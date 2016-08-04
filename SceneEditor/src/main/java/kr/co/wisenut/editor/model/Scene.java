@@ -1,4 +1,4 @@
-package kr.co.wisenut.scene.model;
+package kr.co.wisenut.editor.model;
 
 public class Scene {
 	private int scnId;

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="VideoMapper">
+	<resultMap id="videoList" type="video">
+		<result property="vdoId" column="VDO_ID"/>
+		<result property="vdoTitle" column="VDO_TITLE"/>
+		<result property="vdoType" column="VDO_TYPE"/>
+		<result property="language" column="LANGUAGE"/>
+		<result property="productionDate" column="PRODUCTION_DATE"/>
+		<result property="filePath" column="FILE_PATH"/>
+		<result property="vdoExt" column="VDO_EXT"/>
+		<result property="vdoLClasCd1" column="VDO_L_CLAS_CD1"/>
+		<result property="vdoSClasCd1" column="VDO_S_CLAS_CD1"/>
+		<result property="vdoLClasCd2" column="VDO_L_CLAS_CD2"/>
+		<result property="vdoSClasCd2" column="VDO_S_CLAS_CD2"/>
+		<result property="vdoLClasCd3" column="VDO_L_CLAS_CD3"/>
+		<result property="vdoSClasCd3" column="VDO_S_CLAS_CD3"/>
+		<result property="scnCnt" column="SCN_CNT"/>
+	</resultMap>
+	
+	<select id="getVideoList" resultMap="videoList" parameterType="paging">
+	 SELECT VDO_ID
+		,VDO_TITLE
+		,VDO_TYPE
+		,LANGUAGE
+		,PRODUCTION_DATE
+		,FILE_PATH
+		,VDO_EXT
+		,VDO_L_CLAS_CD1
+		,VDO_S_CLAS_CD1
+		,VDO_L_CLAS_CD2
+		,VDO_S_CLAS_CD2
+		,VDO_L_CLAS_CD3
+		,VDO_S_CLAS_CD3
+		, (select count(*) from scene_manage where vdo_id=Z.VDO_ID) AS SCN_CNT
+		FROM VIDEO_MANAGE Z
+		LIMIT #{page}, #{pageSize}
+	 </select>
+</mapper>

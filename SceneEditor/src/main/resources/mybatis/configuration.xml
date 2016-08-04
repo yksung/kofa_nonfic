@@ -14,7 +14,9 @@
 	
 	<typeAliases>  
         <!-- <typeAlias alias="Task" type="kr.co.wisenut.monitor.model.Task"/> -->
-        <typeAlias alias="Scene" type="kr.co.wisenut.scene.model.Scene"/>
+        <typeAlias alias="scene" type="kr.co.wisenut.editor.model.Scene"/>
+        <typeAlias alias="video" type="kr.co.wisenut.editor.model.Video"/>
+        <typeAlias alias="paging" type="kr.co.wisenut.editor.model.FormVO"/>
     </typeAliases>
     
 	<environments default="development">
@@ -31,6 +33,7 @@
 	
 	<mappers>  
         <mapper resource="mybatis/mappers/${jdbc.vendor}/SceneMapper.xml" />  
+        <mapper resource="mybatis/mappers/${jdbc.vendor}/VideoMapper.xml" />  
     </mappers>
 	
 </configuration>

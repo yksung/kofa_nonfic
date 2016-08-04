@@ -1,10 +1,11 @@
-package kr.co.wisenut.scene.service;
+package kr.co.wisenut.editor.service;
 
 import java.util.List;
 
-import kr.co.wisenut.scene.model.Scene;
+import kr.co.wisenut.editor.model.Scene;
 
 
-public interface SceneService  {
-	public List<Scene> getList();
+public interface EditorService  {
+	public List<Scene> getList(String vdoId);
+	public Scene getScene(String id);
 }
