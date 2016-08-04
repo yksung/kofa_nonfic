@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SceneMapper">
+	<resultMap id="sceneList" type="Scene">
+		<result property="scnId" column="SCN_ID"/>
+		<result property="vdoId" column="VDO_ID"/>
+		<result property="scnStartCd" column="SCN_START_CD"/>
+		<result property="scnEndCd" column="SCN_END_CD"/>
+		<result property="updDtime" column="UPD_DTIME"/>
+		<result property="editor" column="EDITOR"/>
+		<result property="eventLClasCd" column="EVENT_L_CLAS_CD"/>
+		<result property="eventSClasCd" column="EVENT_S_CLAS_CD"/>
+		<result property="eventNm" column="EVENT_NM"/>
+		<result property="eventPrd" column="EVENT_PRD"/>
+		<result property="domAbr" column="DOM_ABR"/>
+		<result property="cntryCd" column="CNTRY_CD"/>
+		<result property="eventPlace" column="EVENT_PLACE"/>
+		<result property="realPlace" column="REAL_PLACE"/>
+		<result property="latitude" column="LATITUDE"/>
+		<result property="longitude" column="LONGITUDE"/>
+		<result property="celebrity1" column="CELEBRITY1"/>
+		<result property="celebrity2" column="CELEBRITY2"/>
+		<result property="celebrity3" column="CELEBRITY3"/>
+		<result property="description" column="DESCRIPTION"/>
+		<result property="narration" column="NARRATION"/>
+		<result property="subtitles" column="SUBTITLES"/>
+		<result property="summary" column="SUMMARY"/>
+		<result property="keyword" column="KEYWORD"/>
+	</resultMap>
+	
+	<select id="getSceneList" resultMap="sceneList">
+	 SELECT SCN_ID
+		,VDO_ID
+		,SCN_START_CD
+		,SCN_END_CD
+		,UPD_DTIME
+		,EDITOR
+		,EVENT_L_CLAS_CD
+		,EVENT_S_CLAS_CD
+		,EVENT_NM
+		,EVENT_PRD
+		,DOM_ABR
+		,CNTRY_CD
+		,EVENT_PLACE
+		,REAL_PLACE
+		,LATITUDE
+		,LONGITUDE
+		,CELEBRITY1
+		,CELEBRITY2
+		,CELEBRITY3
+		,DESCRIPTION
+		,NARRATION
+		,SUBTITLES
+		,SUMMARY
+		,KEYWORD
+	   FROM SCENE_MANAGE
+	 </select>
+</mapper>
