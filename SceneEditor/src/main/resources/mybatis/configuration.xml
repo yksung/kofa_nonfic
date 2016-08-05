@@ -10,13 +10,17 @@
 		<setting name="cacheEnabled" value="false" />
 		<setting name="useGeneratedKeys" value="true" />
 		<setting name="defaultExecutorType" value="REUSE" />
+		<setting name="defaultStatementTimeout" value="30" />
 	</settings>
 	
 	<typeAliases>  
-        <!-- <typeAlias alias="Task" type="kr.co.wisenut.monitor.model.Task"/> -->
         <typeAlias alias="scene" type="kr.co.wisenut.editor.model.Scene"/>
         <typeAlias alias="video" type="kr.co.wisenut.editor.model.Video"/>
         <typeAlias alias="paging" type="kr.co.wisenut.editor.model.FormVO"/>
+        <typeAlias alias="period" type="kr.co.wisenut.editor.model.Period"/>
+        <typeAlias alias="country" type="kr.co.wisenut.editor.model.Country"/>
+        <typeAlias alias="eventCategory" type="kr.co.wisenut.editor.model.Event"/>
+        <typeAlias alias="videoCategory" type="kr.co.wisenut.editor.model.VideoCategory"/>
     </typeAliases>
     
 	<environments default="development">
@@ -34,6 +38,7 @@
 	<mappers>  
         <mapper resource="mybatis/mappers/${jdbc.vendor}/SceneMapper.xml" />  
         <mapper resource="mybatis/mappers/${jdbc.vendor}/VideoMapper.xml" />  
+        <mapper resource="mybatis/mappers/${jdbc.vendor}/EntryMapper.xml" />  
     </mappers>
 	
 </configuration>

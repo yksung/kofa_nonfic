@@ -1,8 +1,14 @@
 package kr.co.wisenut.editor.controller;
 
+import java.net.URLEncoder;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import kr.co.wisenut.editor.model.Country;
+import kr.co.wisenut.editor.model.Event;
 import kr.co.wisenut.editor.model.FormVO;
+import kr.co.wisenut.editor.model.Period;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.model.Video;
 //import kr.co.wisenut.editor.service.EditorService;
@@ -29,6 +35,7 @@ public class EditorController {
 	@Autowired
     //private EditorService sceneService;
 	private EditorDao editorDao;
+	private static final String QUOTE = "\"";
 	
 	@RequestMapping(value = "/viewVideo", method = RequestMethod.GET)
 	public ModelAndView getListOfVideos(@ModelAttribute FormVO vo, ModelAndView mav) {
@@ -75,15 +82,75 @@ public class EditorController {
 		logger.info("============ start to edit scene !!");
 				
 		Scene scene = null;//sceneService.getScene(scnId);
+		List<Country> countryList = null;
+		List<Event> eventCategoryList = null;
+		List<Period> periodList = null;
 		try{
 			scene = editorDao.getScene(scnId);
+			countryList = editorDao.getCountryList(null);
+			eventCategoryList = editorDao.getEventList(null);
+			periodList = editorDao.getPeriodList();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
 		
 		mav.addObject("sceneInfo", scene );
+		mav.addObject("periodList", periodList);
+		mav.addObject("countryList", countryList);
+		mav.addObject("eventCategoryList", eventCategoryList);
 		
 		return mav;
 	}
 	
+	@RequestMapping(value = "/getEventAsJson", method = RequestMethod.GET)
+	public void getEventAsJson(@RequestParam String upperClasCd, HttpServletResponse response) {
+		
+		List<Event> eventCategoryList = null;
+		StringBuffer resultJson = new StringBuffer();
+		try{
+			eventCategoryList = editorDao.getEventList(upperClasCd);
+			for(Event event : eventCategoryList){
+				resultJson.append("{");
+				resultJson.append(QUOTE + "clasCd" + QUOTE).append(":").append(QUOTE+event.getClasCd()+QUOTE);
+				resultJson.append(",");
+				resultJson.append(QUOTE + "clasNm" + QUOTE).append(":").append(QUOTE+event.getClasNm()+QUOTE);
+				resultJson.append("}");
+				resultJson.append(",");
+			}
+			
+			if(resultJson.length()>0 && resultJson.indexOf(",") != -1){				
+				response.getWriter().print("[" + resultJson.substring(0, resultJson.lastIndexOf(",")) + "]");
+			}else{
+				response.getWriter().print("{}");
+			}
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+	}
+	
+	@RequestMapping(value = "/getCountryAsJson", method = RequestMethod.GET)
+	public void getCountryAsJson(@RequestParam String domAbr, HttpServletResponse response) {
+		
+		List<Country> countryList = null;
+		StringBuffer resultJson = new StringBuffer();
+		try{
+			countryList = editorDao.getCountryList(domAbr);
+			for(Country cntry : countryList){
+				resultJson.append("{");
+				resultJson.append(QUOTE + "cntryCd" + QUOTE).append(":").append(QUOTE+cntry.getCntryCd()+QUOTE);
+				resultJson.append(",");
+				resultJson.append(QUOTE + "cntryNm" + QUOTE).append(":").append(QUOTE+cntry.getCntryNm()+QUOTE);
+				resultJson.append("}");
+				resultJson.append(",");
+			}
+			
+			if(resultJson.length()>0 && resultJson.indexOf(",") != -1){				
+				response.getWriter().print("[" + resultJson.substring(0, resultJson.lastIndexOf(",")) + "]");
+			}else{
+				response.getWriter().print("{}");
+			}
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+	}
 }

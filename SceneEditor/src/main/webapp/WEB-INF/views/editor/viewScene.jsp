@@ -17,7 +17,7 @@ th, td { border-width:1px; border-style:solid; border-color:gray; }
 </head>
 <body>
 	<div>
-		<p><strong>~</strong>의 장면 정보 조회</p>
+		<p><strong>${vdoId}</strong>의 장면 정보 조회</p>
 	</div>
 	<table>
 		<tr>
@@ -41,7 +41,7 @@ th, td { border-width:1px; border-style:solid; border-color:gray; }
 			<td>${result.eventSClasCd }</td>
 			<td>${result.editor }</td>
 			<td>${result.updDtime }</td>		
-			<td><a href="/editScene/${result.scnId }">GO</a></td>		
+			<td><a href="/editScene?scnId=${result.scnId }">GO</a></td>		
 		</tr>
 		</c:forEach>
 	</table>

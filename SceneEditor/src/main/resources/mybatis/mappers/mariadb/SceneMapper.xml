@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="SceneMapper">
-	<resultMap id="sceneList" type="Scene">
+	<resultMap id="sceneList" type="scene">
 		<result property="scnId" column="SCN_ID"/>
 		<result property="vdoId" column="VDO_ID"/>
 		<result property="scnStartCd" column="SCN_START_CD"/>
@@ -29,7 +29,7 @@
 		<result property="keyword" column="KEYWORD"/>
 	</resultMap>
 	
-	<select id="getSceneList" resultMap="sceneList">
+	<select id="getSceneList" resultMap="sceneList" parameterType="String">
 	 SELECT SCN_ID
 		,VDO_ID
 		,SCN_START_CD
@@ -55,5 +55,34 @@
 		,SUMMARY
 		,KEYWORD
 	   FROM SCENE_MANAGE
+	   WHERE VDO_ID = #{vdoId}
+	 </select>
+	 <select id="findScene" parameterType="String" resultMap="sceneList">
+	 SELECT SCN_ID
+		,VDO_ID
+		,SCN_START_CD
+		,SCN_END_CD
+		,UPD_DTIME
+		,EDITOR
+		,EVENT_L_CLAS_CD
+		,EVENT_S_CLAS_CD
+		,EVENT_NM
+		,EVENT_PRD
+		,DOM_ABR
+		,CNTRY_CD
+		,EVENT_PLACE
+		,REAL_PLACE
+		,LATITUDE
+		,LONGITUDE
+		,CELEBRITY1
+		,CELEBRITY2
+		,CELEBRITY3
+		,DESCRIPTION
+		,NARRATION
+		,SUBTITLES
+		,SUMMARY
+		,KEYWORD
+	   FROM SCENE_MANAGE
+	   WHERE SCN_ID = #{id}
 	 </select>
 </mapper>

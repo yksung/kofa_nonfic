@@ -35,7 +35,7 @@ th, td { border-width:1px; border-style:solid; border-color:gray; }
 			<td></td>
 			<td>${result.vdoId }</td>
 			<td>${result.vdoTitle }</td>
-			<td></td>
+			<td>${result.vdoType }</td>
 			<td></td>
 			<td>${result.language }</td>
 			<td>${result.productionDate }</td>
