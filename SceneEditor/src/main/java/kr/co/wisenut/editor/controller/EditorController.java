@@ -1,6 +1,5 @@
 package kr.co.wisenut.editor.controller;
 
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -152,5 +151,16 @@ public class EditorController {
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
+	}
+	
+	@RequestMapping(value = "/updateScene", method = RequestMethod.POST)
+	public String update(@RequestParam FormVO vo, HttpServletResponse response) {
+		try{
+			editorDao.updateScene(vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
+		return "redirect:/editScene?scnId="+vo.getScnId();
 	}
 }

@@ -14,8 +14,7 @@ response.setCharacterEncoding("utf-8");
 	<style type="text/css">
 	p {text-align:left; margin:50px 10px 50px 30px}
 	p strong { font-size:50px }
-	.explain {width:1000px; font-size:15px}
-	.explain p {margin:10px 10px 10px 30px}
+	.buttons {width:1000px; font-size:15px; text-align:right}
 	table { float:center; border-collapse:collapse; text-align:center; margin:5px 10px 10px 30px}  
 	th, td { border-width:1px; border-style:solid; border-color:gray; }
 	</style>
@@ -64,6 +63,11 @@ response.setCharacterEncoding("utf-8");
 			});
 		});
 	});
+	
+	function submit(){
+		var f = document.form;
+		f.submit();
+	}
 	</script>
 </head>
 <body>
@@ -71,6 +75,9 @@ response.setCharacterEncoding("utf-8");
 		<p><strong>${sceneInfo.scnStartCd }~${sceneInfo.scnEndCd }</strong>의 장면 정보 수정하기</p>
 		<p>입력자 : ${sceneInfo.editor } / 마지막 입력시간 : ${ sceneInfo.updDtime } </p>
 	</div>
+	<form name="thisScene" action="${contextRoot }/updateScene" method="POST">
+	<input type="hidden" name="scnId" value="${ sceneInfo.scnId }"/>
+	<input type="hidden" name="vdoId" value="${ sceneInfo.vdoId }"/>
 	<table>
 		<tr>
 			<th>순서</th>
@@ -97,12 +104,21 @@ response.setCharacterEncoding("utf-8");
 				대분류 : <select name="eventLClasCd" id="id_eventLClasCd">
 					<c:forEach var="item" items="${ eventCategoryList }">
 						<c:if test="${item.upperClas == null }">
+							<c:choose>
+								<c:when test="${ item.clasCd == sceneInfo.eventLClasCd}">
+					<option value="${item.clasCd }" selected>${item.clasNm }</option>
+								</c:when>
+								<c:otherwise>
 					<option value="${item.clasCd }">${item.clasNm }</option>
+								</c:otherwise>
+							</c:choose>
 						</c:if>
 					</c:forEach>
 				</select>
 				/ 소분류 :
-				<select name="eventSClasCd" id="id_eventSClasCd"></select>
+				<select name="eventSClasCd" id="id_eventSClasCd">
+					<option value="${sceneInfo.eventSClasCd }" selected>
+				</select>
 				/ 사건명 : <input type="text" name="eventNm" value="${sceneInfo.eventNm }">
 			</td>
 			<td>
@@ -133,16 +149,12 @@ response.setCharacterEncoding("utf-8");
 			<td><textarea rows=5 cols="20" name="keyword">${sceneInfo.keyword }</textarea></td>
 		</tr>
 	</table>
-	<div class="explain">
-	<!-- 
-	<p>※ 검사상태</p>
-	<ul>
-		<li>S : 표절검사 완료</li>
-		<li>F/M : 표절검사 실패</li>
-		<li>N : 초기화 상태, 표절문서 대기상태</li>
-		<li>K : 표절검사 진행중</li>
-	</ul>
-	 -->
+	</form>
+	<div class="buttons">
+		<input type="button" name="submit" value="저장" onclick="javascript:submit()"/>
+		<input type="button" name="verify" value="검증"/>
+		<input type="button" name="delete" value="삭제"/>
+		<input type="button" name="cancel" value="취소"/>
 	</div>
 </body>
 </html>

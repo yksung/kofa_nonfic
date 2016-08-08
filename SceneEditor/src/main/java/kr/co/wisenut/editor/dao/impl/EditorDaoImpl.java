@@ -110,4 +110,12 @@ public class EditorDaoImpl implements EditorDao {
 	public void printString(String str){
 		System.out.println(str);
 	}
+	
+	@Override
+	public void updateScene(FormVO vo) throws Exception {
+		SqlSession session = sessionService.getSession();
+		int resultCount = session.update("SceneMapper.updateScene", vo);
+		
+		logger.debug("@@@@@@ resultCount : " + resultCount);
+	}
 }

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SceneMapper">
+	<resultMap id="sceneList" type="scene">
+		<result property="scnId" column="SCN_ID"/>
+		<result property="vdoId" column="VDO_ID"/>
+		<result property="scnStartCd" column="SCN_START_CD"/>
+		<result property="scnEndCd" column="SCN_END_CD"/>
+		<result property="updDtime" column="UPD_DTIME"/>
+		<result property="editor" column="EDITOR"/>
+		<result property="eventLClasCd" column="EVENT_L_CLAS_CD"/>
+		<result property="eventSClasCd" column="EVENT_S_CLAS_CD"/>
+		<result property="eventNm" column="EVENT_NM"/>
+		<result property="eventPrd" column="EVENT_PRD"/>
+		<result property="domAbr" column="DOM_ABR"/>
+		<result property="cntryCd" column="CNTRY_CD"/>
+		<result property="eventPlace" column="EVENT_PLACE"/>
+		<result property="realPlace" column="REAL_PLACE"/>
+		<result property="latitude" column="LATITUDE"/>
+		<result property="longitude" column="LONGITUDE"/>
+		<result property="celebrity1" column="CELEBRITY1"/>
+		<result property="celebrity2" column="CELEBRITY2"/>
+		<result property="celebrity3" column="CELEBRITY3"/>
+		<result property="description" column="DESCRIPTION"/>
+		<result property="narration" column="NARRATION"/>
+		<result property="subtitles" column="SUBTITLES"/>
+		<result property="summary" column="SUMMARY"/>
+		<result property="keyword" column="KEYWORD"/>
+	</resultMap>
+	<parameterMap type="scene" id="sceneInfo">
+		<parameter property="scnId" />
+		<parameter property="vdoId" />
+		<parameter property="scnStartCd" />
+		<parameter property="scnEndCd" />
+		<parameter property="updDtime" />
+		<parameter property="editor" />
+		<parameter property="eventLClasCd" />
+		<parameter property="eventSClasCd" />
+		<parameter property="eventNm" />
+		<parameter property="eventPrd" />
+		<parameter property="domAbr" />
+		<parameter property="cntryCd" />
+		<parameter property="eventPlace" />
+		<parameter property="realPlace" />
+		<parameter property="latitude" />
+		<parameter property="longitude" />
+		<parameter property="celebrity1" />
+		<parameter property="celebrity2" />
+		<parameter property="celebrity3" />
+		<parameter property="description" />
+		<parameter property="narration" />
+		<parameter property="subtitles" />
+		<parameter property="summary" />
+		<parameter property="keyword" />
+	</parameterMap>
+	
+	<select id="getSceneList" resultMap="sceneList" parameterType="String">
+	 SELECT SCN_ID
+		,VDO_ID
+		,SCN_START_CD
+		,SCN_END_CD
+		,UPD_DTIME
+		,EDITOR
+		,EVENT_L_CLAS_CD
+		,EVENT_S_CLAS_CD
+		,EVENT_NM
+		,EVENT_PRD
+		,DOM_ABR
+		,CNTRY_CD
+		,EVENT_PLACE
+		,REAL_PLACE
+		,LATITUDE
+		,LONGITUDE
+		,CELEBRITY1
+		,CELEBRITY2
+		,CELEBRITY3
+		,DESCRIPTION
+		,NARRATION
+		,SUBTITLES
+		,SUMMARY
+		,KEYWORD
+	   FROM SCENE_MANAGE
+	   WHERE VDO_ID = #{vdoId}
+	 </select>
+	 <select id="findScene" parameterType="String" resultMap="sceneList">
+	 SELECT SCN_ID
+		,VDO_ID
+		,SCN_START_CD
+		,SCN_END_CD
+		,UPD_DTIME
+		,EDITOR
+		,EVENT_L_CLAS_CD
+		,EVENT_S_CLAS_CD
+		,EVENT_NM
+		,EVENT_PRD
+		,DOM_ABR
+		,CNTRY_CD
+		,EVENT_PLACE
+		,REAL_PLACE
+		,LATITUDE
+		,LONGITUDE
+		,CELEBRITY1
+		,CELEBRITY2
+		,CELEBRITY3
+		,DESCRIPTION
+		,NARRATION
+		,SUBTITLES
+		,SUMMARY
+		,KEYWORD
+	   FROM SCENE_MANAGE
+	   WHERE SCN_ID = #{id}
+	 </select>
+	 <update id="updateScene" parameterType="sceneList">
+	update SCENE_MANAGE
+	   set 	VDO_ID = #{vdoId},
+		 	SCN_START_CD = #{scnStartCd},
+		    SCN_END_CD = #{scnEndCd},
+		    UPD_DTIME = now(),
+		    EDITOR = #{editor},
+		    EVENT_L_CLAS_CD = #{eventLClasCd},
+		    EVENT_S_CLAS_CD = #{eventSClasCd},
+		    EVENT_NM = #{eventNm},
+		    EVENT_PRD = #{eventPrd},
+		    DOM_ABR = #{domAbr},
+		    CNTRY_CD = #{cntryCd},
+		    EVENT_PLACE = #{eventPlace},
+		    REAL_PLACE = #{realPlace}, 
+		    LATITUDE = #{latitude},
+		    LONGITUDE = #{longitude},
+		    CELEBRITY1 = #{celebrity1},
+		    CELEBRITY2 = #{celebrity2},
+		    CELEBRITY3 = #{celebrity3},
+		    DESCRIPTION = #{description},
+		    NARRATION = #{narration},
+		    SUBTITLES = #{subtitles},
+		    SUMMARY = #{summary},
+		    KEYWORD = #{keyword}
+	  where SCN_ID = #{scnId}
+	</update>
+	<insert id="insertScene" useGeneratedKeys="true" keyProperty="SCN_ID" parameterType="sceneInfo">
+	INSERT INTO SCENE_MANAGE (
+		VDO_ID,
+	 	SCN_START_CD,
+	    SCN_END_CD,
+	    UPD_DTIME,
+	    EDITOR,
+	    EVENT_L_CLAS_CD,
+	    EVENT_S_CLAS_CD,
+	    EVENT_NM,
+	    EVENT_PRD,
+	    DOM_ABR,
+	    CNTRY_CD,
+	    EVENT_PLACE,
+	    REAL_PLACE,
+	    LATITUDE,
+	    LONGITUDE,
+	    CELEBRITY1,
+	    CELEBRITY2,
+	    CELEBRITY3,
+	    DESCRIPTION,
+	    NARRATION,
+	    SUBTITLES,
+	    SUMMARY,
+	    KEYWORD
+	) VALUES (
+	 	#{vdoId},
+	 	#{scnStartCd},
+	 	#{scnEndCd},
+	 	now(),
+	 	#{editor},
+	 	#{eventLClasCd},
+	 	#{eventSClasCd},
+	 	#{eventNm},
+	 	#{eventPrd},
+	 	#{domAbr},
+	 	#{cntryCd},
+	 	#{eventPlace},
+	 	#{realPlace},
+	 	#{latitude},
+	 	#{longitude},
+	 	#{celebrity1},
+	 	#{celebrity2},
+	 	#{celebrity3},
+	 	#{description},
+	 	#{narration},
+	 	#{subtitles},
+	 	#{summary},
+	 	#{keyword}
+	)
+	</insert>
+</mapper>

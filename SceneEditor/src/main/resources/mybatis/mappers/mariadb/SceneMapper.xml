@@ -28,6 +28,32 @@
 		<result property="summary" column="SUMMARY"/>
 		<result property="keyword" column="KEYWORD"/>
 	</resultMap>
+	<parameterMap type="scene" id="sceneInfo">
+		<parameter property="scnId" />
+		<parameter property="vdoId" />
+		<parameter property="scnStartCd" />
+		<parameter property="scnEndCd" />
+		<parameter property="updDtime" />
+		<parameter property="editor" />
+		<parameter property="eventLClasCd" />
+		<parameter property="eventSClasCd" />
+		<parameter property="eventNm" />
+		<parameter property="eventPrd" />
+		<parameter property="domAbr" />
+		<parameter property="cntryCd" />
+		<parameter property="eventPlace" />
+		<parameter property="realPlace" />
+		<parameter property="latitude" />
+		<parameter property="longitude" />
+		<parameter property="celebrity1" />
+		<parameter property="celebrity2" />
+		<parameter property="celebrity3" />
+		<parameter property="description" />
+		<parameter property="narration" />
+		<parameter property="subtitles" />
+		<parameter property="summary" />
+		<parameter property="keyword" />
+	</parameterMap>
 	
 	<select id="getSceneList" resultMap="sceneList" parameterType="String">
 	 SELECT SCN_ID
@@ -85,4 +111,82 @@
 	   FROM SCENE_MANAGE
 	   WHERE SCN_ID = #{id}
 	 </select>
+	 <update id="updateScene" parameterType="sceneList">
+	update SCENE_MANAGE
+	   set 	VDO_ID = #{vdoId},
+		 	SCN_START_CD = #{scnStartCd},
+		    SCN_END_CD = #{scnEndCd},
+		    UPD_DTIME = now(),
+		    EDITOR = #{editor},
+		    EVENT_L_CLAS_CD = #{eventLClasCd},
+		    EVENT_S_CLAS_CD = #{eventSClasCd},
+		    EVENT_NM = #{eventNm},
+		    EVENT_PRD = #{eventPrd},
+		    DOM_ABR = #{domAbr},
+		    CNTRY_CD = #{cntryCd},
+		    EVENT_PLACE = #{eventPlace},
+		    REAL_PLACE = #{realPlace}, 
+		    LATITUDE = #{latitude},
+		    LONGITUDE = #{longitude},
+		    CELEBRITY1 = #{celebrity1},
+		    CELEBRITY2 = #{celebrity2},
+		    CELEBRITY3 = #{celebrity3},
+		    DESCRIPTION = #{description},
+		    NARRATION = #{narration},
+		    SUBTITLES = #{subtitles},
+		    SUMMARY = #{summary},
+		    KEYWORD = #{keyword}
+	  where SCN_ID = #{scnId}
+	</update>
+	<insert id="insertScene" useGeneratedKeys="true" keyProperty="SCN_ID" parameterType="sceneInfo">
+	INSERT INTO SCENE_MANAGE (
+		VDO_ID,
+	 	SCN_START_CD,
+	    SCN_END_CD,
+	    UPD_DTIME,
+	    EDITOR,
+	    EVENT_L_CLAS_CD,
+	    EVENT_S_CLAS_CD,
+	    EVENT_NM,
+	    EVENT_PRD,
+	    DOM_ABR,
+	    CNTRY_CD,
+	    EVENT_PLACE,
+	    REAL_PLACE,
+	    LATITUDE,
+	    LONGITUDE,
+	    CELEBRITY1,
+	    CELEBRITY2,
+	    CELEBRITY3,
+	    DESCRIPTION,
+	    NARRATION,
+	    SUBTITLES,
+	    SUMMARY,
+	    KEYWORD
+	) VALUES (
+	 	#{vdoId},
+	 	#{scnStartCd},
+	 	#{scnEndCd},
+	 	now(),
+	 	#{editor},
+	 	#{eventLClasCd},
+	 	#{eventSClasCd},
+	 	#{eventNm},
+	 	#{eventPrd},
+	 	#{domAbr},
+	 	#{cntryCd},
+	 	#{eventPlace},
+	 	#{realPlace},
+	 	#{latitude},
+	 	#{longitude},
+	 	#{celebrity1},
+	 	#{celebrity2},
+	 	#{celebrity3},
+	 	#{description},
+	 	#{narration},
+	 	#{subtitles},
+	 	#{summary},
+	 	#{keyword}
+	)
+	</insert>
 </mapper>

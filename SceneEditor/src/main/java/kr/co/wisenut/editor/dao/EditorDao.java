@@ -18,4 +18,5 @@ public interface EditorDao {
 	public List<Period> getPeriodList() throws Exception;
 	public List<VideoCategory> getVideoCategoryList() throws Exception;
 	public Scene getScene(String id) throws Exception;
+	public void updateScene(FormVO vo) throws Exception;
 }

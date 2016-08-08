@@ -2,6 +2,7 @@ package kr.co.wisenut.editor.service.impl;
 
 import java.util.List;
 
+import kr.co.wisenut.editor.model.FormVO;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.service.EditorService;
 import kr.co.wisenut.editor.dao.EditorDao;
@@ -20,36 +21,4 @@ public class EditorServiceImpl implements EditorService {
 	@Autowired
 	private EditorDao sceneDao;
 	
-	@Override
-	public List<Scene> getList(String vdoId){
-		
-		List<Scene> result = null;
-		
-		try{
-			result = sceneDao.getSceneList(vdoId);
-			if(result==null){
-				logger.debug("result is null.");
-			}else if(result.size() == 0){
-				logger.debug("result size is 0.");
-			}else{
-				logger.debug("result size : " + result.size());
-			}
-		}catch(Exception e){
-			logger.error(StringUtil.getStackTrace(e));
-		}
-		return result;
-	}
-	
-	@Override
-	public Scene getScene(String id){
-		Scene result = null;
-		
-		try{
-			result = sceneDao.getScene(id);
-		}catch(Exception e){
-			logger.error(StringUtil.getStackTrace(e));
-		}
-		
-		return result;
-	}
 }
