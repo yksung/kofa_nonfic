@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="VideoMapper">
+	<resultMap id="videoList" type="video">
+		<result property="recid" column="ROWNUM"/>
+		<result property="vdoId" column="VIDEO_ID"/>
+		<result property="vdoTitle" column="TITLES"/>
+		<result property="vdoType" column="FORM_CLSS"/>
+		<result property="language" column="LANG_CLSS"/>
+		<result property="productionDate" column="PROD_YEAR"/>
+		<result property="runtime" column="RUNTIME"/>
+		<result property="scnCnt" column="SCN_CNT"/>
+	</resultMap>
+	
+	<select id="getVideoList" resultMap="videoList" parameterType="vo">
+	 SELECT ROWNUM
+	 	, VIDEO_ID
+		, TITLES
+		, FORM_CLSS
+		, LANG_CLSS
+		, PROD_YEAR
+		, RUNTIME
+		, (select count(*) from scene_manage where video_id=Z.VIDEO_ID) AS SCN_CNT
+		FROM VIDEO Z
+		<where>
+		<choose>
+		<when test='page !=0 and pageSize !=0'><![CDATA[
+		ROWNUM >= #{page} and ROWNUM <= #{pageSize} and (select count(*) from scene_manage where video_id=Z.VIDEO_ID)>0
+		]]></when>
+		<otherwise>
+		(select count(*) from scene_manage where video_id=Z.VIDEO_ID)>0
+		</otherwise>
+		</choose>
+		</where>
+	</select>
+	<select id="findVideo" resultMap="videoList" parameterType="String">
+	 SELECT ROWNUM
+	 	, VIDEO_ID
+		, TITLES
+		, FORM_CLSS
+		, LANG_CLSS
+		, PROD_YEAR
+		, RUNTIME
+		, (select count(*) from scene_manage where video_id=Z.VIDEO_ID) AS SCN_CNT
+		FROM VIDEO Z
+		<where>
+		<if test='_parameter != null'>
+		VIDEO_ID = #{id}
+		</if>
+		</where>
+	</select>
+	
+</mapper>

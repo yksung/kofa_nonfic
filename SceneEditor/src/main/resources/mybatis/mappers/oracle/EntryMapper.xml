@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="EntryMapper">
+	<resultMap id="period" type="period">
+		<result property="prdCd" column="CODE"/>
+		<result property="prdNm" column="CODE_NM"/>
+	</resultMap>
+	<resultMap id="country" type="country">
+		<result property="cntryCd" column="CODE"/>
+		<result property="cntryNm" column="CODE_NM"/>
+	</resultMap>
+	<resultMap id="eventCategory" type="eventCategory">
+		<result property="eventCd" column="CODE"/>
+		<result property="eventNm" column="CODE_NM"/>
+	</resultMap>
+	<resultMap id="videoCategory" type="videoCategory">
+		<result property="clasCd" column="CLAS_CD"/>
+		<result property="clasNm" column="CLAS_NM"/>
+		<result property="upperClas" column="UPPER_CLAS"/>
+	</resultMap>
+	
+	<select id="periodList" resultMap="period">
+	 select code, code_nm from codeinfo where div_id = 'S01'
+	</select>
+	<select id="countryList" resultMap="country">
+	 select code, code_nm from codeinfo
+	 <where>
+	 <choose>
+		<when test ='_parameter != null and _parameter.equals("abroad")'>
+     	div_id = 'A13' AND code != 'ko'
+     	</when>
+     	<when test ='_parameter != null and _parameter.equals("domestic")'>
+     	div_id = 'A13' AND code = 'ko'
+     	</when>
+		<otherwise>
+		div_id = 'A13' 
+		</otherwise>
+	 </choose>
+	 </where>
+	 order by code_nm asc
+	</select>
+	<!-- 2016.08.25 event는 자동완성으로 처리 -->
+	<select id="eventCategoryList" resultMap="eventCategory" parameterType="vo">
+	 select code, adit_info1 || ' ' || code_nm as code_nm from codeinfo
+	 <where>
+	 <choose>
+	 	<when test="eventPrd != null"><![CDATA[
+	 	div_id='S02' and to_number(substr(adit_info1, 0, 4)) >= #{eventPrd} and to_number(substr(adit_info1, 0, 4)) < to_number(#{eventPrd})+10
+	 	]]></when>
+	 	<otherwise>
+		div_id='S02'
+	 	</otherwise>
+	 </choose>
+	 </where>
+	</select>
+	<select id="videoCategoryList" resultMap="videoCategory">
+	 select * from video_kind
+	</select>
+</mapper>

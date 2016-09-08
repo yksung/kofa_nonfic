@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SceneMapper">
+	<resultMap id="sceneList" type="scene">
+		<result property="recid" column="ROWNUM"/>
+		<result property="scnId" column="SCN_ID"/>
+		<result property="vdoId" column="VIDEO_ID"/>
+		<result property="vdoNm" column="VIDEO_NM"/>
+		<result property="scnStartCd" column="SCN_START_CD"/>
+		<result property="scnEndCd" column="SCN_END_CD"/>
+		<result property="updDtime" column="UPD_DTIME"/>
+		<result property="editor" column="EDITOR"/>
+		<result property="eventLClasCd" column="EVENT_LCLS"/>
+		<result property="eventSClasCd" column="EVENT_SCLS"/>
+		<result property="eventNm" column="EVENT_NM"/>
+		<result property="eventPrd" column="EVENT_PRD"/>
+		<result property="domAbr" column="DOM_ABR"/>
+		<result property="cntryCd" column="CNTRY_CD"/>
+		<result property="eventPlace" column="EVENT_PLACE"/>
+		<result property="realPlace" column="REAL_PLACE"/>
+		<result property="latitude" column="LATITUDE"/>
+		<result property="longitude" column="LONGITUDE"/>
+		<result property="celebrity1" column="CELEBRITY1"/>
+		<result property="celebrity2" column="CELEBRITY2"/>
+		<result property="celebrity3" column="CELEBRITY3"/>
+		<result property="description" column="DESCRIPTION"/>
+		<result property="narration" column="NARRATION"/>
+		<result property="subtitles" column="SUBTITLES"/>
+		<result property="summary" column="SUMMARY"/>
+		<result property="keyword" column="KEYWORD"/>
+		<result property="note" column="NOTE"/>
+	</resultMap>
+	
+	<select id="getSceneList" resultMap="sceneList" parameterType="String">
+	 SELECT	ROWNUM
+	 	,trim(SCN_ID) as SCN_ID
+		,trim(VIDEO_ID) as VIDEO_ID
+		,(select titles from video where video_id=A.VIDEO_ID) as VIDEO_NM
+		,SCN_START_CD
+		,SCN_END_CD
+		,UPD_DTIME
+		,EDITOR
+		,EVENT_LCLS
+		,EVENT_SCLS
+		,EVENT_NM
+		,trim(EVENT_PRD) as EVENT_PRD
+		,trim(DOM_ABR) as DOM_ABR
+		,trim(CNTRY_CD) as CNTRY_CD
+		,EVENT_PLACE
+		,REAL_PLACE
+		,LATITUDE
+		,LONGITUDE
+		,CELEBRITY1
+		,CELEBRITY2
+		,CELEBRITY3
+		,DESCRIPTION
+		,NARRATION
+		,SUBTITLES
+		,SUMMARY
+		,KEYWORD
+		,NOTE
+	   FROM SCENE_MANAGE A
+	   WHERE VIDEO_ID = #{vdoId}
+	 </select>
+	 <select id="findScene" parameterType="vo" resultMap="sceneList">
+	 SELECT ROWNUM
+	 	,trim(SCN_ID) as SCN_ID
+		,trim(VIDEO_ID) as VIDEO_ID
+		,(select titles from video where video_id=A.VIDEO_ID) as VIDEO_NM
+		,SCN_START_CD
+		,SCN_END_CD
+		,UPD_DTIME
+		,EDITOR
+		,EVENT_LCLS
+		,EVENT_SCLS
+		,EVENT_NM
+		,trim(EVENT_PRD) as EVENT_PRD
+		,trim(DOM_ABR) as DOM_ABR
+		,trim(CNTRY_CD) as CNTRY_CD
+		,EVENT_PLACE
+		,REAL_PLACE
+		,LATITUDE
+		,LONGITUDE
+		,CELEBRITY1
+		,CELEBRITY2
+		,CELEBRITY3
+		,DESCRIPTION
+		,NARRATION
+		,SUBTITLES
+		,SUMMARY
+		,KEYWORD
+		,NOTE
+	   FROM SCENE_MANAGE A
+	   <where>
+	   <choose>
+	   	<when test="direction == 1"><![CDATA[
+	   	SCN_ID = ( select min(SCN_ID) from SCENE_MANAGE where SCN_ID > #{scnId} ) AND VIDEO_ID = #{vdoId}
+	   	]]></when>
+	   	<when test="direction == -1"><![CDATA[
+	   	SCN_ID = ( select max(SCN_ID) from SCENE_MANAGE where SCN_ID < #{scnId} ) AND VIDEO_ID = #{vdoId}
+	   	]]></when>
+	   	<otherwise>
+	   	SCN_ID = #{scnId} AND VIDEO_ID = #{vdoId}
+	   	</otherwise>
+	   </choose>
+	   </where>
+	 </select>
+	 <update id="updateScene" parameterType="scene">
+	update SCENE_MANAGE
+	   set 	VIDEO_ID = #{vdoId},
+		 	SCN_START_CD = #{scnStartCd},
+		    SCN_END_CD = #{scnEndCd},
+		    UPD_DTIME = sysdate,
+		    EDITOR = #{editor},
+		    EVENT_LCLS = #{eventLClasCd},
+		    EVENT_SCLS = #{eventSClasCd},
+		    EVENT_NM = #{eventNm},
+		    EVENT_PRD = #{eventPrd},
+		    DOM_ABR = #{domAbr},
+		    CNTRY_CD = #{cntryCd},
+		    EVENT_PLACE = #{eventPlace},
+		    REAL_PLACE = #{realPlace}, 
+		    LATITUDE = #{latitude},
+		    LONGITUDE = #{longitude},
+		    CELEBRITY1 = #{celebrity1},
+		    CELEBRITY2 = #{celebrity2},
+		    CELEBRITY3 = #{celebrity3},
+		    DESCRIPTION = #{description},
+		    NARRATION = #{narration},
+		    SUBTITLES = #{subtitles},
+		    SUMMARY = #{summary},
+		    KEYWORD = #{keyword},
+		    NOTE = #{note}
+	  where SCN_ID = #{scnId}
+	</update>
+	<insert id="insertScene" useGeneratedKeys="true" keyProperty="SCN_ID" parameterType="scene">
+	INSERT INTO SCENE_MANAGE (
+		VIDEO_ID,
+	 	SCN_START_CD,
+	    SCN_END_CD,
+	    UPD_DTIME,
+	    EDITOR,
+	    EVENT_L_CLAS_CD,
+	    EVENT_S_CLAS_CD,
+	    EVENT_NM,
+	    EVENT_PRD,
+	    DOM_ABR,
+	    CNTRY_CD,
+	    EVENT_PLACE,
+	    REAL_PLACE,
+	    LATITUDE,
+	    LONGITUDE,
+	    CELEBRITY1,
+	    CELEBRITY2,
+	    CELEBRITY3,
+	    DESCRIPTION,
+	    NARRATION,
+	    SUBTITLES,
+	    SUMMARY,
+	    KEYWORD,
+	    NOTE
+	) VALUES (
+	 	#{vdoId},
+	 	#{scnStartCd},
+	 	#{scnEndCd},
+	 	sysdate,
+	 	#{editor},
+	 	#{eventLClasCd},
+	 	#{eventSClasCd},
+	 	#{eventNm},
+	 	#{eventPrd},
+	 	#{domAbr},
+	 	#{cntryCd},
+	 	#{eventPlace},
+	 	#{realPlace},
+	 	#{latitude},
+	 	#{longitude},
+	 	#{celebrity1},
+	 	#{celebrity2},
+	 	#{celebrity3},
+	 	#{description},
+	 	#{narration},
+	 	#{subtitles},
+	 	#{summary},
+	 	#{keyword},
+	 	#{note}
+	)
+	</insert>
+</mapper>

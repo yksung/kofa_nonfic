@@ -1,0 +1,47 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* layout */
+.wrap{width:996px; height:800px;margin:10px auto; border-left:2px solid #23364c ;  border-right:2px solid #23364c ; border-bottom:2px solid #23364c ;  border-radius:6px 6px 0 0; background-color:#4b596a }
+.top{width:996px; height:63px; background:url(../images/title_bg.png) no-repeat;  padding-top:2px;}
+.content{width:956px; height:700px; margin:10px auto 0;background-color:#fff;box-shadow:4px 5px 3px #3f4b5a;}
+
+.skip a{ position: absolute; top: 0px;left: -10000px;   }
+.skip a:focus, #skjip a:active{ left: 45%; padding: 5px; background-color: #ffffcc; color: #666; }
+
+.top h1{float:left; margin:13px 20px 0 20px;}
+.top .btn_scnSearch{background:url(../images/btn_search_bg.png) no-repeat left top ; padding-left:17px;color:#c3d0de; display:inline-block;width:128px; height:26px; line-height:24px; margin-top:13px; }
+.top ul{float:right; margin:14px 10px 0 0;}
+.top ul li{float:left; color:#e1e3e4; padding:0 10px; background:url(../images/bar.png) no-repeat right center}
+.top ul li+li{background:none}
+.top ul li strong{font-weight:700}
+.top ul li a.btn_logout{width:40px; height:20px; border:1px solid #2e3846; background-color:#506177; border-radius:10px;cursor:pointer;text-align:center;padding:1px 8px;margin-left:2px; font-size:11px; color:#dfe4eb}
+.top ul li a.btn_myinfo{color:#8f9caf}
+
+.content nav{float:left; width:190px; margin:10px 30px 0 10px}
+.content nav a{display:inline-block; width:178px; height:38px; line-height:38px; border:1px solid #e2e2e2; background-color:#f1f1f1; margin-bottom:10px; font-size:15px; color:#898989;padding-left:10px;}
+.content nav a.on{border:1px solid #334e72; background:#456692 url(../images/icon_next_on.png) no-repeat 174px center ; color:#fff; font-weight:500}
+.content nav a:hover{text-decoration:underline}
+.content .event_wrap{float:left; width:711px; margin-top:10px}
+.content .event_wrap h2{width:690px;padding:6px 10px; height:27px;line-height:27px; font-size:15px; font-weight:500; background-color:#dfe9f5; border:1px solid #cedbea}
+.event_01{float:left; width:326px; margin-top:20px}
+.event_01.marL{margin-right:59px}
+.event_01 span{font-size:14px; float:left}
+.event_01 .event_list{width:270px; height:365px; border:1px solid #9a9a9a; margin-left:53px; overflow-y:scroll}
+.event_01 .event_list li a{ display:block;padding:4px 0 3px 7px;}
+.event_01 .event_list li a:hover{background-color:#f1f1f1;display:block}
+.event_01 .btn_area{width:280px; height:20px; margin:10px 0 0 53px; }
+.event_01 .btn_area li{float:left; margin-right:1px}
+.event_01 .btn_area li.marL{margin-right:5px}
+.event_wrap .btn_save{ clear:both;float:right;color:#fff; font-weight:700; border:1px solid #3d6899;border-radius:2px;height:28px; line-height:26px;  text-align:center;font-size:14px;width:68px; display:inline-block; margin:20px 10px 0 0;
+	background: #3770b4; /* Old browsers */
+	background: -moz-linear-gradient(top,  #3770b4 0%, #1c4e89 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  #3770b4 0%,#1c4e89 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  #3770b4 0%,#1c4e89 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3770b4', endColorstr='#1c4e89',GradientType=0 ); /* IE6-9 */}
+	
+.addlist{ width:270px;margin:20px 0 0 53px; height:65px; font-size:12px; background-color:#fff; border:1px solid #9a9a9a; right:10px; top:300px; padding-bottom:10px;}
+.addlist>p{background-color:#999; color:#fff; font-size:13px;font-weight:500; height:30px; line-height:30px; padding-left:10px;}
+.addlist>p a{float:right;  margin:2px 5px 0 0}
+.addlist input{width:246px; margin:7px 10px ; height:26px; border:1px solid #ccc; padding-left:3px;}
+

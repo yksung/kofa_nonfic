@@ -1,0 +1,21 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* layout */
+.wrap{width:996px; height:800px;margin:10px auto; border-left:2px solid #23364c ;  border-right:2px solid #23364c ; border-bottom:2px solid #23364c ;  border-radius:6px 6px 0 0; background-color:#4b596a }
+.top{width:996px; height:63px; background:url(../images/title_bg.png) no-repeat;  padding-top:2px;}
+.content{width:956px; height:700px; margin:10px auto 0;background-color:#fff;box-shadow:4px 5px 3px #3f4b5a;}
+
+.skip a{ position: absolute; top: 0px;left: -10000px;   }
+.skip a:focus, #skjip a:active{ left: 45%; padding: 5px; background-color: #ffffcc; color: #666; }
+
+.top h1{float:left; margin:13px 20px 0 20px;}
+.top .btn_scnSearch{background:url(../images/btn_search_bg.png) no-repeat left top ; padding-left:17px;color:#c3d0de; display:inline-block;width:128px; height:26px; line-height:24px; margin-top:13px; }
+
+.box{width:348px; height:278px;margin:200px auto 0 ; background:url(../images/login_bg.png) no-repeat;}
+.box h2{ height:55px; line-height:60px; text-align:center;font-size:15px; font-weight:500; text-shadow:#fff 0 1px 0}
+.box ul{ height:90px; padding:26px 22px; }
+.box ul li input[type="text"]{width:270px; height:38px;background:#e6e6e6 url(../images/icon_id.png) no-repeat 8px center; padding-left:30px; border:1px solid #d5d5d5; border-radius:5px;box-shadow:0 1px 0 #fff; margin-bottom:9px;}
+.box ul li input[type="password"]{width:270px; height:38px;background:#e6e6e6 url(../images/icon_pwd.png) no-repeat 8px center; padding-left:30px; border:1px solid #d5d5d5; border-radius:5px;box-shadow:0 1px 0 #fff; margin-bottom:9px;}
+.box button{width:121px; height:37px; background:url(../images/login_btnbg.png) no-repeat left top; font-size:14px; color:#fff; border:none; margin:15px 114px}
+

@@ -1,0 +1,175 @@
+<!DOCTYPE html >
+<html  lang="ko">
+ <head>
+  <meta charset="utf-8" />
+  <title> 메타입력화면</title>
+  <!--[if lt IE 9]>
+	<script type="text/javascript" src="js/html5shiv.js"></script>
+  <![endif]-->
+<link rel="stylesheet" type="text/css" href="css/style01.css">
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<!-- skip -->
+<nav class="skip">
+		<a href="#top">헤더 바로가기</a>
+		<a href="#vdo_area">재생중인 영상 바로가기</a>
+		<a href="#info_area">메타입력 정보 바로가기</a>
+</nav>
+<!-- //skip -->
+
+<div class="wrap">
+	<!-- header -->
+	<header class="top" id="top">
+         <h1><a href="#"><img src="images/title.png" alt="장면정보 입력 관리 시스템" /></a></h1>
+         <a class="btn_scnSearch" href="#">장면정보 검색</a>
+         <ul>
+         	<li>입력자 : 홍길동</li>
+             <li>마지막 입력시간 : 2016-08-04 11:19</li>
+         </ul>
+	</header>
+    <!-- //header -->
+    
+    <!-- content -->
+    <section class="content">
+    		<article class="vdo_area" id="vdo_area">
+            <header>
+            		<h2>제목 : <strong>대한뉴스 제704호</strong></h2>
+            		<a href="#">영상불러오기</a>
+            </header>
+            <div class="vdo_player">
+            		비디오영역
+            </div>
+         </article>
+         
+         <article class="info_area" id="info_area">
+         	<header>
+            		<h2>메타입력 정보</h2>
+            		<a href="#">목록보기</a>
+                 <ul>
+                 		<li><a class="btn_prev on" href="#">이전정보</a></li>
+                      <li><a class="btn_next" href="#">다음정보</a></li>
+                 </ul>
+            </header>
+            <form action="" id="">
+            		<table summary="메타정보를 입력할 수 있는 양식">
+                    <caption>메타입력정보</caption>
+                    <colgroup>
+                        <col width="68px"/><col width="*"/>
+                    </colgroup>
+                    <tbody>
+                    		<tr>
+                            	<th>타임코드</th>
+                               <td>
+                               	<label for="">시작*</label><input id="" type="text" placeholder="mmm:ss" /><label for="">종료</label><input id="" type="text" placeholder="mmm:ss" /> 
+                               </td>
+                          </tr>
+                          <tr>
+                            	<th>사건<a href="#"><img src="images/btn_plus.png" alt="사건 추가" /></a></th>
+                               <td>
+                               	<label for="">대분류*</label><input id="" type="text" placeholder="mmm:ss" /><label for="">소분류*</label><input id="" type="text" placeholder="mmm:ss" /> 
+                               </td>
+                          </tr>
+                          <tr>
+                            	<th></th>
+                               <td>
+                               	<label for="">직접입력</label><input class="size" id="" type="text" /> 
+                               </td>
+                          </tr>
+                          <tr>
+                            	<th>사건연대</th>
+                               <td>
+                               	<select  id="">
+                                		<option>사건연대</option>
+                                        <option>사건연대</option>
+                                	</select>
+                               </td>
+                          </tr>
+                          <tr>
+                            	<th>장소</th>
+                               <td>
+                               	<label for="">국내/국외*</label>
+                                	<select class="marL" id="">
+                                		<option>장소</option>
+                                        <option>장소</option>
+                                	</select>
+                                    <label for="">국가명*</label>
+                                    <select class="marL"  id="">
+                                		<option>국가명</option>
+                                        <option>국가명</option>
+                                	</select> 
+                               </td>
+                            </tr>
+                            <tr>
+                            	<th></th>
+                               <td>
+                               	<label for="">장면 상 장소</label><input id="" type="text" placeholder="POI 또는 행정구역명" /><label for="">실제장소</label><input id="" type="text" placeholder="POI 또는 행정구역명" />
+                               </td>
+                            </tr>
+                            <tr>
+                            	<th></th>
+                               <td>
+                               	<label for="">위/경도 정보</label><input class="bg" id="" type="text" placeholder="자동입력됩니다." />
+                                	<input class="bg" id="" type="text" placeholder="자동입력됩니다." />
+                                	<a class="btn_map" href="#">지도검색</a>
+                               </td>
+                            </tr>
+                            <tr>
+                            	<th>인물명</th>
+                               <td><input id="" type="text" placeholder="유명인만 기재" /><a href="#"><img src="images/btn_plus.png" alt="인물 추가" /></a></td>
+                          </tr>
+                          <tr class="textarea_h">
+                            	<th>화면묘사</th>
+                               <td><textarea id=""></textarea></td>
+                          </tr>
+                          <tr class="textarea_h">
+                            	<th>내레이션</th>
+                               <td><textarea id=""></textarea></td>
+                          </tr>
+                          <tr class="textarea_h">
+                            	<th>자막</th>
+                               <td><textarea id=""></textarea></td>
+                          </tr>
+                          <tr class="textarea_h">
+                            	<th>장면요약</th>
+                               <td><textarea id=""></textarea></td>
+                          </tr>
+                         <tr class="textarea_h">
+                            	<th>키워드</th>
+                               <td><textarea id=""></textarea></td>
+                          </tr>
+                    </tbody>
+                 </table>
+                <ul class="btn_area">
+                	 <li><a class="btn_save" href="#">저장</a></li>
+                   <li><a class="btn_check" href="#">검증</a></li>
+                   <li><a class="btn_del" href="#">삭제</a></li>
+                </ul>
+                    <!-- 스크랩팝업 -->
+                        <div class="map_pop">
+                   	    <p>지도검색<a href="#"><img src="images/icon_close01.png" alt="닫기" /></a></p>
+                            <table summary="지도검색을 위한 팝업">
+                            <caption>지도검색</caption>
+                                <colgroup>
+                                    <col width="25%" />
+                                   <col width="" />
+                               </colgroup>
+                               <tr>
+                               	 <th><label for="">지역명</label></th>
+                                    <td><input class="map_input" id="" type="text"  /> </td>
+                               </tr>
+                                <tr>
+                               	 <td colspan="2"><span>검색결과가 없습니다.</span><a class="btn_search" href="#">검색</a></td>
+                               </tr>
+                           </table>
+                    </div>
+                    <!-- //스크랩팝업 --> 
+            </form>
+         </article>
+    </section>
+    <!-- //content -->
+    
+    
+</div>
+</body>
+</html>
