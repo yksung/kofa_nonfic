@@ -8,18 +8,11 @@
 		<result property="vdoType" column="VDO_TYPE"/>
 		<result property="language" column="LANGUAGE"/>
 		<result property="productionDate" column="PRODUCTION_DATE"/>
-		<result property="filePath" column="FILE_PATH"/>
-		<result property="vdoExt" column="VDO_EXT"/>
-		<result property="vdoLClasCd1" column="VDO_L_CLAS_CD1"/>
-		<result property="vdoSClasCd1" column="VDO_S_CLAS_CD1"/>
-		<result property="vdoLClasCd2" column="VDO_L_CLAS_CD2"/>
-		<result property="vdoSClasCd2" column="VDO_S_CLAS_CD2"/>
-		<result property="vdoLClasCd3" column="VDO_L_CLAS_CD3"/>
-		<result property="vdoSClasCd3" column="VDO_S_CLAS_CD3"/>
+		<result property="runtime" column="RUNTIME"/>
 		<result property="scnCnt" column="SCN_CNT"/>
 	</resultMap>
 	
-	<select id="getVideoList" resultMap="videoList" parameterType="paging">
+	<select id="getVideoList" resultMap="videoList" parameterType="vo">
 	 SELECT VDO_ID
 		,VDO_TITLE
 		,VDO_TYPE

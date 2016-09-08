@@ -27,6 +27,8 @@ public class FormVO {
 	private String keyword;
 	private int page;
 	private int pageSize;
+	private int direction;
+	
 	public int getScnId() {
 		return scnId;
 	}
@@ -182,6 +184,12 @@ public class FormVO {
 	}
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+	public int getDirection() {
+		return direction;
+	}
+	public void setDirection(int direction) {
+		this.direction = direction;
 	}
 	
 	

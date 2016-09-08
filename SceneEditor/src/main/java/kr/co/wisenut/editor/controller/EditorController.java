@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Handles requests for the application home page.
  */
@@ -42,14 +44,14 @@ public class EditorController {
 		
 		logger.info("View the List of Registered Video!!");
 			
-		List<Video> videoList = null;
+		/*List<Video> videoList = null;
 		try{			
 			videoList = editorDao.getVideoList(vo);
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
 		
-		mav.addObject("videoList", videoList);
+		mav.addObject("videoList", videoList);*/
 		
 		return mav;
 	}
@@ -59,74 +61,70 @@ public class EditorController {
 		mav.setViewName("editor/viewScene");
 		
 		logger.info("View the List of Registered Scene!!");
-				
-		//List<Scene> sceneList = sceneService.getList(vdoId);
-		List<Scene> sceneList = null;
+		
+		Video video = null;
 		try{
-			sceneList = editorDao.getSceneList(vdoId);
+			video = editorDao.findVideo(vdoId);
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
 		
-		mav.addObject("vdoId", vdoId);
-		mav.addObject("sceneList", sceneList );
+		mav.addObject("videoInfo", video );
 		
 		return mav;
 	}
 	
 	@RequestMapping(value = "/editScene", method = RequestMethod.GET)
-	public ModelAndView editSceneInfo(@RequestParam String scnId, ModelAndView mav) {
+	public ModelAndView editSceneInfo(@ModelAttribute FormVO vo, ModelAndView mav) {
 		mav.setViewName("editor/editScene");
 		
 		logger.info("============ start to edit scene !!");
 				
-		Scene scene = null;//sceneService.getScene(scnId);
+		Scene scene = null;
 		List<Country> countryList = null;
-		List<Event> eventCategoryList = null;
 		List<Period> periodList = null;
+		List<Event> eventList = null;
+		int prevExists = 0;
+		int nextExists = 0;
+		
+		FormVO voForPrevScene = new FormVO();
+		voForPrevScene.setDirection(-1);
+		voForPrevScene.setVdoId(vo.getVdoId());
+		voForPrevScene.setScnId(vo.getScnId());
+
+		FormVO voForNextScene = new FormVO();
+		voForNextScene.setDirection(1);
+		voForNextScene.setVdoId(vo.getVdoId());
+		voForNextScene.setScnId(vo.getScnId());
+		
 		try{
-			scene = editorDao.getScene(scnId);
+			scene = editorDao.findScene(vo);
+			if(editorDao.findScene(voForPrevScene) != null){
+				prevExists = 1;
+			}
+			if(editorDao.findScene(voForNextScene) != null){
+				nextExists = 1;
+			}
 			countryList = editorDao.getCountryList(null);
-			eventCategoryList = editorDao.getEventList(null);
 			periodList = editorDao.getPeriodList();
+			
+			// 해당 장몀의 사건연대 값을 받아와 해당 연대의 사건만 가져온다. 개발할 때만 적용할 수도 있음. 
+			vo.setEventPrd(scene.getEventPrd());
+			eventList = editorDao.getEventList(vo);
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
 		
+		mav.addObject("prevExists", prevExists);
+		mav.addObject("nextExists", nextExists);
 		mav.addObject("sceneInfo", scene );
 		mav.addObject("periodList", periodList);
 		mav.addObject("countryList", countryList);
-		mav.addObject("eventCategoryList", eventCategoryList);
+		mav.addObject("eventList", eventList);
 		
 		return mav;
 	}
-	
-	@RequestMapping(value = "/getEventAsJson", method = RequestMethod.GET)
-	public void getEventAsJson(@RequestParam String upperClasCd, HttpServletResponse response) {
 		
-		List<Event> eventCategoryList = null;
-		StringBuffer resultJson = new StringBuffer();
-		try{
-			eventCategoryList = editorDao.getEventList(upperClasCd);
-			for(Event event : eventCategoryList){
-				resultJson.append("{");
-				resultJson.append(QUOTE + "clasCd" + QUOTE).append(":").append(QUOTE+event.getClasCd()+QUOTE);
-				resultJson.append(",");
-				resultJson.append(QUOTE + "clasNm" + QUOTE).append(":").append(QUOTE+event.getClasNm()+QUOTE);
-				resultJson.append("}");
-				resultJson.append(",");
-			}
-			
-			if(resultJson.length()>0 && resultJson.indexOf(",") != -1){				
-				response.getWriter().print("[" + resultJson.substring(0, resultJson.lastIndexOf(",")) + "]");
-			}else{
-				response.getWriter().print("{}");
-			}
-		}catch(Exception e){
-			logger.error(StringUtil.getStackTrace(e));
-		}
-	}
-	
 	@RequestMapping(value = "/getCountryAsJson", method = RequestMethod.GET)
 	public void getCountryAsJson(@RequestParam String domAbr, HttpServletResponse response) {
 		
@@ -152,7 +150,51 @@ public class EditorController {
 			logger.error(StringUtil.getStackTrace(e));
 		}
 	}
+
+	@RequestMapping(value = "/getVideoListAsJson", method = RequestMethod.POST)
+	public void getVideoListAsJson(@ModelAttribute FormVO vo, HttpServletResponse response) {
+		
+		List<Video> videoList = null;
+		ObjectMapper mapper = new ObjectMapper();
+
+		String jsonString = "";
+		try{
+			videoList = editorDao.getVideoList(vo);
+			jsonString = mapper.writeValueAsString(videoList);
+			
+			//response.getWriter().print(jsonString.replaceAll("\\{\"", "\\{").replaceAll("\":", ":").replaceAll(",\"", ","));
+			response.getWriter().print("{"
+					+QUOTE+"status"+QUOTE+":"+QUOTE+"success"+QUOTE+","
+					+QUOTE+"total"+QUOTE+":"+videoList.size()+","
+					+QUOTE+"records"+QUOTE+":"+jsonString
+					+"}");
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+	}
 	
+	@RequestMapping(value = "/getSceneListAsJson", method = RequestMethod.POST)
+	public void getSceneListAsJson(@ModelAttribute FormVO vo, HttpServletResponse response) {
+		
+		List<Scene> sceneList = null;
+		ObjectMapper mapper = new ObjectMapper();
+
+		String jsonString = "";
+		try{
+			sceneList = editorDao.getSceneList(vo.getVdoId());
+			jsonString = mapper.writeValueAsString(sceneList);
+			
+			//response.getWriter().print(jsonString.replaceAll("\\{\"", "\\{").replaceAll("\":", ":").replaceAll(",\"", ","));
+			response.getWriter().print("{"
+					+QUOTE+"status"+QUOTE+":"+QUOTE+"success"+QUOTE+","
+					+QUOTE+"total"+QUOTE+":"+sceneList.size()+","
+					+QUOTE+"records"+QUOTE+":"+jsonString
+					+"}");
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+	}
+
 	@RequestMapping(value = "/updateScene", method = RequestMethod.POST)
 	public String update(@RequestParam FormVO vo, HttpServletResponse response) {
 		try{

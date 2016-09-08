@@ -28,35 +28,10 @@
 		<result property="summary" column="SUMMARY"/>
 		<result property="keyword" column="KEYWORD"/>
 	</resultMap>
-	<parameterMap type="scene" id="sceneInfo">
-		<parameter property="scnId" />
-		<parameter property="vdoId" />
-		<parameter property="scnStartCd" />
-		<parameter property="scnEndCd" />
-		<parameter property="updDtime" />
-		<parameter property="editor" />
-		<parameter property="eventLClasCd" />
-		<parameter property="eventSClasCd" />
-		<parameter property="eventNm" />
-		<parameter property="eventPrd" />
-		<parameter property="domAbr" />
-		<parameter property="cntryCd" />
-		<parameter property="eventPlace" />
-		<parameter property="realPlace" />
-		<parameter property="latitude" />
-		<parameter property="longitude" />
-		<parameter property="celebrity1" />
-		<parameter property="celebrity2" />
-		<parameter property="celebrity3" />
-		<parameter property="description" />
-		<parameter property="narration" />
-		<parameter property="subtitles" />
-		<parameter property="summary" />
-		<parameter property="keyword" />
-	</parameterMap>
 	
 	<select id="getSceneList" resultMap="sceneList" parameterType="String">
-	 SELECT SCN_ID
+	 SELECT ROWNUM
+	 	,SCN_ID
 		,VDO_ID
 		,SCN_START_CD
 		,SCN_END_CD
@@ -84,7 +59,8 @@
 	   WHERE VDO_ID = #{vdoId}
 	 </select>
 	 <select id="findScene" parameterType="String" resultMap="sceneList">
-	 SELECT SCN_ID
+	 SELECT ROWNUM
+	 	,SCN_ID
 		,VDO_ID
 		,SCN_START_CD
 		,SCN_END_CD
@@ -111,7 +87,7 @@
 	   FROM SCENE_MANAGE
 	   WHERE SCN_ID = #{id}
 	 </select>
-	 <update id="updateScene" parameterType="sceneList">
+	 <update id="updateScene" parameterType="scene">
 	update SCENE_MANAGE
 	   set 	VDO_ID = #{vdoId},
 		 	SCN_START_CD = #{scnStartCd},
@@ -138,7 +114,7 @@
 		    KEYWORD = #{keyword}
 	  where SCN_ID = #{scnId}
 	</update>
-	<insert id="insertScene" useGeneratedKeys="true" keyProperty="SCN_ID" parameterType="sceneInfo">
+	<insert id="insertScene" useGeneratedKeys="true" keyProperty="SCN_ID" parameterType="scene">
 	INSERT INTO SCENE_MANAGE (
 		VDO_ID,
 	 	SCN_START_CD,

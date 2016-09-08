@@ -1,8 +1,10 @@
 package kr.co.wisenut.editor.model;
 
 public class Scene {
+	private int recid;
 	private int scnId;
 	private String vdoId;
+	private String vdoNm;
 	private String scnStartCd;
 	private String scnEndCd;
 	private String updDtime;
@@ -25,7 +27,14 @@ public class Scene {
 	private String subtitles;
 	private String summary;
 	private String keyword;
+	private String note;
 	
+	public int getRecid() {
+		return recid;
+	}
+	public void setRecid(int recid) {
+		this.recid = recid;
+	}
 	public int getScnId() {
 		return scnId;
 	}
@@ -37,6 +46,12 @@ public class Scene {
 	}
 	public void setVdoId(String vdoId) {
 		this.vdoId = vdoId;
+	}
+	public String getVdoNm() {
+		return vdoNm;
+	}
+	public void setVdoNm(String vdoNm) {
+		this.vdoNm = vdoNm;
 	}
 	public String getScnStartCd() {
 		return scnStartCd;
@@ -169,6 +184,12 @@ public class Scene {
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
 	}
 	
 	

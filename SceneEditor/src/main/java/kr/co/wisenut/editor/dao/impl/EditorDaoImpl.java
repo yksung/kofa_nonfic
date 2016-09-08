@@ -28,11 +28,11 @@ public class EditorDaoImpl implements EditorDao {
 	private final SessionService sessionService = new SessionService();
 	
 	@Override
-	public List<Video> getVideoList(FormVO paging) throws Exception{
+	public List<Video> getVideoList(FormVO vo) throws Exception{
 		
 		SqlSession session = sessionService.getSession();
 	
-		List<Video> videoList = session.selectList("VideoMapper.getVideoList", paging);
+		List<Video> videoList = session.selectList("VideoMapper.getVideoList", vo);
 		
 		return videoList;
 	}
@@ -73,16 +73,12 @@ public class EditorDaoImpl implements EditorDao {
 	}
 	
 	@Override
-	public List<Event> getEventList(String upperClas) throws Exception{
+	public List<Event> getEventList(FormVO vo) throws Exception{
 		
 		SqlSession session = sessionService.getSession();
 	
 		List<Event> eventCategoryList = null;
-		if(StringUtils.isNullOrEmpty(upperClas)){
-			eventCategoryList = session.selectList("EntryMapper.eventCategoryList");
-		}else{
-			eventCategoryList = session.selectList("EntryMapper.eventCategoryList", upperClas);			
-		}
+		eventCategoryList = session.selectList("EntryMapper.eventCategoryList", vo);
 		
 		return eventCategoryList;
 	}
@@ -98,13 +94,19 @@ public class EditorDaoImpl implements EditorDao {
 	}
 	
 	@Override
-	public Scene getScene(String id) throws Exception {
+	public Scene findScene(FormVO vo) throws Exception {
 		SqlSession session = sessionService.getSession();
-		Scene theScene = (Scene)session.selectOne("SceneMapper.findScene", id);
-		
-		logger.debug("@@@@@@ theScene.getVdoId() : " + theScene.getVdoId());
-	
+		Scene theScene = (Scene)session.selectOne("SceneMapper.findScene", vo);
+			
 		return theScene;
+	}
+	
+	@Override
+	public Video findVideo(String id) throws Exception {
+		SqlSession session = sessionService.getSession();
+		Video theVideo = (Video)session.selectOne("VideoMapper.findVideo", id);
+	
+		return theVideo;
 	}
 	
 	public void printString(String str){

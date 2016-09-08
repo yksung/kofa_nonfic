@@ -11,9 +11,8 @@
 		<result property="cntryNm" column="CNTRY_NM"/>
 	</resultMap>
 	<resultMap id="eventCategory" type="eventCategory">
-		<result property="clasCd" column="CLAS_CD"/>
-		<result property="clasNm" column="CLAS_NM"/>
-		<result property="upperClas" column="UPPER_CLAS"/>
+		<result property="eventCd" column="CLAS_CD"/>
+		<result property="eventNm" column="CLAS_NM"/>
 	</resultMap>
 	<resultMap id="videoCategory" type="videoCategory">
 		<result property="clasCd" column="CLAS_CD"/>

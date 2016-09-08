@@ -11,12 +11,13 @@ import kr.co.wisenut.editor.model.Video;
 import kr.co.wisenut.editor.model.VideoCategory;
 
 public interface EditorDao {
-	public List<Video> getVideoList(FormVO paging) throws Exception;
+	public List<Video> getVideoList(FormVO vo) throws Exception;
 	public List<Scene> getSceneList(String id) throws Exception;
 	public List<Country> getCountryList(String domAbr) throws Exception;
-	public List<Event> getEventList(String upperClas) throws Exception;
+	public List<Event> getEventList(FormVO vo) throws Exception;
 	public List<Period> getPeriodList() throws Exception;
 	public List<VideoCategory> getVideoCategoryList() throws Exception;
-	public Scene getScene(String id) throws Exception;
+	public Scene findScene(FormVO vo) throws Exception;
+	public Video findVideo(String id) throws Exception;
 	public void updateScene(FormVO vo) throws Exception;
 }
