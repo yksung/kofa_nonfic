@@ -2,6 +2,18 @@
 /* CSS Document */
 
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+@font-face {
+  font-family: 'Noto Sans KR';
+  src: url(../fonts/NotoSansKR-Regular.woff2),
+       url(../fonts/NotoSansKR-Medium.woff2),
+       url(../fonts/NotoSansKR-Bold.woff2),
+       url(../fonts/NotoSansKR-Regular.woff),
+       url(../fonts/NotoSansKR-Medium.woff),
+       url(../fonts/NotoSansKR-Bold.woff),
+       url(../fonts/NotoSansKR-Medium.otf),
+       url(../fonts/NotoSansKR-Regular.otf'),
+       url(../fonts/NotoSansKR-Bold.otf);
+}
 
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,select,textarea,p,blockquote,th,td{margin:0;padding:0;font-family:'Noto Sans KR', Arial, serif; font-size:12px; color:#333;}
 

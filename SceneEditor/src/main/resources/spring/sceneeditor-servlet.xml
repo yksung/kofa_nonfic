@@ -22,11 +22,22 @@
 	<resources mapping="/js/**" location="/WEB-INF/js/" />
 	<resources mapping="/img/**" location="/WEB-INF/img/" />
 	<resources mapping="/images/**" location="/WEB-INF/images/" />
-
+	
+	<beans:bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
+		<beans:property name="order" value="1"/>
+		<beans:property name="contentType" value="text/html; charset=UTF-8"/>
+	</beans:bean>
+	
+	<beans:bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+		<beans:property name="definitions" value="/WEB-INF/tiles/tiles.xml"/>
+	</beans:bean>
+	
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
-	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<beans:bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
+		<beans:property name="order" value="#{tilesViewResolver.order+1}"/>
 	</beans:bean>
 	
 	<context:component-scan base-package="kr.co.wisenut" />

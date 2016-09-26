@@ -1,20 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
-%><%@ page session="false" 
-%><%@ page contentType="text/html; charset=utf-8" %>
-<c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
-<!DOCTYPE html>
-<html lang="ko">
- <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>장면정보 입력 관리 시스템 - WISE Scene Editor V1.0</title>
-  <!--[if lt IE 9]>
-	<script type="text/javascript" src="js/html5shiv.js"></script>
-  <![endif]-->
+<%@ include file="/WEB-INF/tiles/includes.jsp"
+%><%@ page contentType="text/html; charset=utf-8"%>
 <link rel="stylesheet" type="text/css" href="${contextRoot}/css/style02.css">
-<link rel="stylesheet" type="text/css" href="${contextRoot}/css/default.css">
-<link rel="stylesheet" type="text/css" href="${contextRoot}/css/w2ui-1.4.3.min.css">
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-<script type="text/javascript" src="${contextRoot}/js/w2ui-1.4.3.min.js"></script>
 <script>
 var localSettingsSI = {
 	    "locale"         : "si-SI",
@@ -33,7 +19,7 @@ var localSettingsSI = {
 var config = {
 	grid : { 
 	    name   : 'sceneGrid',
-        url:'/getSceneListAsJson?vdoId=${videoInfo.vdoId}',          
+        url:'/editor/getSceneListAsJson?vdoId=${videoInfo.vdoId}',          
 	    show: { 
             toolbar: true,
             footer: true,
@@ -59,7 +45,7 @@ var config = {
 	        { field: 'updDtime', caption: '마지막 수정 일시', size: '20%', sortable:true, render:'date_format', attr: 'align=center'},
 	        { field: 'goEditoScene', caption: '상세보기', size: '10%', sortable:true, attr: 'align=center',
 	        	render: function (record) {
-	                return '<a href=\"/editScene?vdoId=${videoInfo.vdoId}&scnId=' + record.scnId + '\">GO</a>';
+	                return '<a href=\"${contextRoot}/editor/editScene?vdoNm=${videoInfo.vdoTitle}&vdoId=${videoInfo.vdoId}&scnId=' + record.scnId + '\">GO</a>';
 	            }
 	        }
 	    ]
@@ -67,10 +53,14 @@ var config = {
 };
 
 function refreshGrid(auto) {
-	w2ui['sceneGrid'].load("/getSceneListAsJson?vdoId=${vdoId}");
+	w2ui['sceneGrid'].load("${contextRoot}/editor/getSceneListAsJson?vdoId=${vdoId}");
     w2ui['sceneGrid'].autoLoad = auto;
     w2ui['sceneGrid'].skip(0);    
 	w2ui['sceneGrid'].refresh();
+}
+
+function createNewSceneInfo(vdoNm, vdoId){
+	location.href = "${contextRoot}/editor/editScene?vdoNm="+vdoNm+"&vdoId="+vdoId;
 }
 
 $(function(){
@@ -82,50 +72,28 @@ $(function(){
 });
 
 </script>
-</head>
-<body>
-<!-- skip -->
-<nav class="skip">
-		<a href="#top">헤더 바로가기</a>
-		<a href="#contnet">본문내용 바로가기</a>
-</nav>
-<!-- //skip -->
-<div class="wrap">
-	<!-- header -->
-	<header class="top" id="top">
-    	<h1><a href="#"><img src="images/title.png" alt="장면정보 입력 관리 시스템" /></a></h1>
-        <a class="btn_scnSearch" href="#">장면정보 검색</a>
-        <ul>
-        	<li><strong>홍길동</strong> 님 (admin@admin.com) <a class="btn_logout" href="#">로그아웃</a></li>
-            <li><a class="btn_myinfo" href="#">정보수정</a></li>
-        </ul>
-	</header>
-    <!-- //header -->
-    
-    <!-- content -->
-    <section class="content" id="content">
-    	<div class="opt">
-    		<ul>
-    			<li>
-    				<select id="">
-    					<option>사건명</option>
-    					<option>사건명</option>
-					</select>
-				</li>
-				<li><input id="" type="text" /></li>
-				<li><a class="btn_search" href="#">검색</a></li>
-			</ul>
-			<a class="btn_item" href="#">항목관리</a>
-		</div> 
-		<div class="sub_tit">
-			<strong>${videoInfo.vdoTitle}</strong>의 장면 정보 조회
-			<ul>
-				<li><a class="btn_undo" href="#"><img src="images/icon_undo.png" alt="영상조회로 돌아가기" /></a></li>
-				<li><a class="btn_newvdo" href="#">새 장면 입력하기</a></li>
-			</ul>
-		</div>
-		<article class="tbl_area" id="id_sceneGrid"></article>
-	</section>
-    <!-- //content -->
-</body>
-</html>
+<!-- content -->
+<section class="content" id="content">
+   	<div class="opt">
+   		<ul>
+   			<li>
+   				<select id="">
+   					<option>사건명</option>
+   					<option>사건명</option>
+				</select>
+			</li>
+			<li><input id="" type="text" /></li>
+			<li><a class="btn_search" href="#">검색</a></li>
+		</ul>
+		<a class="btn_item" href="#">항목관리</a>
+	</div> 
+	<div class="sub_tit">
+		<strong>${videoInfo.vdoTitle}</strong>의 장면 정보 조회
+		<ul>
+			<li><a class="btn_undo" href="#"><img src="${contextRoot}/images/icon_undo.png" alt="영상조회로 돌아가기" /></a></li>
+			<li><a class="btn_newvdo" href="javascript:createNewSceneInfo('${videoInfo.vdoTitle}', '${videoInfo.vdoId}')">새 장면 입력하기</a></li>
+		</ul>
+	</div>
+	<article class="tbl_area" id="id_sceneGrid"></article>
+</section>
+<!-- //content -->

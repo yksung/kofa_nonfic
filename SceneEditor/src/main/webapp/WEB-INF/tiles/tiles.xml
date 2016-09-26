@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+   "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+   "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+	<definition name="login/login" template="/WEB-INF/tiles/layout/layout-login.jsp">
+		<put-attribute name="content" value="/WEB-INF/views/login/login.jsp"/>
+	</definition>
+	
+	<definition name="editor/updateScene" template="/WEB-INF/tiles/layout/layout2.jsp">
+		<put-attribute name="content" value="/WEB-INF/views/editor/updateScene.jsp"/>
+	</definition>
+	
+	<definition name="editor/view*" template="/WEB-INF/tiles/layout/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/tile/header-view.jsp" />
+		<put-attribute name="navigation" value="/WEB-INF/tiles/tile/navigation-view.jsp" />
+		<put-attribute name="content" value="/WEB-INF/views/editor/view{1}.jsp" />
+	</definition>
+	
+	<definition name="editor/edit*" extends="editor/view*">
+		<put-attribute name="header" value="/WEB-INF/tiles/tile/header-edit.jsp" />
+		<put-attribute name="navigation" value="/WEB-INF/tiles/tile/navigation-edit.jsp" />
+		<put-attribute name="content" value="/WEB-INF/views/editor/edit{1}.jsp" />
+	</definition>
+</tiles-definitions>

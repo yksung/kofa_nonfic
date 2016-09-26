@@ -22,6 +22,7 @@
         <typeAlias alias="person" type="kr.co.wisenut.editor.model.Person"/>
         <typeAlias alias="eventCategory" type="kr.co.wisenut.editor.model.Event"/>
         <typeAlias alias="videoCategory" type="kr.co.wisenut.editor.model.VideoCategory"/>
+        <typeAlias alias="user" type="kr.co.wisenut.login.model.User"/>
     </typeAliases>
     
 	<environments default="development">
@@ -40,6 +41,7 @@
         <mapper resource="mybatis/mappers/${jdbc.vendor}/SceneMapper.xml" />  
         <mapper resource="mybatis/mappers/${jdbc.vendor}/VideoMapper.xml" />  
         <mapper resource="mybatis/mappers/${jdbc.vendor}/EntryMapper.xml" />  
+        <mapper resource="mybatis/mappers/${jdbc.vendor}/LoginMapper.xml" />  
     </mappers>
 	
 </configuration>

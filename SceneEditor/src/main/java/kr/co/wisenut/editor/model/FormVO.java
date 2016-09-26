@@ -2,7 +2,8 @@ package kr.co.wisenut.editor.model;
 
 public class FormVO {
 	private int scnId;
-	private String vdoId;
+	private int vdoId;
+	private String vdoNm;
 	private String scnStartCd;
 	private String scnEndCd;
 	private String updDtime;
@@ -25,6 +26,7 @@ public class FormVO {
 	private String subtitles;
 	private String summary;
 	private String keyword;
+	private String note;
 	private int page;
 	private int pageSize;
 	private int direction;
@@ -35,11 +37,17 @@ public class FormVO {
 	public void setScnId(int scnId) {
 		this.scnId = scnId;
 	}
-	public String getVdoId() {
+	public int getVdoId() {
 		return vdoId;
 	}
-	public void setVdoId(String vdoId) {
+	public void setVdoId(int vdoId) {
 		this.vdoId = vdoId;
+	}
+	public String getVdoNm() {
+		return vdoNm;
+	}
+	public void setVdoNm(String vdoNm) {
+		this.vdoNm = vdoNm;
 	}
 	public String getScnStartCd() {
 		return scnStartCd;
@@ -172,6 +180,12 @@ public class FormVO {
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
 	}
 	public int getPage() {
 		return page;

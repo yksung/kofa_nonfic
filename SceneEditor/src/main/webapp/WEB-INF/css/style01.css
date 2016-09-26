@@ -2,7 +2,7 @@
 /* CSS Document */
 
 /* layout */
-.wrap{width:996px; height:800px;margin:10px auto; border-left:2px solid #23364c ;  border-right:2px solid #23364c ; border-bottom:2px solid #23364c ;  border-radius:6px 6px 0 0; background-color:#4b596a }
+.wrap{width:996px; height:850px;margin:10px auto; border-left:2px solid #23364c ;  border-right:2px solid #23364c ; border-bottom:2px solid #23364c ;  border-radius:6px 6px 0 0; background-color:#4b596a }
 .top{width:996px; height:63px; background:url(../images/title_bg.png) no-repeat;  padding-top:2px;}
 .content{padding:10px 20px}
 
@@ -32,9 +32,9 @@
 	background: -webkit-linear-gradient(top,  #3770b4 0%,#1c4e89 100%); /* Chrome10-25,Safari5.1-6 */
 	background: linear-gradient(to bottom,  #3770b4 0%,#1c4e89 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3770b4', endColorstr='#1c4e89',GradientType=0 ); /* IE6-9 */}
-.vdo_area .vdo_player{width:400px; height:435px;margin:10px auto 0;}
+.vdo_area .vdo_player{width:400px; height:435px;margin:10px auto 0; background-color: #333; text-align: center;}
 
-.info_area{width:516px; height:700px; background-color:#fff;box-shadow:4px 5px 3px #3f4b5a}
+.info_area{width:516px; height:750px; background-color:#fff;box-shadow:4px 5px 3px #3f4b5a}
 .info_area h2{width:283px;color:#242424; font-size:15px; float:left;font-weight:700}
 .info_area header>a{float:left;color:#fff; font-weight:500; border:1px solid #3d6899;border-radius:2px;height:26px; line-height:24px; padding: 0 8px; margin-top:9px;
 	background: #587fab; /* Old browsers */

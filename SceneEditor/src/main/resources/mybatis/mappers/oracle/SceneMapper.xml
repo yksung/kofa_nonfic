@@ -106,43 +106,42 @@
 	   </choose>
 	   </where>
 	 </select>
-	 <update id="updateScene" parameterType="scene">
-	update SCENE_MANAGE
-	   set 	VIDEO_ID = #{vdoId},
-		 	SCN_START_CD = #{scnStartCd},
+	 <update id="updateScene" parameterType="vo">
+	 update SCENE_MANAGE
+	    set SCN_START_CD = #{scnStartCd},
 		    SCN_END_CD = #{scnEndCd},
 		    UPD_DTIME = sysdate,
 		    EDITOR = #{editor},
-		    EVENT_LCLS = #{eventLClasCd},
-		    EVENT_SCLS = #{eventSClasCd},
-		    EVENT_NM = #{eventNm},
-		    EVENT_PRD = #{eventPrd},
+		    EVENT_LCLS = #{eventLClasCd, jdbcType=VARCHAR},
+		    EVENT_NM = #{eventNm, jdbcType=VARCHAR},
+		    EVENT_PRD = #{eventPrd, jdbcType=VARCHAR},
 		    DOM_ABR = #{domAbr},
-		    CNTRY_CD = #{cntryCd},
-		    EVENT_PLACE = #{eventPlace},
-		    REAL_PLACE = #{realPlace}, 
-		    LATITUDE = #{latitude},
-		    LONGITUDE = #{longitude},
-		    CELEBRITY1 = #{celebrity1},
-		    CELEBRITY2 = #{celebrity2},
-		    CELEBRITY3 = #{celebrity3},
-		    DESCRIPTION = #{description},
-		    NARRATION = #{narration},
-		    SUBTITLES = #{subtitles},
-		    SUMMARY = #{summary},
-		    KEYWORD = #{keyword},
-		    NOTE = #{note}
+		    CNTRY_CD = #{cntryCd, jdbcType=CHAR},
+		    EVENT_PLACE = #{eventPlace, jdbcType=VARCHAR},
+		    REAL_PLACE = #{realPlace, jdbcType=VARCHAR}, 
+		    LATITUDE = #{latitude, jdbcType=FLOAT},
+		    LONGITUDE = #{longitude, jdbcType=FLOAT},
+		    CELEBRITY1 = #{celebrity1, jdbcType=VARCHAR},
+		    CELEBRITY2 = #{celebrity2, jdbcType=VARCHAR},
+		    CELEBRITY3 = #{celebrity3, jdbcType=VARCHAR},
+		    DESCRIPTION = #{description, jdbcType=CLOB},
+		    NARRATION = #{narration, jdbcType=CLOB},
+		    SUBTITLES = #{subtitles, jdbcType=CLOB},
+		    SUMMARY = #{summary, jdbcType=VARCHAR},
+		    KEYWORD = #{keyword, jdbcType=VARCHAR},
+		    NOTE = #{note, jdbcType=CLOB}
 	  where SCN_ID = #{scnId}
+	    and VIDEO_ID = #{vdoId}
 	</update>
 	<insert id="insertScene" useGeneratedKeys="true" keyProperty="SCN_ID" parameterType="scene">
 	INSERT INTO SCENE_MANAGE (
+		SCN_ID,
 		VIDEO_ID,
 	 	SCN_START_CD,
 	    SCN_END_CD,
 	    UPD_DTIME,
 	    EDITOR,
-	    EVENT_L_CLAS_CD,
-	    EVENT_S_CLAS_CD,
+	    EVENT_LCLS,
 	    EVENT_NM,
 	    EVENT_PRD,
 	    DOM_ABR,
@@ -161,30 +160,35 @@
 	    KEYWORD,
 	    NOTE
 	) VALUES (
+		(select max(SCN_ID)+1 from SCENE_MANAGE),
 	 	#{vdoId},
 	 	#{scnStartCd},
 	 	#{scnEndCd},
 	 	sysdate,
 	 	#{editor},
-	 	#{eventLClasCd},
-	 	#{eventSClasCd},
-	 	#{eventNm},
-	 	#{eventPrd},
+	 	#{eventLClasCd, jdbcType=VARCHAR},
+	 	#{eventNm, jdbcType=VARCHAR},
+	 	#{eventPrd, jdbcType=VARCHAR},
 	 	#{domAbr},
-	 	#{cntryCd},
-	 	#{eventPlace},
-	 	#{realPlace},
-	 	#{latitude},
-	 	#{longitude},
-	 	#{celebrity1},
-	 	#{celebrity2},
-	 	#{celebrity3},
-	 	#{description},
-	 	#{narration},
-	 	#{subtitles},
-	 	#{summary},
-	 	#{keyword},
-	 	#{note}
+	 	#{cntryCd, jdbcType=CHAR},
+	 	#{eventPlace, jdbcType=VARCHAR},
+	 	#{realPlace, jdbcType=VARCHAR},
+	 	#{latitude, jdbcType=FLOAT},
+	 	#{longitude, jdbcType=FLOAT},
+	 	#{celebrity1, jdbcType=VARCHAR},
+	 	#{celebrity2, jdbcType=VARCHAR},
+	 	#{celebrity3, jdbcType=VARCHAR},
+	 	#{description, jdbcType=CLOB},
+	 	#{narration, jdbcType=CLOB},
+	 	#{subtitles, jdbcType=CLOB},
+	 	#{summary, jdbcType=VARCHAR},
+	 	#{keyword, jdbcType=VARCHAR},
+	 	#{note, jdbcType=CLOB}
 	)
 	</insert>
+	<delete id="deleteScene" parameterType="vo">
+	 delete from SCENE_MANAGE
+	  where SCN_ID = #{scnId}
+	    and VIDEO_ID = #{vdoId}
+	</delete>
 </mapper>

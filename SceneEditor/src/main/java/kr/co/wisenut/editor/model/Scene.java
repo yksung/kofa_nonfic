@@ -3,7 +3,7 @@ package kr.co.wisenut.editor.model;
 public class Scene {
 	private int recid;
 	private int scnId;
-	private String vdoId;
+	private int vdoId;
 	private String vdoNm;
 	private String scnStartCd;
 	private String scnEndCd;
@@ -41,10 +41,10 @@ public class Scene {
 	public void setScnId(int scnId) {
 		this.scnId = scnId;
 	}
-	public String getVdoId() {
+	public int getVdoId() {
 		return vdoId;
 	}
-	public void setVdoId(String vdoId) {
+	public void setVdoId(int vdoId) {
 		this.vdoId = vdoId;
 	}
 	public String getVdoNm() {

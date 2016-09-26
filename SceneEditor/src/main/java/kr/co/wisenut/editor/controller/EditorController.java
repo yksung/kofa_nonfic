@@ -1,5 +1,6 @@
 package kr.co.wisenut.editor.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import kr.co.wisenut.editor.model.FormVO;
 import kr.co.wisenut.editor.model.Period;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.model.Video;
+import kr.co.wisenut.editor.service.EditorService;
 //import kr.co.wisenut.editor.service.EditorService;
 import kr.co.wisenut.util.StringUtil;
 import kr.co.wisenut.editor.dao.EditorDao;
@@ -30,13 +32,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Handles requests for the application home page.
  */
 @Controller
+@RequestMapping("/editor")
 public class EditorController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EditorController.class);
-	@Autowired
-    //private EditorService sceneService;
-	private EditorDao editorDao;
 	private static final String QUOTE = "\"";
+	
+	@Autowired
+    private EditorService sceneService;
+	
+	@Autowired
+	private EditorDao editorDao;
 	
 	@RequestMapping(value = "/viewVideo", method = RequestMethod.GET)
 	public ModelAndView getListOfVideos(@ModelAttribute FormVO vo, ModelAndView mav) {
@@ -80,37 +86,44 @@ public class EditorController {
 		
 		logger.info("============ start to edit scene !!");
 				
-		Scene scene = null;
+		Scene scene = new Scene();
 		List<Country> countryList = null;
 		List<Period> periodList = null;
-		List<Event> eventList = null;
+		//List<Event> eventList = null;
 		int prevExists = 0;
 		int nextExists = 0;
-		
 		FormVO voForPrevScene = new FormVO();
-		voForPrevScene.setDirection(-1);
-		voForPrevScene.setVdoId(vo.getVdoId());
-		voForPrevScene.setScnId(vo.getScnId());
-
 		FormVO voForNextScene = new FormVO();
-		voForNextScene.setDirection(1);
-		voForNextScene.setVdoId(vo.getVdoId());
-		voForNextScene.setScnId(vo.getScnId());
-		
-		try{
-			scene = editorDao.findScene(vo);
-			if(editorDao.findScene(voForPrevScene) != null){
-				prevExists = 1;
-			}
-			if(editorDao.findScene(voForNextScene) != null){
-				nextExists = 1;
-			}
-			countryList = editorDao.getCountryList(null);
-			periodList = editorDao.getPeriodList();
 			
-			// 해당 장몀의 사건연대 값을 받아와 해당 연대의 사건만 가져온다. 개발할 때만 적용할 수도 있음. 
-			vo.setEventPrd(scene.getEventPrd());
-			eventList = editorDao.getEventList(vo);
+		try{
+			if(vo.getScnId() != 0){
+				scene = editorDao.findScene(vo);
+				
+				voForPrevScene.setDirection(-1);
+				voForPrevScene.setVdoId(vo.getVdoId());
+				voForPrevScene.setScnId(vo.getScnId());
+				
+				voForNextScene.setDirection(1);
+				voForNextScene.setVdoId(vo.getVdoId());
+				voForNextScene.setScnId(vo.getScnId());
+				
+				if(editorDao.findScene(voForPrevScene) != null){
+					prevExists = 1;
+				}
+				
+				if(editorDao.findScene(voForNextScene) != null){
+					nextExists = 1;
+				}
+				// 해당 장몀의 사건연대 값을 받아와 해당 연대의 사건만 가져온다. 개발할 때만 적용할 수도 있음. 
+				vo.setEventPrd(scene.getEventPrd());
+			}else{
+				scene.setVdoId(vo.getVdoId());// 새 장면인 경우 기존에 장면정보 ID는 없지만 VIDEO_ID는 존재하므로 그 정보를 새 장면 입력화면에 넘겨준다.
+				scene.setVdoNm(vo.getVdoNm());
+			}
+			
+			countryList = editorDao.getCountryList(vo);
+			periodList = editorDao.getPeriodList();
+			//eventList = editorDao.getEventList(vo);
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
@@ -120,9 +133,51 @@ public class EditorController {
 		mav.addObject("sceneInfo", scene );
 		mav.addObject("periodList", periodList);
 		mav.addObject("countryList", countryList);
-		mav.addObject("eventList", eventList);
+		//mav.addObject("eventList", eventList);
 		
 		return mav;
+	}
+	
+	@RequestMapping(value = "/saveScene", method = RequestMethod.POST)
+	public ModelAndView saveSceneInfo(@ModelAttribute FormVO vo, ModelAndView mav) {
+		mav.setViewName("editor/updateScene");
+		
+		int successfullySaveCount = 0;
+		try {
+			successfullySaveCount = sceneService.saveSceneInfo(vo);
+		} catch (IOException e) {
+			logger.error(StringUtil.getStackTrace(e));
+		} catch (Exception e) {
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
+		mav.addObject("saveCount", successfullySaveCount);
+		mav.addObject("sceneInfo", vo);
+		
+		return mav;
+	}
+	
+	@RequestMapping(value = "/deleteScene", method = RequestMethod.GET)
+	public void deleteSceneInfo(@RequestParam(value="vdoId") int vdoId,
+								@RequestParam(value="scnId") int scnId,
+								HttpServletResponse response) {
+		
+		int successfullyDeleteCount = 0;
+		FormVO vo = new FormVO();
+		
+		vo.setVdoId(vdoId);
+		vo.setScnId(scnId);
+		
+		try {
+			successfullyDeleteCount = sceneService.deleteSceneInfo(vo);
+			
+			response.getWriter().print(successfullyDeleteCount);
+		} catch (IOException e) {
+			logger.error(StringUtil.getStackTrace(e));
+		} catch (Exception e) {
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
 	}
 		
 	@RequestMapping(value = "/getCountryAsJson", method = RequestMethod.GET)
@@ -193,16 +248,5 @@ public class EditorController {
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
-	}
-
-	@RequestMapping(value = "/updateScene", method = RequestMethod.POST)
-	public String update(@RequestParam FormVO vo, HttpServletResponse response) {
-		try{
-			editorDao.updateScene(vo);
-		}catch(Exception e){
-			logger.error(StringUtil.getStackTrace(e));
-		}
-		
-		return "redirect:/editScene?scnId="+vo.getScnId();
 	}
 }

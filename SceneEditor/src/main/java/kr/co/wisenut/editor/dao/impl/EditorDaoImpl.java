@@ -11,11 +11,16 @@ import kr.co.wisenut.editor.model.Period;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.model.Video;
 import kr.co.wisenut.editor.model.VideoCategory;
+import kr.co.wisenut.util.StringUtil;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.mysql.cj.core.util.StringUtils;
 
@@ -38,7 +43,7 @@ public class EditorDaoImpl implements EditorDao {
 	}
 
 	@Override
-	public List<Scene> getSceneList(String id) throws Exception{
+	public List<Scene> getSceneList(int id) throws Exception{
 		
 		SqlSession session = sessionService.getSession();
 	
@@ -67,6 +72,21 @@ public class EditorDaoImpl implements EditorDao {
 			countryList = session.selectList("EntryMapper.countryList");			
 		}else{			
 			countryList = session.selectList("EntryMapper.countryList", domAbr);
+		}
+		
+		return countryList;
+	}
+	
+	@Override
+	public List<Country> getCountryList(FormVO vo) throws Exception{
+		
+		SqlSession session = sessionService.getSession();
+	
+		List<Country> countryList = null;
+		if(vo.getDomAbr()==null || StringUtils.isNullOrEmpty(vo.getDomAbr())){
+			countryList = session.selectList("EntryMapper.countryList");			
+		}else{			
+			countryList = session.selectList("EntryMapper.countryList", vo.getDomAbr());
 		}
 		
 		return countryList;
@@ -114,10 +134,56 @@ public class EditorDaoImpl implements EditorDao {
 	}
 	
 	@Override
-	public void updateScene(FormVO vo) throws Exception {
+	public int updateScene(FormVO vo){
 		SqlSession session = sessionService.getSession();
-		int resultCount = session.update("SceneMapper.updateScene", vo);
+
+		int resultCount = 0;
+		try{
+			resultCount = session.update("SceneMapper.updateScene", vo);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
 		
-		logger.debug("@@@@@@ resultCount : " + resultCount);
+		session.commit(false);
+		logger.info("Update count : " + resultCount);
+		
+		return resultCount;
+	}
+	
+	@Override
+	public int insertScene(FormVO vo){
+		SqlSession session = sessionService.getSession();
+
+		int resultCount = 0;
+		try{
+			resultCount = session.insert("SceneMapper.insertScene", vo);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		session.commit(false);
+		logger.info("Insert count : " + resultCount);
+		
+		return resultCount;
+	}
+	
+	@Override
+	public int deleteScene(FormVO vo){
+		SqlSession session = sessionService.getSession();
+
+		int resultCount = 0;
+		try{
+			resultCount = session.delete("SceneMapper.deleteScene", vo);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		session.commit(false);
+		logger.info("Delete count : " + resultCount);
+		
+		return resultCount;
 	}
 }
