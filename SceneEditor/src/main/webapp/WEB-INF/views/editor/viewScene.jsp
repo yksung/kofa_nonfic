@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/tiles/includes.jsp"
 %><%@ page contentType="text/html; charset=utf-8"%>
+<c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
 <link rel="stylesheet" type="text/css" href="${contextRoot}/css/style02.css">
 <script>
 var localSettingsSI = {
@@ -85,12 +86,12 @@ $(function(){
 			<li><input id="" type="text" /></li>
 			<li><a class="btn_search" href="#">검색</a></li>
 		</ul>
-		<a class="btn_item" href="#">항목관리</a>
+		<%-- <a class="btn_item" href="${contextRoot }/manager">항목관리</a> --%>
 	</div> 
 	<div class="sub_tit">
 		<strong>${videoInfo.vdoTitle}</strong>의 장면 정보 조회
 		<ul>
-			<li><a class="btn_undo" href="#"><img src="${contextRoot}/images/icon_undo.png" alt="영상조회로 돌아가기" /></a></li>
+			<li><a class="btn_undo" href="${contextRoot }/editor/viewVideo?vdoId=${videoInfo.vdoId}&pageSize=100"><img src="${contextRoot}/images/icon_undo.png" alt="영상조회로 돌아가기" /></a></li>
 			<li><a class="btn_newvdo" href="javascript:createNewSceneInfo('${videoInfo.vdoTitle}', '${videoInfo.vdoId}')">새 장면 입력하기</a></li>
 		</ul>
 	</div>

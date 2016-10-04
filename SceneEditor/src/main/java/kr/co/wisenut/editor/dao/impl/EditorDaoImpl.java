@@ -41,6 +41,15 @@ public class EditorDaoImpl implements EditorDao {
 		
 		return videoList;
 	}
+	
+	@Override
+	public List<Video> goBackToVideoList(FormVO vo) throws Exception {
+		SqlSession session = sessionService.getSession();
+		
+		List<Video> videoList = session.selectList("VideoMapper.goBackToVideoList", vo);
+		
+		return videoList;
+	}
 
 	@Override
 	public List<Scene> getSceneList(int id) throws Exception{

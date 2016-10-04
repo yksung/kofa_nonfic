@@ -22,4 +22,8 @@
 		<put-attribute name="navigation" value="/WEB-INF/tiles/tile/navigation-edit.jsp" />
 		<put-attribute name="content" value="/WEB-INF/views/editor/edit{1}.jsp" />
 	</definition>
+	
+	<definition name="manager/*" extends="editor/view*">
+		<put-attribute name="content" value="/WEB-INF/views/manager/{1}.jsp" />
+	</definition>
 </tiles-definitions>

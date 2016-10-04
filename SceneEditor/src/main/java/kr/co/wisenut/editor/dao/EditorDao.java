@@ -12,6 +12,7 @@ import kr.co.wisenut.editor.model.VideoCategory;
 
 public interface EditorDao {
 	public List<Video> getVideoList(FormVO vo) throws Exception;
+	public List<Video> goBackToVideoList(FormVO vo) throws Exception;
 	public List<Scene> getSceneList(int id) throws Exception;
 	public List<Country> getCountryList(FormVO vo) throws Exception;
 	public List<Country> getCountryList(String domAbr) throws Exception;

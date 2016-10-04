@@ -4,6 +4,8 @@ $(function(){
 	});
 	
 	$("a.btn_map").on("click", function(){
+		$("div.map_pop").find("input[type='text']").val("");
+		$("#search_result").html("");
 		$("div.map_pop").show();
 	});
 	
@@ -30,8 +32,23 @@ $(function(){
 			}
 		});
 	});
-
+	
+	$("body").on("click", "a.minus", function(e) {
+		e.preventDefault();
+	    var $parent = $(this).parent(); // <li>
+	    if($parent.parent().children().length > 1 ){        	
+	    	$parent.remove();
+	    }else{
+	    	$(this).prevUntil("li").each(function(){
+	    		if($(this).is("input")){
+	    			$(this).val("");        			
+	    		}
+	    	});
+	    }
+	});
 });
+
+
 
 function onEventChange(){
 	$("#id_eventLClasCd").on("change", function(){
@@ -82,10 +99,35 @@ function onDomAbrChange(cntryCd){
 		});
 	});
 }
+
+function serializeInputArray(selector, delimiter){
+	var serializedStr = "";
+	var $el = $(selector); // selector must be the name of a input array.
+	var loop = 0;
 	
+	$el.each(function(){
+		if($(this).val().trim() != ""){				
+			serializedStr += $(this).val() + delimiter;
+		}
+		if(loop!=0){				
+			$(this).remove();
+		}
+		loop++;
+	});
+	
+	//alert(serializedStr + '\n' + serializedStr.replace(new RegExp(delimiter+"$", "g"), ""));
+	$el.val(serializedStr.replace(new RegExp(delimiter+"$", "g"), ""));
+}
+
 function saveScene(){
-	var f = document.thisSceneForm;
-	f.submit();
+	
+	var $eventNm = $("input[name='eventNm']");
+	var loop = 0;	
+	
+	serializeInputArray("input[name='eventNm']", "@^@");
+	serializeInputArray("input[name='celebrity1']", "@^@");
+	
+	document.thisSceneForm.submit();
 }
 
 function deleteScene(v, s){
@@ -105,7 +147,7 @@ function deleteScene(v, s){
 	});
 }
 
-function plus(elementType, elementName){ // elementType : celebrity, elementName: input
+function cloneElement(elementType, elementName){ // elementType : celebrity, elementName: input
 	// ex)
 	// <td>
 	// 		<input id="id_celebrity1" name="celebrity1" type="text" value=""/>
@@ -120,6 +162,11 @@ function plus(elementType, elementName){ // elementType : celebrity, elementName
 	var parent = $(selectorStr).parent(); // <td id="id_celebrity">
 	
 	$(selectorStr+":last").clone().appendTo(parent);
+	if(elementType=='input'){
+		$(selectorStr+":last").val("");
+	}else{	
+		$(selectorStr+":last>input").val("");
+	}
 }
 
 function plusEvent(elementType, elementName){ // elementType : li,  elementName: event
@@ -166,4 +213,32 @@ function plusEvent(elementType, elementName){ // elementType : li,  elementName:
 	if($lastElement.attr("value") != undefined ){		
 		$lastElement.val("");
 	}
+}
+/*
+function add(elementType, elementName){
+	var selectorStr = elementType+"[name="+elementName+"]";
+	if($(selectorStr).length==5){
+		alert("5개까지만 입력할 수 있습니다.");
+		return;
+	}
+	
+	var parent = $(selectorStr).parent(); // <td id="id_celebrity">
+	
+	$(selectorStr+":last").clone().appendTo(parent);
+	if(elementType=='input'){
+		$(selectorStr+":last").val();
+	}else{	
+		$(selectorStr+":last>input").val("");
+	}
+}*/
+
+function open(el){
+	$(el).show();
+}
+
+function close(el){
+	$(el).hide();
+	$(el+">input").each(function(){
+		$(this).val("");
+	});
 }

@@ -27,7 +27,7 @@
 .event_01{float:left; width:326px; margin-top:20px}
 .event_01.marL{margin-right:59px}
 .event_01 span{font-size:14px; float:left}
-.event_01 .event_list{width:270px; height:365px; border:1px solid #9a9a9a; margin-left:53px; overflow-y:scroll}
+.event_01 .event_list{width:600px; height:365px; border:1px solid #9a9a9a; margin-left:53px; overflow-y:scroll}
 .event_01 .event_list li a{ display:block;padding:4px 0 3px 7px;}
 .event_01 .event_list li a:hover{background-color:#f1f1f1;display:block}
 .event_01 .btn_area{width:280px; height:20px; margin:10px 0 0 53px; }
@@ -40,7 +40,7 @@
 	background: linear-gradient(to bottom,  #3770b4 0%,#1c4e89 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3770b4', endColorstr='#1c4e89',GradientType=0 ); /* IE6-9 */}
 	
-.addlist{ width:270px;margin:20px 0 0 53px; height:65px; font-size:12px; background-color:#fff; border:1px solid #9a9a9a; right:10px; top:300px; padding-bottom:10px;}
+.addlist{ display:none; width:270px;margin:20px 0 0 53px; height:130px; font-size:12px; background-color:#fff; border:1px solid #9a9a9a; right:10px; top:300px; padding-bottom:10px;}
 .addlist>p{background-color:#999; color:#fff; font-size:13px;font-weight:500; height:30px; line-height:30px; padding-left:10px;}
 .addlist>p a{float:right;  margin:2px 5px 0 0}
 .addlist input{width:246px; margin:7px 10px ; height:26px; border:1px solid #ccc; padding-left:3px;}

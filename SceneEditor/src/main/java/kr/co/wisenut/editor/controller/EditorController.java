@@ -45,19 +45,14 @@ public class EditorController {
 	private EditorDao editorDao;
 	
 	@RequestMapping(value = "/viewVideo", method = RequestMethod.GET)
-	public ModelAndView getListOfVideos(@ModelAttribute FormVO vo, ModelAndView mav) {
+	public ModelAndView viewVideo(@ModelAttribute FormVO vo, ModelAndView mav) {
 		mav.setViewName("editor/viewVideo");
 		
 		logger.info("View the List of Registered Video!!");
-			
-		/*List<Video> videoList = null;
-		try{			
-			videoList = editorDao.getVideoList(vo);
-		}catch(Exception e){
-			logger.error(StringUtil.getStackTrace(e));
-		}
 		
-		mav.addObject("videoList", videoList);*/
+		mav.addObject("vdoId", vo.getVdoId());
+		mav.addObject("page", vo.getPage());
+		mav.addObject("pageSize", vo.getPageSize());
 		
 		return mav;
 	}
@@ -208,24 +203,13 @@ public class EditorController {
 
 	@RequestMapping(value = "/getVideoListAsJson", method = RequestMethod.POST)
 	public void getVideoListAsJson(@ModelAttribute FormVO vo, HttpServletResponse response) {
-		
-		List<Video> videoList = null;
-		ObjectMapper mapper = new ObjectMapper();
-
-		String jsonString = "";
-		try{
-			videoList = editorDao.getVideoList(vo);
-			jsonString = mapper.writeValueAsString(videoList);
-			
-			//response.getWriter().print(jsonString.replaceAll("\\{\"", "\\{").replaceAll("\":", ":").replaceAll(",\"", ","));
-			response.getWriter().print("{"
-					+QUOTE+"status"+QUOTE+":"+QUOTE+"success"+QUOTE+","
-					+QUOTE+"total"+QUOTE+":"+videoList.size()+","
-					+QUOTE+"records"+QUOTE+":"+jsonString
-					+"}");
-		}catch(Exception e){
+		try {
+			response.getWriter().print(sceneService.getVideoListAsJson(vo));
+		} catch (IOException e) {
 			logger.error(StringUtil.getStackTrace(e));
-		}
+		} catch (Exception e) {
+			logger.error(StringUtil.getStackTrace(e));
+		}	
 	}
 	
 	@RequestMapping(value = "/getSceneListAsJson", method = RequestMethod.POST)

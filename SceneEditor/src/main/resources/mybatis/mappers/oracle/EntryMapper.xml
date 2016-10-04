@@ -13,6 +13,7 @@
 	<resultMap id="eventCategory" type="eventCategory">
 		<result property="eventCd" column="CODE"/>
 		<result property="eventNm" column="CODE_NM"/>
+		<result property="eventDate" column="ADIT_INFO1"/>
 	</resultMap>
 	<resultMap id="videoCategory" type="videoCategory">
 		<result property="clasCd" column="CLAS_CD"/>
@@ -38,11 +39,10 @@
 		</otherwise>
 	 </choose>
 	 </where>
-	 order by code_nm asc
 	</select>
 	<!-- 2016.08.25 event는 자동완성으로 처리 -->
 	<select id="eventCategoryList" resultMap="eventCategory" parameterType="vo">
-	 select code, adit_info1 || ' ' || code_nm as code_nm from codeinfo
+	 select code, code_nm, adit_info1 from codeinfo
 	 <where>
 	 <choose>
 	 	<when test="eventPrd != null"><![CDATA[
@@ -53,8 +53,22 @@
 	 	</otherwise>
 	 </choose>
 	 </where>
+	 order by to_number(code) asc
 	</select>
 	<select id="videoCategoryList" resultMap="videoCategory">
 	 select * from video_kind
 	</select>
+	<insert id="insertEvent" useGeneratedKeys="true" parameterType="eventCategory">
+	INSERT INTO CODEINFO (
+		DIV_ID,
+		CODE,
+	 	CODE_NM,
+	 	ADIT_INFO1
+	) VALUES (
+		'S02',
+	 	(select to_char(max(to_number(CODE))+1) from codeinfo where div_id='S02'),
+	 	#{eventNm},
+	 	#{eventDate}
+	)
+	</insert>
 </mapper>

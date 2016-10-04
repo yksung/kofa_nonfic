@@ -36,7 +36,7 @@ public class HomeController {
 //		model.addAttribute("serverTime", formattedDate );
 		
 		if(request.getSession().getAttribute("loginInfo")!=null){
-			return "redirect:/viewVideo?page=0&pageSize=10";
+			return "redirect:/editor/viewVideo?page=0&pageSize=10";
 		}else{			
 			return "redirect:/login";
 		}

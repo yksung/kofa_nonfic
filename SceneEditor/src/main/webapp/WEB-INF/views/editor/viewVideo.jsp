@@ -1,6 +1,10 @@
 <%@ include file="/WEB-INF/tiles/includes.jsp"
 %><%@ page contentType="text/html; charset=utf-8"%>
 <link rel="stylesheet" type="text/css" href="${contextRoot}/css/style02.css">
+<c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
+<c:set var="vdoId" value="${empty vdoId ? 0:vdoId }"/>
+<c:set var="page" value="${empty page ? 0:page }"/>
+<c:set var="pageSize" value="${empty pageSize ? 0:pageSize }"/>
 <script>
 var localSettingsSI = {
 	    "locale"         : "si-SI",
@@ -19,7 +23,7 @@ var localSettingsSI = {
 var config = {
 	grid : { 
 	    name   : 'videoGrid',
-        url:'${contextRoot}/editor/getVideoListAsJson?page=1&pageSize=2000',          
+        url:'${contextRoot}/editor/getVideoListAsJson?vdoId=${vdoId}&page=${page}&pageSize=${pageSize}',          
 	    show: { 
             toolbar: true,
             footer: true,
@@ -59,7 +63,7 @@ var config = {
 };
 
 function refreshGrid(auto) {
-	w2ui['videoGrid'].load("${contextRoot}/editor/getVideoListAsJson?page=0&pageSize=3700");
+	w2ui['videoGrid'].load("${contextRoot}/editor/getVideoListAsJson?vdoId=${vdoId}&page=${page}&pageSize=${pageSize}");
     w2ui['videoGrid'].autoLoad = auto;
     w2ui['videoGrid'].skip(0);    
 	w2ui['videoGrid'].refresh();
@@ -87,7 +91,7 @@ $(function(){
 			<li><input id="" type="text" /></li>
             <li><a class="btn_search" href="#">검색</a></li>
 		</ul>
-		<a class="btn_item" href="#">항목관리</a>
+		<%-- <a class="btn_item" href="${contextRoot }/manager/">항목관리</a> --%>
 	</div> 
 	<div class="sub_tit">영상조회 <input type="checkbox" id="autoLoad" onclick="refreshGrid(this.checked)" checked></div>
 	<article class="tbl_area" id="id_videoGrid"></article>

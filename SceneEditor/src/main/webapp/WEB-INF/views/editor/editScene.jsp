@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/tiles/includes.jsp"
 %><%@ page contentType="text/html; charset=utf-8"%>
+<c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
 <link rel="stylesheet" type="text/css" href="${contextRoot}/css/style01.css">
 <script type="text/javascript" src="${contextRoot}/js/beta.fix.js"></script>
 <script type="text/javascript" src="${contextRoot}/js/ark_function.js"></script>
@@ -84,6 +85,7 @@
 									<!-- <label for="id_eventNm${status.index }">직접입력</label> -->
 									<input class="size" id="id_eventNm${status.index }" name="eventNm" type="text" value="${fn:trim(eventNm) }" onClick="javascript:doArk('thisSceneForm', 'id_eventNm${status.index}', 'id_eventArk${status.index }', 'event');" onKeyUp="javascript:arkKeyUp(event, 'id_eventArk${status.index }')"/> 
 		                     		<span id="id_eventArk${status.index }"></span>
+		                     		<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="사건 삭제" /></a>
 	                     		</li>
 	                     		</c:forTokens>
 							</ul>
@@ -149,18 +151,22 @@
 						<th></th>
 						<td>
 							<label for="">위/경도 정보</label>
-							<input class="bg" id="" name="latitude" type="text" placeholder="자동입력됩니다." value="${sceneInfo.latitude }"/>
-                            <input class="bg" id="" name="longitude" type="text" placeholder="자동입력됩니다." value="${sceneInfo.longitude}"/>
+							<input class="bg" id="id_latitude" name="latitude" type="text" placeholder="자동입력됩니다." value="${sceneInfo.latitude }" readonly/>
+                            <input class="bg" id="id_longitude" name="longitude" type="text" placeholder="자동입력됩니다." value="${sceneInfo.longitude}" readonly/>
 							<a class="btn_map" href="#">지도검색</a>
 						</td>
 					</tr>
                     <tr>
-						<th>인물명</th>
+						<th>인물명<a href="javascript:cloneElement('li', 'celebrity')" id="id_celb_add"><img src="${contextRoot}/images/btn_plus.png" alt="인물 추가" /></th>
 						<td id="id_celebrity">
-							<input name="celebrity" type="text" placeholder="유명인만 기재" value="${fn:trim(sceneInfo.celebrity1) }"/>
-							<input name="celebrity" type="text" placeholder="유명인만 기재" value="${fn:trim(sceneInfo.celebrity2) }"/>
-							<input name="celebrity" type="text" placeholder="유명인만 기재" value="${fn:trim(sceneInfo.celebrity3) }"/>
-							<a href="javascript:plus('input', 'celebrity')" id="id_celb_add"><img src="${contextRoot}/images/btn_plus.png" alt="인물 추가" /></a>
+							<ul class="horizontal">
+								<c:forTokens var="celebrityName" items="${empty sceneInfo.celebrity1 ? ' ':sceneInfo.celebrity1 }" delims="@^@" varStatus="status">
+								<li name="celebrity">
+									<input name="celebrity1" type="text" placeholder="유명인만 기재" value="${fn:trim(celebrityName) }"/>
+									<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a>
+								</li>
+								</c:forTokens>
+							</ul>
 						</td>
 					</tr>
 					<tr class="textarea_h">
@@ -205,10 +211,12 @@
 					</colgroup>
 					<tr>
 						<th><label for="">지역명</label></th>
-						<td><input class="map_input" id="" type="text"  /> </td>
+						<td><input class="map_input" id="id_map_keyword" type="text" /></td>
 					</tr>
 					<tr>
-						<td colspan="2"><span>검색결과가 없습니다.</span><a class="btn_search" href="#">검색</a></td>
+						<td colspan="2">
+						<div id="search_result"></div>
+						<a class="btn_search" href="javascript:poiSearch();">검색</a></td>
 					</tr>
 				</table>
 			</div>
@@ -219,6 +227,40 @@
   <!-- //content -->
 </div>
 <script>
+function putLatLon(lat, lon){
+	$("#id_latitude").val(lat);
+	$("#id_longitude").val(lon);
+	$("div.map_pop").hide();
+}
+function poiSearch(){
+	$.ajax({
+		url : "https://apis.skplanetx.com/tmap/pois?appKey=343afd6a-d5f8-3991-a8b2-6ca2659ef4a1&version=1&searchKeyword="+encodeURIComponent($("#id_map_keyword").val()),
+		//contentType : 'application/json',
+		/* data : {
+			appKey : '343afd6a-d5f8-3991-a8b2-6ca2659ef4a1',
+			version : 1, 	// 필수
+			page : 1,		// 선택
+			count : 5, 		// 선택
+			searchKeyword : ,
+			searchType: 'all',
+			searchtypeCd: 'A'
+		}, */
+		type : "GET",
+		success : function(response){
+			var html = "<ul>";
+			$.each(response.searchPoiInfo.pois.poi, function(idx, el){
+				html += "<li><a href='javascript:putLatLon(\""+el.noorLat+"\",\""+el.noorLon+"\");'>"+el.name+"</a></li>";
+			});
+			
+			html+="</ul>";
+			
+			$("#search_result").html(html);
+		},
+		error : function ( request, status, error ){
+			alert("code : " + request.status + "\n" + "message : "+ request.responseText + "\n" + "error : " + error);
+		}
+	});
+}
 var playerImg = "http://releases.flowplayer.org/swf/flowplayer-3.2.18.swf";
 var playerConfig = {
 

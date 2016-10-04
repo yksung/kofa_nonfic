@@ -106,3 +106,5 @@
 .map_pop table td input.map_input{width:161px; height:26px; border:1px solid #9a9a9a; padding-left:3px;}
 .map_pop .btn_search{float:right; width:40px; height:20px;border:1px solid #054179; color:#fff; background-color:#255997; font-weight:500;cursor:pointer;text-align:center}
 
+/* yksung @ 2016-09-27 */
+ul.horizontal li { display:inline }
