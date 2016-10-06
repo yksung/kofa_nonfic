@@ -25,7 +25,7 @@ public class LoginController {
 	@Autowired
 	LoginService loginService;
 	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public ModelAndView displayLogin(HttpSession session, ModelAndView mav){
 		
 		if(session.getAttribute("loginInfo")!=null){
@@ -54,7 +54,7 @@ public class LoginController {
 	@RequestMapping(value = "/logout")
 	public String logout(HttpSession session){
 		session.setAttribute("loginInfo", null);
-		return "redirect:login";
+		return "redirect:/login/page";
 	}
 }
 

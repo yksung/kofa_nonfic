@@ -38,7 +38,7 @@ public class HomeController {
 		if(request.getSession().getAttribute("loginInfo")!=null){
 			return "redirect:/editor/viewVideo?page=0&pageSize=10";
 		}else{			
-			return "redirect:/login";
+			return "redirect:/login/page";
 		}
 		
 	}

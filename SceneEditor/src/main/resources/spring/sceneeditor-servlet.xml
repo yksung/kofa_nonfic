@@ -23,6 +23,17 @@
 	<resources mapping="/img/**" location="/WEB-INF/img/" />
 	<resources mapping="/images/**" location="/WEB-INF/images/" />
 	
+	<interceptors>
+		<interceptor>
+			<mapping path="/manager/*" />
+			<beans:bean class="kr.co.wisenut.login.interceptor.LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
+			<mapping path="/editor/*" />
+			<beans:bean class="kr.co.wisenut.login.interceptor.LoginInterceptor"/>
+		</interceptor>
+	</interceptors>
+	
 	<beans:bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
 		<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
 		<beans:property name="order" value="1"/>

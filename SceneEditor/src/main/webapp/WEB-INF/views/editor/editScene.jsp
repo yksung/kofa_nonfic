@@ -6,17 +6,38 @@
 <script type="text/javascript" src="${contextRoot}/js/ark_function.js"></script>
 <script type="text/javascript" src="${contextRoot}/js/flowplayer-3.2.13.js"></script>
 <!-- content -->
+<script>
+var browserType = getBrowserType();
+$(document).ready(function(){
+	var str = "";
+	if(browserType.substring(0,2) == 'IE'){
+		str += '<object id="mediaplayer" width="192" height="146" classid="clsid:22d6f312-b0f6-11d0-94ab-0080c74c7e95"';
+		str += 'standby="loading windows media player components..." type="application/x-oleobject">';
+		str += '	<param name="filename" value="http://www.mediacollege.com/video/format/windows-media/streaming/videofilename.wmv">';
+		str += '	<param name="showcontrols" value="false">';
+		str += '	<param name="showstatusbar" value="false">';
+		str += '	<param name="showdisplay" value="false">';
+		str += '	<param name="autostart" value="true">';
+		str += '	<embed type="application/x-mplayer2" src="http://www.mediacollege.com/video/format/windows-media/streaming/videofilename.wmv" name="mediaplayer"	width="192" height="146" showcontrols="0" showstatusbar="0" showdisplay="0" autostart="1"> </embed>';
+		str += '</object>';
+		
+		$("#id_vdoPlayer").html(str);
+	}else{
+		str += '<a id="id_playerButton" href="#">';
+		str += '<img src="${contextRoot}/images/showme.png" />';
+		str += '</a>';
+		
+		$("#id_vdoPlayer").html(str);
+	}
+});
+</script>
 <section class="content">
 	<article class="vdo_area" id="vdo_area">
     	<header>
         	<h2>제목 : <strong>${ sceneInfo.vdoNm }</strong></h2>
         	<!-- <a href="#">영상불러오기</a> -->
 		</header>
-        <div class="vdo_player" id="id_vdoPlayer">
-        	<a id="id_playerButton" href="#">
-        		<img src="${contextRoot}/images/showme.png" />
-        	</a>
-        </div>
+        <div class="vdo_player" id="id_vdoPlayer"></div>
 	</article>
     
 	<article class="info_area" id="info_area">
@@ -46,6 +67,11 @@
          	<input type="hidden" name="scnId" value="${fn:trim(sceneInfo.scnId) }"/>
 			<input type="hidden" name="vdoId" value="${fn:trim(sceneInfo.vdoId) }"/>
 			<input type="hidden" name="editor" value="<%=userName %>"/>
+			<c:set var="strScnStartMin" value="${fn:substring(sceneInfo.scnStartCd, 0, 3) }"/>
+			<c:set var="strScnStartSec" value="${fn:substring(sceneInfo.scnStartCd, 4, 6) }"/>
+			<fmt:parseNumber var="scnStartMin" value="${strScnStartMin }"/>
+			<fmt:parseNumber var="scnStartSec" value="${strScnStartSec }"/>
+						
          	<table summary="메타정보를 입력할 수 있는 양식">
                  <caption>메타입력정보</caption>
                  <colgroup>
@@ -265,10 +291,13 @@ var playerImg = "http://releases.flowplayer.org/swf/flowplayer-3.2.18.swf";
 var playerConfig = {
 
     clip: {
-        url: 'mp4:${sceneInfo.vdoId}.mp4',
+        url: 'mp4:4.19.mp4', // ${sceneInfo.vdoId}.mp4'
         scaling: 'fit',
         // configure clip to use hddn as our provider, referring to our rtmp plugin
-        provider: 'hddn'
+        provider: 'hddn',
+        onStart : function(){
+        	$f("id_vdoPlayer").seek(${scnStartMin*60 + scnStartSec});
+        }
     },
 
     // streaming plugins are configured under the plugins node
@@ -288,8 +317,9 @@ var playerConfig = {
     }
 };
 
-$("#id_playerButton").click(function(evt){
-	$f("id_vdoPlayer", playerImg, playerConfig).load();	
+$("body").click("#id_playerButton", function(evt){
+	console.log("scnStartMin : ${scnStartMin} / scnStartSec : ${scnStartSec}" );
+	$f("id_vdoPlayer", playerImg, playerConfig).load();
 });
 </script>
 </body>
