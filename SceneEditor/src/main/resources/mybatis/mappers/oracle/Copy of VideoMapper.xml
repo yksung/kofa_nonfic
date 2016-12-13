@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="VideoMapper">
+	<resultMap id="videoList" type="video">
+		<result property="recid" column="SEQ"/>
+		<result property="vdoId" column="MUL_ID"/>
+		<result property="vdoTitle" column="MUL_TITLE"/>
+		<result property="vdoType" column="TITLE_ETC"/>
+		<result property="language" column="LANGUAGE"/>
+		<result property="productionDate" column="MUL_YEAR"/>
+		<result property="runtime" column="RUNTIME"/>
+		<result property="scnCnt" column="SCN_CNT"/>
+	</resultMap>
+	
+	<select id="goBackToVideoList" resultMap="videoList" parameterType="vo"><![CDATA[
+	select YY.seq as SEQ
+		 , YY.MUL_ID
+		 , YY.MUL_TITLE
+		 , YY.TITLE_ETC
+		 , YY.LANGUAGE
+		 , YY.MUL_YEAR
+		 , YY.RUNTIME
+		 , (select count(*) from scene_manage where video_id=YY.MUL_ID) as SCN_CNT
+	  from (select seq  from (select row_number() over (order by MUL_ID ASC) as seq, MUL_ID from MULTI_NEW) X where X.MUL_ID=#{vdoId}) XX,
+		  (select row_number() over (order by MUL_ID ASC) as seq, Y.* from MULTI_NEW Y order by MUL_ID asc) YY
+	 where FLOOR((YY.seq-1)/#{pageSize}) >= FLOOR(XX.seq/#{pageSize}) and FLOOR((YY.seq-1)/#{pageSize}) < (FLOOR(XX.seq/#{pageSize})+1)
+	]]></select>
+	<select id="getVideoList" resultMap="videoList" parameterType="vo">
+	 SELECT ROWNUM as SEQ
+	 	, MUL_ID
+		, MUL_TITLE
+		, TITLE_ETC
+		, LANGUAGE
+		, MUL_YEAR
+		, RUNTIME
+		, (select count(*) from scene_manage where video_id=Z.MUL_ID) AS SCN_CNT
+		FROM MULTI_NEW Z
+		<where>
+			<choose>
+			<when test='page !=0 and pageSize !=0'><![CDATA[
+			ROWNUM >= #{page} and ROWNUM <= #{pageSize} and (select count(*) from scene_manage where video_id=Z.MUL_ID)>0
+			]]></when>
+			<otherwise>
+			(select count(*) from scene_manage where video_id=Z.MUL_ID)>0
+			</otherwise>
+			</choose>
+		</where>
+	</select>
+	<select id="findVideo" resultMap="videoList" parameterType="String">
+	 SELECT ROWNUM as SEQ
+	 	, MUL_ID
+		, MUL_TITLE
+		, TITLE_ETC
+		, LANGUAGE
+		, MUL_YEAR
+		, RUNTIME
+		, (select count(*) from scene_manage where video_id=Z.MUL_ID) AS SCN_CNT
+		FROM MULTI_NEW Z
+		<where>
+		<if test='_parameter != null'>
+		MUL_ID = #{id}
+		</if>
+		</where>
+	</select>
+	<select id="findVideoFile" resultType="String" parameterType="vo">
+	 select MULTI_FILE_PATH || '\' || MULTOR_NM
+	   from MULTI_FILE
+	  where MUL_ID = #{vdoId}
+	</select>
+	
+</mapper>
