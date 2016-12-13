@@ -3,65 +3,151 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="VideoMapper">
 	<resultMap id="videoList" type="video">
-		<result property="recid" column="SEQ"/>
-		<result property="vdoId" column="VIDEO_ID"/>
-		<result property="vdoTitle" column="TITLES"/>
-		<result property="vdoType" column="FORM_CLSS"/>
-		<result property="language" column="LANG_CLSS"/>
-		<result property="productionDate" column="PROD_YEAR"/>
-		<result property="runtime" column="RUNTIME"/>
-		<result property="scnCnt" column="SCN_CNT"/>
+		<result property="recid" column="recid"/>
+		<result property="vdoId" column="vdoId"/>
+		<result property="vdoTitle" column="vdoTitle"/>
+		<result property="vdoType" column="vdoType"/>
+		<result property="language" column="language"/>
+		<result property="productionDate" column="productionDate"/>
+		<result property="runtime" column="runtime"/>
+		<result property="scnCnt" column="scnCnt"/>
 	</resultMap>
 	
-	<select id="goBackToVideoList" resultMap="videoList" parameterType="vo"><![CDATA[
-	select YY.seq as SEQ
-		 , YY.VIDEO_ID
-		 , YY.TITLES
-		 , YY.FORM_CLSS
-		 , YY.LANG_CLSS
-		 , YY.PROD_YEAR
-		 , YY.RUNTIME
-		 , (select count(*) from scene_manage where video_id=YY.VIDEO_ID) as SCN_CNT
-	  from (select seq  from (select row_number() over (order by VIDEO_ID ASC) as seq, VIDEO_ID from VIDEO) X where X.VIDEO_ID=#{vdoId}) XX,
-		  (select row_number() over (order by VIDEO_ID ASC) as seq, Y.* from VIDEO Y order by VIDEO_ID asc) YY
-	 where FLOOR((YY.seq-1)/#{pageSize}) >= FLOOR(XX.seq/#{pageSize}) and FLOOR((YY.seq-1)/#{pageSize}) < (FLOOR(XX.seq/#{pageSize})+1)
-	]]></select>
-	<select id="getVideoList" resultMap="videoList" parameterType="vo">
-	 SELECT ROWNUM as SEQ
-	 	, VIDEO_ID
-		, TITLES
-		, FORM_CLSS
-		, LANG_CLSS
-		, PROD_YEAR
-		, RUNTIME
-		, (select count(*) from scene_manage where video_id=Z.VIDEO_ID) AS SCN_CNT
-		FROM VIDEO Z
+	<!-- <select id="goBackToVideoList" resultMap="videoList" parameterType="vo"><![CDATA[
+	select YY.seq as recid
+		 , YY.MUL_ID as vdoId
+		 , YY.MUL_TITLE as vdoTitle
+		 , YY.TITLE_ETC as vdoType
+		 , YY.LANGUAGE as language
+		 , YY.MUL_YEAR as productionDate
+		 , YY.RUNTIME as runtime
+		 , (select count(*) from scene_manage where video_id=YY.MUL_ID) as scnCnt
+	  from (select seq  from (select row_number() over (order by MUL_ID ASC) as seq, MUL_ID from MULTI_NEW) X where X.MUL_ID=#{vdoId}) XX,
+		  (select row_number() over (order by MUL_ID ASC) as seq, Y.* from MULTI_NEW Y order by MUL_ID asc) YY
+	 where FLOOR((YY.seq-1)/#{limit}) >= FLOOR(XX.seq/#{limit}) and FLOOR((YY.seq-1)/#{limit}) < (FLOOR(XX.seq/#{limit})+1)
+	]]></select> -->
+	
+	
+	<select id="getVideoTotalCount" resultType="Integer" parameterType="vo">
+	 SELECT count(*) FROM (
+	 	select X.* from (
+			select MUL_ID as vdoId
+				, MUL_TITLE as vdoTitle
+				, TITLE_ETC as vdoType
+				, LANGUAGE as language
+				, MUL_YEAR as productionDate
+				, RUNTIME as runtime
+				, (select count(*) from scene_manage where video_id=Z.MUL_ID) AS scnCnt
+			 FROM MULTI_NEW Z
+			 <where>
+			 	<if test='viewOnlyHavingScene != null and viewOnlyHavingScene == "y"'>
+				(select count(*) from scene_manage where video_id=Z.MUL_ID)  > 0
+				</if>
+			 </where>
+		) X
 		<where>
+			<if test='search != null'>
+				<foreach collection="search" item="searchMap" separator=" or ">
+					<if test="searchMap.operator == 'begins'">
+					${searchMap.field} like #{searchMap.value}||'%'
+					</if>
+					<if test="searchMap.operator == 'is'">
+					${searchMap.field} = #{searchMap.value}
+					</if>
+					<if test="searchMap.operator == 'ends'">
+					${searchMap.field} like '%'||#{searchMap.value}
+					</if>
+					<if test="searchMap.operator == 'contains'">
+					${searchMap.field} like '%'||#{searchMap.value}||'%'
+					</if>
+					<if test="searchMap.operator == 'in'">
+					${searchMap.field} in (#{searchMap.value})
+					</if>
+				</foreach>
+			</if>
+		</where>
+	)
+	</select>
+	<select id="getVideoList" resultMap="videoList" parameterType="vo">
+	select * from (
+		SELECT row_number() over ( order by
 			<choose>
-			<when test='page !=0 and pageSize !=0'><![CDATA[
-			ROWNUM >= #{page} and ROWNUM <= #{pageSize} and (select count(*) from scene_manage where video_id=Z.VIDEO_ID)>0
-			]]></when>
-			<otherwise>
-			(select count(*) from scene_manage where video_id=Z.VIDEO_ID)>0
-			</otherwise>
-			</choose>
+			<when test='sort !=null'>			
+				<foreach collection="sort" item="sortMap" separator=",">
+				${sortMap.field} ${sortMap.direction}
+				</foreach>
+			</when><otherwise>
+				vdoId ASC
+			</otherwise></choose>
+		) as recid, X.* from (
+		select MUL_ID as vdoId
+			, MUL_TITLE as vdoTitle
+			, TITLE_ETC as vdoType
+			, LANGUAGE as language
+			, MUL_YEAR as productionDate
+			, RUNTIME as runtime
+			, (select count(*) from scene_manage where video_id=Z.MUL_ID) AS scnCnt
+		 FROM MULTI_NEW Z
+		 <where>
+		 	<if test='viewOnlyHavingScene != null and viewOnlyHavingScene == "y"'>
+			(select count(*) from scene_manage where video_id=Z.MUL_ID)  > 0
+			</if>
+		 </where>
+		) X
+		<where>
+			<if test='search != null'>
+				<foreach collection="search" item="searchMap" separator=" OR ">
+					<if test="searchMap.operator == 'begins'">
+					${searchMap.field} like #{searchMap.value}||'%'
+					</if>
+					<if test="searchMap.operator == 'is'">
+					${searchMap.field} = #{searchMap.value}
+					</if>
+					<if test="searchMap.operator == 'ends'">
+					${searchMap.field} like '%'||#{searchMap.value}
+					</if>
+					<if test="searchMap.operator == 'contains'">
+					${searchMap.field} like '%'||#{searchMap.value}||'%'
+					</if>
+					<if test="searchMap.operator == 'in'">
+					${searchMap.field} in (#{searchMap.value})
+					</if>
+				</foreach>
+			</if>
+			
+		</where>
+	)
+		<where>
+			<if test='pageSize !=0'><![CDATA[
+			recid >= #{page} and recid <= #{pageSize}
+			]]></if>
 		</where>
 	</select>
 	<select id="findVideo" resultMap="videoList" parameterType="String">
-	 SELECT ROWNUM as SEQ
-	 	, VIDEO_ID
-		, TITLES
-		, FORM_CLSS
-		, LANG_CLSS
-		, PROD_YEAR
-		, RUNTIME
-		, (select count(*) from scene_manage where video_id=Z.VIDEO_ID) AS SCN_CNT
-		FROM VIDEO Z
+	 SELECT MUL_ID as vdoId
+		 , MUL_TITLE as vdoTitle
+		 , TITLE_ETC as vdoType
+		 , LANGUAGE as language
+		 , MUL_YEAR as productionDate
+		 , RUNTIME as runtime
+		 , (select count(*) from scene_manage where video_id=Z.MUL_ID) AS scnCnt
+		FROM MULTI_NEW Z
 		<where>
 		<if test='_parameter != null'>
-		VIDEO_ID = #{id}
+		MUL_ID = #{id}
 		</if>
 		</where>
+	</select>
+	<select id="findVideoFile" resultType="String" parameterType="vo">
+	 select a.sel from (
+	 	select MULTI_FILE_PATH || '\' || MULTOR_NM as sel
+	 	  from MULTI_FILE A
+	 	 where MUL_ID = #{vdoId}
+	 	   and MULTOR_NM like '%mp4'
+	 	   and USE_CLSS in (2,1)
+	 	 order by USE_CLSS desc, CREATE_DATE desc
+	  ) A
+	  where rownum=1
 	</select>
 	
 </mapper>

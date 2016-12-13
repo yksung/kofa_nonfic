@@ -32,7 +32,8 @@
 	background: -webkit-linear-gradient(top,  #3770b4 0%,#1c4e89 100%); /* Chrome10-25,Safari5.1-6 */
 	background: linear-gradient(to bottom,  #3770b4 0%,#1c4e89 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3770b4', endColorstr='#1c4e89',GradientType=0 ); /* IE6-9 */}
-.vdo_area .vdo_player{width:400px; height:435px;margin:10px auto 0; background-color: #333; text-align: center;}
+.vdo_area .vdo_player{width:400px; height:435px;margin:10px auto 0; background-color: #333; text-align: center; display:table }
+.vdo_area .vdo_player a,span{color:#fff; display:table-cell; vertical-align:middle; }
 
 .info_area{width:516px; height:750px; background-color:#fff;box-shadow:4px 5px 3px #3f4b5a}
 .info_area h2{width:283px;color:#242424; font-size:15px; float:left;font-weight:700}

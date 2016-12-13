@@ -33,21 +33,151 @@ $(function(){
 		});
 	});
 	
+	$("body").on("click", "input[name='searchPerson']", function(e){
+		var id = e.toElement.getAttribute("id").substring(e.toElement.getAttribute("id").lastIndexOf("_")+1);
+		searchPerson(id);
+	});
+	
+	$("body").on("click", "input[name='celebrityNm']", function(e){
+		var id = e.toElement.getAttribute("id").substring(e.toElement.getAttribute("id").lastIndexOf("_")+1);
+		layer_open('id_addcelebrity_'+id, 'layer_addcelebrity_'+id);
+	});
+	
 	$("body").on("click", "a.minus", function(e) {
 		e.preventDefault();
 	    var $parent = $(this).parent(); // <li>
-	    if($parent.parent().children().length > 1 ){        	
-	    	$parent.remove();
-	    }else{
+	    // (-) 버튼이 인물명의 것인 경우 장면-인물명 매핑 테이블에서 성공적으로 삭제했는지 여부(result)에 따라
+	    // input element 자체를 삭제할지 결정.
+	    if($parent.attr("name")=='celebrity' && $(this).prev().val()!=""){
+	    	// 직전 element인 input의 인물명 가져오기
+	    	var personKorNm = '';
 	    	$(this).prevUntil("li").each(function(){
 	    		if($(this).is("input")){
-	    			$(this).val("");        			
+	    			personKorNm = $(this).val().substring(0, $(this).val().indexOf("("));        			
 	    		}
 	    	});
+	    	var param = "personKorNm="+personKorNm+"&scnId="+$("input[name='scnId']").val();
+	    	
+	    	$.ajax({
+	    		url : "/editor/deletePersonFromMapping?"+param,
+	    		type : "POST",
+	    		dataType : "json",
+	    		success : function(result){
+	    			if(result.total > 0){
+	    				alert("인물명을 매핑 정보에서 삭제했습니다.");
+	    				
+	    				if($parent.parent().children().length > 1 ){        	
+	    	    	    	$parent.remove();
+	    	    	    }else{
+	    	    	    	$parent.find("input[type='text']").val(""); 
+	    	    	    	$parent.find(".list-group").remove();
+	    	    	    }
+	    			}else{
+	    				alert("매핑 정보에서 인물명 삭제에 실패하였습니다.");
+	    			}
+	    		},
+	    		error : function ( request, status, error ){
+	    			alert("code : " + request.status + "\n" + "message : "+ request.responseText + "\n" + "error : " + error);
+	    		}
+	    	});
+	    	
+	    	
+	    }else{ // (-) 버튼이 인물명 것이 아니면 element 를 바로 삭제.
+	    	if($parent.parent().children().length > 1 ){        	
+    	    	$parent.remove();
+    	    }else{
+    	    	$(this).prevUntil("li").each(function(){
+    	    		if($(this).is("input[type='text']")){
+    	    			$(this).val("");        			
+    	    		}
+    	    	});
+    	    }
 	    }
+	    
+	});
+	
+	$("li[name='event']>a").on("click", function(){
+		var val = $(this).text();
+		var eventCd = $(this).parent().attr("id");
+		var eventDate = "";
+		var eventNm = "";
+		if( val.indexOf("/") > 0){
+			eventDate = val.split("/")[0];
+			eventNm = val.split("/")[1];
+		}
+		$("#id_editlist").find("input[name='editEventNm']").val(eventNm);
+		$("#id_editlist").find("input[name='editEventDate']").val(eventDate);
+		$("#id_editlist").find("input[name='editEventCd']").val(eventCd);
+		layer_open("id_editlist", "layer_edit");
 	});
 });
 
+function addEvent(){
+	var newForm = "";
+	newForm += "<form action='/manager/addEvent' method='POST'>";
+	newForm += "	<input type='hidden' name='eventCd' value='"+$("#id_addEventCd").val()+"'/>";
+	newForm += "	<input type='hidden' name='eventNm' value='"+$("#id_addEventNm").val()+"'/>";
+	newForm += "	<input type='hidden' name='eventDate' value='"+$("#id_addEventDate").val()+"'/>";
+	newForm += "</form>"
+	$(newForm).appendTo("body").submit();
+}
+
+function editEvent(){
+	var newForm = "";
+	newForm += "<form action='/manager/updateEvent' method='POST'>";
+	newForm += "	<input type='hidden' name='eventNm' value='"+$("#id_editEventNm").val()+"'/>";
+	newForm += "	<input type='hidden' name='eventCd' value='"+$("#id_editEventCd").val()+"'/>";
+	newForm += "	<input type='hidden' name='eventDate' value='"+$("#id_editEventDate").val()+"'/>";
+	newForm += "</form>"
+	$(newForm).appendTo("body").submit();
+}
+
+function layer_open(el, layer){
+	var temp = $('#' + el);     //레이어의 id를 temp변수에 저장
+	var layerId = $("#"+layer);
+	
+	temp.show();
+	var bg = temp.prev().hasClass('bg');    //dimmed 레이어를 감지하기 위한 boolean 변수
+	if(bg){
+		$(layerId).fadeIn();
+	}else{
+		temp.fadeIn();  //bg 클래스가 없으면 일반레이어로 실행한다.
+	}
+
+	// 화면의 중앙에 레이어를 띄운다.
+	if (temp.outerHeight() < $(document).height() ){
+		temp.css('margin-top', '-'+temp.outerHeight()/2+'px');
+	}
+	else{
+		temp.css('top', '0px');
+	}
+	
+	if (temp.outerWidth() < $(document).width() ){
+		temp.css('margin-left', '-'+temp.outerWidth()/2+'px');
+	}
+	else{
+		temp.css('left', '0px');
+	}
+	 
+	$('.layer .bg').click(function(e){
+		$('.layer').fadeOut();
+		e.preventDefault();
+	});
+	 
+}
+
+function layer_close(el){
+	$("#"+el).hide();
+	$('.layer').fadeOut();
+}
+
+function deleteEvent(){
+	var newForm = "";
+	newForm += "<form action='/manager/deleteEvent' method='POST'>";
+	newForm += "	<input type='hidden' name='eventCd' value='"+$("#id_editEventCd").val()+"'/>";
+	newForm += "</form>"
+	$(newForm).appendTo("body").submit();
+}
 
 
 function onEventChange(){
@@ -147,8 +277,7 @@ function deleteScene(v, s){
 	});
 }
 
-function cloneElement(elementType, elementName){ // elementType : celebrity, elementName: input
-	// ex)
+function cloneElement(elementType, elementName){ // elementType : celebrity, elementName: input	// ex)
 	// <td>
 	// 		<input id="id_celebrity1" name="celebrity1" type="text" value=""/>
 	// 		<input id="id_celebrity2" name="celebrity2" type="text" value=""/>
@@ -160,12 +289,23 @@ function cloneElement(elementType, elementName){ // elementType : celebrity, ele
 	}
 	
 	var parent = $(selectorStr).parent(); // <td id="id_celebrity">
+	var lastIdx = Number($(selectorStr+":last").attr("id").substring($(selectorStr+":last").attr("id").lastIndexOf("_")+1))+1;
 	
 	$(selectorStr+":last").clone().appendTo(parent);
-	if(elementType=='input'){
+	if($(selectorStr).is("input[type='text']")){
 		$(selectorStr+":last").val("");
+		var clonedId = $(selectorStr+":last").attr("id");
+		$(selectorStr+":last").attr("id", clonedId.substring(0, clonedId.lastIndexOf("_"))+"_"+lastIdx);
 	}else{	
-		$(selectorStr+":last>input").val("");
+		$(selectorStr+":last").attr("id", lastIdx);
+		$(selectorStr+":last").find("*").each(function(){
+			if($(this).attr("id")!=null){
+				var clonedId = $(this).attr("id");
+				$(this).attr("id", clonedId.substring(0, clonedId.lastIndexOf("_"))+"_"+lastIdx);
+			}
+		});
+		$(selectorStr+":last").find("input[type='text']").val("");
+		$(selectorStr+":last").find(".list-group").remove();
 	}
 }
 
@@ -240,5 +380,65 @@ function close(el){
 	$(el).hide();
 	$(el+">input").each(function(){
 		$(this).val("");
+	});
+}
+
+
+function setPerson(idx, personKorNm, personEngNm, personId, scnId, vdoId){
+	var displayName = personKorNm;
+	if(personId){
+		displayName += "("+personId+")";
+	}
+	$("#id_celebrityNm_"+idx).val(displayName);
+	var param = "personKorNm="+personKorNm+"&personEngNm="+personEngNm+"&personId="+personId+"&scnId="+scnId+"&vdoId="+vdoId;
+	
+	$.ajax({
+		url : "/editor/mapSceneAndPerson?"+param,
+		type : "POST",
+		dataType : "json",
+		async : false,
+		success : function(result){
+			if(result.total > 0){
+				alert("인물명과 장면정보 매핑에 성공하였습니다.");
+			}else{
+				alert("인물명과 장면정보 매핑에 실패하였습니다.");
+			}
+		},
+		error : function ( request, status, error ){
+			alert("code : " + request.status + "\n" + "message : "+ request.responseText + "\n" + "error : " + error);
+		}
+	});
+	
+	layer_close('id_addcelebrity_'+idx)
+}
+
+function searchPerson(idx){
+	$.ajax({
+		url : "/editor/getCelebrityListAsJson?celebrityNm="+$("#id_personKorNm_"+idx).val(),
+		type : "POST",
+		dataType : "json",
+		beforeSend:function(xhr, opts){
+			if($("#id_personKorNm_"+idx).val().trim() == ""){
+				alert("검색할 이름을 입력하세요.");
+				xhr.abort(); // ajax 요청하지 않음.
+			}
+		},
+		success : function(data){
+			var str = "<div class=\"list-group\">";
+			if (data.total > 0){
+				$.each(data.records, function(i, el) {
+					str += "<button type=\"button\" onclick=\"javascript:setPerson("+idx+",'"+el.korNm+"','"+el.engNm+"','"+el.personId+"','"+$("input[name='scnId']").val()+"','"+$("input[name='vdoId']").val()+"');\" class=\"list-group-item list-group-item-action\">"+el.korNm+"("+el.engNm+","+el.personId+")</button>";
+				});
+			}else{
+				str += "<p>인명정보가 없습니다. 그래도 장면정보와 인물 간 매핑정보를 저장하겠습니까?</p>"
+				str += "<p><a href='javascript:setPerson("+idx+",\""+$("#id_personKorNm_"+idx).val()+"\",\""+$("#id_personEngNm_"+idx).val()+"\",null,\""+$("input[name='scnId']").val()+"\",\""+$("input[name='vdoId']").val()+"\");'>저장</a></p>";
+			}
+			str += "</div>";
+			
+			$("#id_personList_"+idx).html(str);
+		},
+		error : function ( request, status, error ){
+			alert("code : " + request.status + "\n" + "message : "+ request.responseText + "\n" + "error : " + error);
+		}
 	});
 }

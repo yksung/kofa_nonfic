@@ -284,11 +284,11 @@ function drawArk(_ARKID_) {
 	var str;
 
 	// 자동완성 접기/펼침 이미지 생성
-	str = "<div id=\"" + arkDownId.get(_ARKID_) + "\" style=\"position:absolute; display:block; cursor:pointer;\"><img id=\"" + imgDownId.get(_ARKID_) + "\" src=\"" + arkPath.get(_ARKID_) + "/img/arrow_auto.gif\" alt=\"자동완성펼치기\"></div>";
-	str += "<div id=\"" + arkUpId.get(_ARKID_) + "\" style=\"position:absolute; display:none; cursor:pointer;\"><img id=\"" + imgUpId.get(_ARKID_) + "\" src=\"" + arkPath.get(_ARKID_) + "/img/arrow_auto2.gif\" alt=\"자동완성접기\" ></div>";
+	str = "<div id=\"" + arkDownId.get(_ARKID_) + "\" style=\"position:absolute; display:block; cursor:pointer;\"><img id=\"" + imgDownId.get(_ARKID_) + "\" src=\"" + arkPath.get(_ARKID_) + "/images/arrow_auto.gif\" alt=\"자동완성펼치기\"></div>";
+	str += "<div id=\"" + arkUpId.get(_ARKID_) + "\" style=\"position:absolute; display:none; cursor:pointer;\"><img id=\"" + imgUpId.get(_ARKID_) + "\" src=\"" + arkPath.get(_ARKID_) + "/images/arrow_auto2.gif\" alt=\"자동완성접기\" ></div>";
 	
 	// 툴팁 이미지 생성
-	str += "<div id=\"tooltip01_"+_ARKID_+"\" style=\"position:absolute; display:none; cursor:pointer; z-index:999999;\"><img id=\"tooltipIcon01\" src=\"" + arkPath.get(_ARKID_) +"/img/tooltip_01.gif\"/></div>";
+	str += "<div id=\"tooltip01_"+_ARKID_+"\" style=\"position:absolute; display:none; cursor:pointer; z-index:999999;\"><img id=\"tooltipIcon01\" src=\"" + arkPath.get(_ARKID_) +"/images/tooltip_01.gif\"/></div>";
 
 	// 자동완성 결과 생성
 	str += "<div class=\"ark_wrap\" id=\"" + wrapId.get(_ARKID_) +"\">";

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -25,7 +24,7 @@ public class LoginController {
 	@Autowired
 	LoginService loginService;
 	
-	@RequestMapping(value = "/page", method = RequestMethod.GET)
+	@RequestMapping(value = "/page")
 	public ModelAndView displayLogin(HttpSession session, ModelAndView mav){
 		
 		if(session.getAttribute("loginInfo")!=null){
@@ -37,7 +36,7 @@ public class LoginController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/loginOk", method = RequestMethod.POST)
+	@RequestMapping(value = "/loginOk")
 	public void executeLogin(@ModelAttribute User loginInfo, HttpSession session, HttpServletResponse response){
 		boolean isValidUser = false;
 		try{

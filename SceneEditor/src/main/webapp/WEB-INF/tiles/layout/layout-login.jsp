@@ -9,15 +9,16 @@ response.setCharacterEncoding("UTF-8");
 <!DOCTYPE html >
 <html lang="ko">
  <head>
-  <meta charset="UTF-8" />
   <title>로그인</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <link rel="stylesheet" href="${contextRoot }/css/default.css" type="text/css"/>
+  <link rel="stylesheet" href="${contextRoot }/css/style_login.css" type="text/css"/>
   <!--[if lt IE 9]>
-	<script type="text/javascript" src="js/html5shiv.js"></script>
+	<script type="text/javascript" src="${contextRoot}/js/html5shiv.js"></script>
   <![endif]-->
   <script type="text/javascript" src="${contextRoot}/js/jquery-3.1.0.min.js"></script>
   <script type="text/javascript" src="${contextRoot}/js/editor.js"></script>
-  <link rel="stylesheet" type="text/css" href="${contextRoot }/css/style_login.css">
-  <link rel="stylesheet" type="text/css" href="${contextRoot }/css/default.css">
 </head>
 <body>
 <!-- skip -->

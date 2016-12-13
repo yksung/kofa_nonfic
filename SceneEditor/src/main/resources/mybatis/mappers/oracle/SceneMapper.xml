@@ -3,94 +3,106 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="SceneMapper">
 	<resultMap id="sceneList" type="scene">
-		<result property="recid" column="ROWNUM"/>
-		<result property="scnId" column="SCN_ID"/>
-		<result property="vdoId" column="VIDEO_ID"/>
-		<result property="vdoNm" column="VIDEO_NM"/>
-		<result property="scnStartCd" column="SCN_START_CD"/>
-		<result property="scnEndCd" column="SCN_END_CD"/>
-		<result property="updDtime" column="UPD_DTIME"/>
-		<result property="editor" column="EDITOR"/>
-		<result property="eventLClasCd" column="EVENT_LCLS"/>
-		<result property="eventSClasCd" column="EVENT_SCLS"/>
-		<result property="eventNm" column="EVENT_NM"/>
-		<result property="eventPrd" column="EVENT_PRD"/>
-		<result property="domAbr" column="DOM_ABR"/>
-		<result property="cntryCd" column="CNTRY_CD"/>
-		<result property="eventPlace" column="EVENT_PLACE"/>
-		<result property="realPlace" column="REAL_PLACE"/>
-		<result property="latitude" column="LATITUDE"/>
-		<result property="longitude" column="LONGITUDE"/>
-		<result property="celebrity1" column="CELEBRITY1"/>
-		<result property="celebrity2" column="CELEBRITY2"/>
-		<result property="celebrity3" column="CELEBRITY3"/>
-		<result property="description" column="DESCRIPTION"/>
-		<result property="narration" column="NARRATION"/>
-		<result property="subtitles" column="SUBTITLES"/>
-		<result property="summary" column="SUMMARY"/>
-		<result property="keyword" column="KEYWORD"/>
-		<result property="note" column="NOTE"/>
+		<result property="recid" column="recid"/>
+		<result property="scnId" column="scnId"/>
+		<result property="vdoId" column="vdoId"/>
+		<result property="vdoNm" column="vdoNm"/>
+		<result property="scnStartCd" column="scnStartCd"/>
+		<result property="scnEndCd" column="scnEndCd"/>
+		<result property="updDtime" column="updDtime"/>
+		<result property="editor" column="editor"/>
+		<result property="eventLClasCd" column="eventLClasCd"/>
+		<result property="eventSClasCd" column="eventSClasCd"/>
+		<result property="eventNm" column="eventNm"/>
+		<result property="eventPrd" column="eventPrd"/>
+		<result property="domAbr" column="domAbr"/>
+		<result property="cntryCd" column="cntryCd"/>
+		<result property="eventPlace" column="eventPlace"/>
+		<result property="realPlace" column="realPlace"/>
+		<result property="latitude" column="latitude"/>
+		<result property="longitude" column="longitude"/>
+		<result property="celebrity1" column="celebrity1"/>
+		<result property="celebrity2" column="celebrity2"/>
+		<result property="celebrity3" column="celebrity3"/>
+		<result property="description" column="description"/>
+		<result property="narration" column="narration"/>
+		<result property="subtitles" column="subtitles"/>
+		<result property="summary" column="summary"/>
+		<result property="keyword" column="keyword"/>
+		<result property="note" column="note"/>
 	</resultMap>
 	
-	<select id="getSceneList" resultMap="sceneList" parameterType="String">
-	 SELECT	ROWNUM
-	 	,trim(SCN_ID) as SCN_ID
-		,trim(VIDEO_ID) as VIDEO_ID
-		,(select titles from video where video_id=A.VIDEO_ID) as VIDEO_NM
-		,SCN_START_CD
-		,SCN_END_CD
-		,UPD_DTIME
-		,EDITOR
-		,EVENT_LCLS
-		,EVENT_SCLS
-		,EVENT_NM
-		,trim(EVENT_PRD) as EVENT_PRD
-		,trim(DOM_ABR) as DOM_ABR
-		,trim(CNTRY_CD) as CNTRY_CD
-		,EVENT_PLACE
-		,REAL_PLACE
-		,LATITUDE
-		,LONGITUDE
-		,CELEBRITY1
-		,CELEBRITY2
-		,CELEBRITY3
-		,DESCRIPTION
-		,NARRATION
-		,SUBTITLES
-		,SUMMARY
-		,KEYWORD
-		,NOTE
-	   FROM SCENE_MANAGE A
-	   WHERE VIDEO_ID = #{vdoId}
+	<select id="getSceneList" resultMap="sceneList" parameterType="vo">
+	select * from (
+		SELECT row_number() over (order by
+			<choose>
+			<when test='sort !=null'>			
+				<foreach collection="sort" item="sortMap" separator=",">
+				${sortMap.field} ${sortMap.direction}
+				</foreach>
+			</when><otherwise>
+				to_number(substr(scnStartCd, 0, instr(scnStartCd, ':')-1)) asc, to_number(substr(scnStartCd, instr(scnStartCd, ':')+1)) asc
+			</otherwise></choose>
+		) as recid, X.* from (
+			select trim(SCN_ID) as scnId
+				 , trim(VIDEO_ID) as vdoId
+				 , (select MUL_TITLE from MULTI_NEW where MUL_ID=A.VIDEO_ID) as vdoNm
+				 , SCN_START_CD as scnStartCd
+				 , SCN_END_CD as scnEndCd
+				 , UPD_DTIME as updDtime
+				 , EDITOR as editor
+				 , EVENT_LCLS as eventLClasCd
+				 , EVENT_SCLS as eventSClasCd
+				 , EVENT_NM as eventNm
+				 , trim(EVENT_PRD) as eventPrd
+				 , trim(DOM_ABR) as domAbr
+				 , trim(CNTRY_CD) as cntryCd
+				 , EVENT_PLACE as eventPlace
+				 , REAL_PLACE as realPlace
+				 , LATITUDE as latitude
+				 , LONGITUDE as longitude
+				 , CELEBRITY1 as celebrity1
+				 , CELEBRITY2 as celebrity2
+				 , CELEBRITY3 as celebrity3
+				 , DESCRIPTION as description
+				 , NARRATION as narration
+				 , SUBTITLES as subtitles
+				 , SUMMARY as summary
+				 , KEYWORD as keyword
+				 , NOTE as note
+		   FROM SCENE_MANAGE A
+		   WHERE VIDEO_ID = #{vdoId}
+		) X
+	)
 	 </select>
 	 <select id="findScene" parameterType="vo" resultMap="sceneList">
-	 SELECT ROWNUM
-	 	,trim(SCN_ID) as SCN_ID
-		,trim(VIDEO_ID) as VIDEO_ID
-		,(select titles from video where video_id=A.VIDEO_ID) as VIDEO_NM
-		,SCN_START_CD
-		,SCN_END_CD
-		,UPD_DTIME
-		,EDITOR
-		,EVENT_LCLS
-		,EVENT_SCLS
-		,EVENT_NM
-		,trim(EVENT_PRD) as EVENT_PRD
-		,trim(DOM_ABR) as DOM_ABR
-		,trim(CNTRY_CD) as CNTRY_CD
-		,EVENT_PLACE
-		,REAL_PLACE
-		,LATITUDE
-		,LONGITUDE
-		,CELEBRITY1
-		,CELEBRITY2
-		,CELEBRITY3
-		,DESCRIPTION
-		,NARRATION
-		,SUBTITLES
-		,SUMMARY
-		,KEYWORD
-		,NOTE
+	 SELECT ROWNUM as recid
+	 	,trim(SCN_ID) as scnId
+		,trim(VIDEO_ID) as vdoId
+		,(select MUL_TITLE from MULTI_NEW where MUL_ID=A.VIDEO_ID) as vdoNm
+		,SCN_START_CD as scnStartCd
+		,SCN_END_CD as scnEndCd
+		,UPD_DTIME as updDtime
+		,EDITOR as editor
+		,EVENT_LCLS as eventLClasCd
+		,EVENT_SCLS as eventSClasCd
+		,EVENT_NM as eventNm
+		,trim(EVENT_PRD) as eventPrd
+		,trim(DOM_ABR) as domAbr
+		,trim(CNTRY_CD) as cntryCd
+		,EVENT_PLACE as eventPlace
+		,REAL_PLACE as realPlace
+		,LATITUDE as latitude
+		,LONGITUDE as longitude
+		,CELEBRITY1 as celebrity1
+		,CELEBRITY2 as celebrity2
+		,CELEBRITY3 as celebrity3
+		,DESCRIPTION as description
+		,NARRATION as narration
+		,SUBTITLES as subtitles
+		,SUMMARY as summary
+		,KEYWORD as keyword
+		,NOTE as note
 	   FROM SCENE_MANAGE A
 	   <where>
 	   <choose>

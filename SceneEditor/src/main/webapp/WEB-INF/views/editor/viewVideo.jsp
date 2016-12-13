@@ -3,8 +3,8 @@
 <link rel="stylesheet" type="text/css" href="${contextRoot}/css/style02.css">
 <c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
 <c:set var="vdoId" value="${empty vdoId ? 0:vdoId }"/>
-<c:set var="page" value="${empty page ? 0:page }"/>
-<c:set var="pageSize" value="${empty pageSize ? 0:pageSize }"/>
+<c:set var="offset" value="${empty offset ? 0:offset }"/>
+<c:set var="limit" value="${empty limit ? 0:limit }"/>
 <script>
 var localSettingsSI = {
 	    "locale"         : "si-SI",
@@ -23,23 +23,27 @@ var localSettingsSI = {
 var config = {
 	grid : { 
 	    name   : 'videoGrid',
-        url:'${contextRoot}/editor/getVideoListAsJson?vdoId=${vdoId}&page=${page}&pageSize=${pageSize}',          
+        url:'${contextRoot}/editor/getVideoListAsJson',
+        postData: {
+        	vdoId : ${vdoId}
+        },
+        autoLoad: true,
 	    show: { 
             toolbar: true,
             footer: true,
         },
-        //multiSelect: false,         
-        //reorderColumns: false,      
+        multiSelect: true,         
+        reorderColumns: false,      
         msgRefresh: 'Loading...',
-        //fixedBody: true,
-        //fixedRecord : true,
+        fixedBody: true,
+        fixedRecord : true,
         msgAJAXerrror : 'Uncaught AJAX error',
-        limit : 50,
+        limit : 100,
         offset: 0,
         searches: [                
             { field: 'vdoTitle', caption: '제목', type: 'text' },
+            { field: 'vdoType', caption: '유형', type: 'text' },
             { field: 'language', caption: '언어', type: 'text' },
-            { field: 'productionDate', caption: '제작일시', type: 'date' },
         ],
     	columns:[                
 	        { field: 'recid', caption: '순서', size: '2%', attr: 'align=center'},
@@ -62,38 +66,30 @@ var config = {
 	}
 };
 
-function refreshGrid(auto) {
-	w2ui['videoGrid'].load("${contextRoot}/editor/getVideoListAsJson?vdoId=${vdoId}&page=${page}&pageSize=${pageSize}");
-    w2ui['videoGrid'].autoLoad = auto;
-    w2ui['videoGrid'].skip(0);    
-	w2ui['videoGrid'].refresh();
-}
-
 $(function(){
 	$('#id_videoGrid').w2grid(config.grid);
 	
-	w2ui['videoGrid'].on('click', function(target, eventData){
-		console.log("ddd!!!");
+	$("#id_viewOnlyHavingScene").click(function(){
+		if($("#id_viewOnlyHavingScene").is(":checked")){		
+			w2ui['videoGrid'].postData['viewOnlyHavingScene'] = $(this).val();
+		}else{
+			w2ui['videoGrid'].postData['viewOnlyHavingScene'] = '';
+		}
+		w2ui['videoGrid'].reload();
 	});
 });
 
 </script>
 <!-- content -->
 <section class="content" id="content">
+	<form name="viewVideoForm" id="id_viewVideoForm" action="/editor/viewVideo" method="POST">
 	<div class="opt">
-	   	<ul>
-	   		<li>
-	   			<select id="id_searchField">
-					<option>제목</option>
-                	<option>내용</option>
-				</select>
-			</li>
-			<li><input id="" type="text" /></li>
-            <li><a class="btn_search" href="#">검색</a></li>
-		</ul>
-		<%-- <a class="btn_item" href="${contextRoot }/manager/">항목관리</a> --%>
+		<a class="btn_item" href="${contextRoot }/manager/editEvent">항목관리</a>
 	</div> 
-	<div class="sub_tit">영상조회 <input type="checkbox" id="autoLoad" onclick="refreshGrid(this.checked)" checked></div>
+	<div class="sub_tit">영상조회
+		<span><label for="id_viewOnlyHavingScene">장면정보 존재하는 영상만 보기&nbsp;&nbsp;<input type="checkbox" id="id_viewOnlyHavingScene" name="viewOnlyHavingScene" value="y"/></label></span>
+	</div> 
 	<article class="tbl_area" id="id_videoGrid"></article>
+	</form>
 </section>
 <!-- //content -->

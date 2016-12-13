@@ -1,6 +1,16 @@
 <%@ include file="/WEB-INF/tiles/includes.jsp"
 %><%@ page contentType="text/html; charset=utf-8"%>
 <c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
+<fmt:parseNumber var="strVdoIdx" value="${fn:indexOf(vdoFilePath, 'vod') }"/>
+<fmt:parseNumber var="vdoFilePathLen" value="${fn:length(vdoFilePath) }"/>
+<script>
+console.log('vdoFilePath : ${vdoFilePath}');
+console.log('strVdoIdx : ${strVdoIdx}');
+console.log('vdoFilePathLen : ${vdoFilePathLen}');
+</script>
+<c:set var="vdoFilePathReal" value="${fn:substring(vdoFilePath, strVdoIdx-1, vdoFilePathLen )}"/>
+<fmt:parseNumber var="scnStartMin" value="${fn:trim(strScnStartMin) }"/>
+<fmt:parseNumber var="scnStartSec" value="${fn:trim(strScnStartSec) }"/>
 <link rel="stylesheet" type="text/css" href="${contextRoot}/css/style01.css">
 <script type="text/javascript" src="${contextRoot}/js/beta.fix.js"></script>
 <script type="text/javascript" src="${contextRoot}/js/ark_function.js"></script>
@@ -10,26 +20,28 @@
 var browserType = getBrowserType();
 $(document).ready(function(){
 	var str = "";
-	if(browserType.substring(0,2) == 'IE'){
-		str += '<object id="mediaplayer" width="192" height="146" classid="clsid:22d6f312-b0f6-11d0-94ab-0080c74c7e95"';
-		str += 'standby="loading windows media player components..." type="application/x-oleobject">';
-		str += '	<param name="filename" value="http://www.mediacollege.com/video/format/windows-media/streaming/videofilename.wmv">';
-		str += '	<param name="showcontrols" value="false">';
-		str += '	<param name="showstatusbar" value="false">';
-		str += '	<param name="showdisplay" value="false">';
-		str += '	<param name="autostart" value="true">';
-		str += '	<embed type="application/x-mplayer2" src="http://www.mediacollege.com/video/format/windows-media/streaming/videofilename.wmv" name="mediaplayer"	width="192" height="146" showcontrols="0" showstatusbar="0" showdisplay="0" autostart="1"> </embed>';
-		str += '</object>';
-		
-		$("#id_vdoPlayer").html(str);
-	}else{
-		str += '<a id="id_playerButton" href="#">';
-		str += '<img src="${contextRoot}/images/showme.png" />';
-		str += '</a>';
-		
-		$("#id_vdoPlayer").html(str);
-	}
+	
+	str += '<a id="id_playerButton" href="#">';
+	str += '<img src="${contextRoot}/images/showme.png" />';
+	str += '</a>';
+	
+	$("#id_vdoPlayer").html(str);
+	
+	$("body").click(function(evt){
+		var target = $(evt.target);
+		if(target.parent().attr("id")=='id_playerButton' || target.attr("id")=='id_playerButton'){
+			var videoFilePath = '${vdoFilePathReal}';
+			if(videoFilePath.lastIndexOf('mp4')==videoFilePath.length-3){
+				console.log("scnStartMin : ${scnStartMin} / scnStartSec : ${scnStartSec}" );
+				$f("id_vdoPlayer", playerImg, playerConfig).load();
+			}else{
+				$("#id_vdoPlayer").html('<span>mp4 형식의 영상이 아닙니다.</span>');
+			}
+		}
+	});
+
 });
+
 </script>
 <section class="content">
 	<article class="vdo_area" id="vdo_area">
@@ -37,12 +49,14 @@ $(document).ready(function(){
         	<h2>제목 : <strong>${ sceneInfo.vdoNm }</strong></h2>
         	<!-- <a href="#">영상불러오기</a> -->
 		</header>
-        <div class="vdo_player" id="id_vdoPlayer"></div>
+        <div class="vdo_player" id="id_vdoPlayer">
+        </div>
 	</article>
     
 	<article class="info_area" id="info_area">
       	<header>
       		<h2>메타입력 정보</h2>
+      		<c:if test="${ isValidUser }">
          	<a href="${contextRoot }/editor/viewScene?vdoId=${sceneInfo.vdoId}">목록보기</a>
             <ul>
              	<c:choose>
@@ -62,6 +76,7 @@ $(document).ready(function(){
              	</c:otherwise>
              	</c:choose>
 			</ul>
+			</c:if>
 		</header>
 		<form name="thisSceneForm" action="${contextRoot }/editor/saveScene" method="POST">
          	<input type="hidden" name="scnId" value="${fn:trim(sceneInfo.scnId) }"/>
@@ -69,9 +84,6 @@ $(document).ready(function(){
 			<input type="hidden" name="editor" value="<%=userName %>"/>
 			<c:set var="strScnStartMin" value="${fn:substring(sceneInfo.scnStartCd, 0, 3) }"/>
 			<c:set var="strScnStartSec" value="${fn:substring(sceneInfo.scnStartCd, 4, 6) }"/>
-			<fmt:parseNumber var="scnStartMin" value="${strScnStartMin }"/>
-			<fmt:parseNumber var="scnStartSec" value="${strScnStartSec }"/>
-						
          	<table summary="메타정보를 입력할 수 있는 양식">
                  <caption>메타입력정보</caption>
                  <colgroup>
@@ -186,12 +198,42 @@ $(document).ready(function(){
 						<th>인물명<a href="javascript:cloneElement('li', 'celebrity')" id="id_celb_add"><img src="${contextRoot}/images/btn_plus.png" alt="인물 추가" /></th>
 						<td id="id_celebrity">
 							<ul class="horizontal">
-								<c:forTokens var="celebrityName" items="${empty sceneInfo.celebrity1 ? ' ':sceneInfo.celebrity1 }" delims="@^@" varStatus="status">
-								<li name="celebrity">
-									<input name="celebrity1" type="text" placeholder="유명인만 기재" value="${fn:trim(celebrityName) }"/>
+								<c:if test="${not empty scenePersonMapping }">
+								<c:forEach var="celebrity" items="${empty scenePersonMapping ? ' ':scenePersonMapping }" varStatus="status">
+								<li name="celebrity" id="id_celebrity_${status.index }">
+									<input name="celebrityNm" id="id_celebrityNm_${status.index }" type="text"
+											placeholder="유명인만 기재" value="${empty celebrity.korNm? '': fn:trim(celebrity.korNm) }(${empty celebrity.personId? '': fn:trim(celebrity.personId) })"/>
 									<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a>
+									<!-- 인물명팝업 -->
+									<div class="layer" id="layer_addcelebrity_${status.index }">
+										<div class="bg"></div>
+							            <div class="pop-layer" id="id_addcelebrity_${status.index }">
+							            	<p>사건 추가<a href="javascript:layer_close('id_addcelebrity_${status.index }')"><img src="${contextRoot }/images/icon_close01.png" alt="닫기" /></a></p>
+							                <input id="id_personKorNm_${status.index }" name="personKorNm" type="text" placeholder="인물명(한글)" value=""/>
+											<input type="button" name="searchPerson" id="id_searchPerson_${status.index }" value="검색">
+											<div id="id_personList_${status.index }"></div>
+										</div>
+									</div>
+								<!-- //인물명팝업 --> 
 								</li>
-								</c:forTokens>
+								</c:forEach>
+								</c:if>
+								<c:if test="${empty scenePersonMapping }">
+								<li name="celebrity" id="id_celebrity_0">
+									<input name="celebrityNm" id="id_celebrityNm_0" type="text" placeholder="유명인만 기재" value=""/>
+									<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a>
+									<!-- 인물명팝업 -->
+									<div class="layer" id="layer_addcelebrity_0">
+										<div class="bg"></div>
+							            <div class="pop-layer" id="id_addcelebrity_0">
+							            	<p>사건 추가<a href="javascript:layer_close('id_addcelebrity_0')"><img src="${contextRoot }/images/icon_close01.png" alt="닫기" /></a></p>
+							                <input id="id_personKorNm_0" name="personKorNm" type="text" placeholder="인물명(한글)" value=""/>
+											<input type="button" name="searchPerson" id="id_searchPerson_0" value="검색">
+											<div class="button-list" id="id_personList_0"></div>
+										</div>
+									</div>
+								</li>
+								</c:if>
 							</ul>
 						</td>
 					</tr>
@@ -221,11 +263,13 @@ $(document).ready(function(){
 					</tr>
 				</tbody>
 			</table>
+			<c:if test="${ isValidUser }">
             <ul class="btn_area">
 				<li><a class="btn_save" href="javascript:saveScene();">저장</a></li>
-				<li><a class="btn_check" href="#">검증</a></li>
+				<!-- <li><a class="btn_check" href="#">검증</a></li> -->
 				<li><a class="btn_del" href="javascript:deleteScene('${fn:trim(sceneInfo.vdoId)}', '${fn:trim(sceneInfo.scnId) }');">삭제</a></li>
             </ul>
+            </c:if>
 			<!-- 스크랩팝업 -->
 			<div class="map_pop">
 				<p>지도검색<a href="#"><img src="${contextRoot}/images/icon_close01.png" alt="닫기" class="popup_close"/></a></p>
@@ -246,7 +290,7 @@ $(document).ready(function(){
 					</tr>
 				</table>
 			</div>
-			<!-- //스크랩팝업 --> 
+			<!-- //스크랩팝업 -->
 		</form>
 	</article>
 </section>
@@ -291,7 +335,7 @@ var playerImg = "http://releases.flowplayer.org/swf/flowplayer-3.2.18.swf";
 var playerConfig = {
 
     clip: {
-        url: 'mp4:4.19.mp4', // ${sceneInfo.vdoId}.mp4'
+        url: 'mp4:${vdoFilePathReal}', // ${sceneInfo.vdoId}.mp4'
         scaling: 'fit',
         // configure clip to use hddn as our provider, referring to our rtmp plugin
         provider: 'hddn',
@@ -308,7 +352,7 @@ var playerConfig = {
             url: "flowplayer.rtmp-3.2.13.swf",
 
             // netConnectionUrl defines where the streams are found
-            netConnectionUrl: 'rtmp://localhost:1935'
+            netConnectionUrl: 'rtmp://210.124.107.21'
         }
     },
     canvas: {
@@ -316,11 +360,6 @@ var playerConfig = {
         backgroundColor: "#000"
     }
 };
-
-$("body").click("#id_playerButton", function(evt){
-	console.log("scnStartMin : ${scnStartMin} / scnStartSec : ${scnStartSec}" );
-	$f("id_vdoPlayer", playerImg, playerConfig).load();
-});
 </script>
 </body>
 </html>

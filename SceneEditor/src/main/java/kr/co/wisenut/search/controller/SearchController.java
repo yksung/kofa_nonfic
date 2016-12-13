@@ -1,27 +1,25 @@
 package kr.co.wisenut.search.controller;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
-import kr.co.wisenut.search.model.ArkVO;
+import kr.co.wisenut.search.model.SearchForm;
+import kr.co.wisenut.search.service.SearchService;
 import kr.co.wisenut.util.StringUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Handles requests for the application home page.
@@ -31,25 +29,60 @@ public class SearchController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
 	
-	private static final String MANAGER_IP = "127.0.0.1";
-	private static final String MANAGER_PORT = "7800";
+	@Autowired
+	SearchService searchService;
+	
+	@RequestMapping(value = "/search")
+	public ModelAndView search(@ModelAttribute SearchForm form, ModelAndView mav){
+		mav.setViewName("search/search");
+		
+		try {
+			//if(form.getQuery() != null && !"".equals(form.getQuery())){
+				searchService.search(form);
+				
+				HashMap<String,String> categoryGroupby = new HashMap<String,String>();
+				String strCategoryGroupby = "";
+				if(form.isCategorySearch() && null != form.getCategoryGroupby() && !"".equals(form.getCategoryGroupby()) ){
+					String[] arrCategoryGroupby = form.getCategoryGroupby().split("!");
+					for(String cg : arrCategoryGroupby){
+						categoryGroupby.put(cg.split(":")[0], cg.split(":")[1]);
+					}
+					strCategoryGroupby = form.getCategoryGroupby();
+				}else{
+					categoryGroupby = searchService.getCategoryGroupby();
+					Iterator<String> iter = categoryGroupby.keySet().iterator();
+					StringBuffer cateBf = new StringBuffer();
+					while(iter.hasNext()){
+						String cate = iter.next();
+						cateBf.append(cate+":"+categoryGroupby.get(cate)+"!");
+					}
+					strCategoryGroupby = cateBf.toString().replaceAll("!$", "");
+				}
+				
+				mav.addObject("query", form.getQuery());
+				mav.addObject("sort", form.getSort());
+				mav.addObject("resultList", searchService.getResultList());
+				mav.addObject("categorySearch", form.isCategorySearch());
+				mav.addObject("categoryField", form.getCategoryField());
+				mav.addObject("categoryQuery", form.getCategoryQuery());
+				mav.addObject("categoryResult", categoryGroupby);
+				mav.addObject("strCategoryGroupby", strCategoryGroupby);
+				mav.addObject("searchField", form.getSearchField());
+				mav.addObject("totalCount", searchService.getTotalResultCount());
+				mav.addObject("paging", searchService.getPageLinks(form.getPage(), searchService.getTotalResultCount(), 10, 10));
+			//}
+		} catch (Exception e) {
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
+		return mav;
+	}
 	
 	@RequestMapping(value = "/ark/event", method = RequestMethod.POST)
 	public void getEventArk(@RequestParam String query, HttpServletResponse response) {
 		
-		int timeout = 1000;	// 1000분의 500초 : 0.5초이내에 응답이 없는 경우 연결 종료
-		String convert = "fw";
-		String target = "event";
-		String charset = "UTF-8";
-		String datatype = "json";
-		//System.out.println("--> Query:" + query + "/ datatype:" + datatype);
-
 		try {
-			query = URLEncoder.encode(query, "UTF-8");
-			String url = "http://" + MANAGER_IP + ":" + MANAGER_PORT + "/manager/WNRun.do";
-			String param = "query=" + query + "&convert=" + convert + "&target=" + target + "&charset=" + charset + "&datatype=" + datatype;
-			
-			response.getWriter().print(getHtmls(url, param, timeout));
+			response.getWriter().print(searchService.getArkHtmlResult(query, "event"));
 		} catch (UnsupportedEncodingException e) {
 			logger.error(StringUtil.getStackTrace(e));
 		} catch (IOException e) {
@@ -58,47 +91,17 @@ public class SearchController {
 
 	}
 	
-	public String getHtmls(String receiverURL, String parameter, int timeout) {
-		StringBuffer receiveMsg = new StringBuffer();
-		HttpURLConnection uc = null;
-		int errorCode = 0;
+	@RequestMapping(value = "/ark/person", method = RequestMethod.POST)
+	public void getPersonArk(@RequestParam String query, HttpServletResponse response) {
+		
 		try {
-			URL servletUrl = new URL(receiverURL);
-			uc = (HttpURLConnection) servletUrl.openConnection();
-			uc.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-			uc.setRequestMethod("POST");
-			uc.setDoOutput(true);
-			uc.setDoInput(true);
-			uc.setUseCaches(false);
-			uc.setDefaultUseCaches(false);
-			DataOutputStream dos = new DataOutputStream (uc.getOutputStream());
-			dos.write(parameter.getBytes());
-			dos.flush();
-			dos.close();
-			
-			// -- Network error check
-			//System.out.println("[URLConnection Response Code] " + uc.getResponseCode());
-			if (uc.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				String currLine = "";
-                // UTF-8. ..
-                BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream(), "UTF-8"));
-                while ((currLine = in.readLine()) != null) {
-                	receiveMsg.append(currLine).append("\r\n");
-                }
-                in.close();
-            } else {
-                  errorCode = uc.getResponseCode();
-                  return receiveMsg.toString();
-             }
-       } catch(Exception ex) {
-    	   logger.error("[SearchController][getHtmls] errorCode : " + errorCode);
-    	   logger.error(StringUtil.getStackTrace(ex));
-       } finally {
-            uc.disconnect();
-       }
+			response.getWriter().print(searchService.getArkHtmlResult(query, "person"));
+		} catch (UnsupportedEncodingException e) {
+			logger.error(StringUtil.getStackTrace(e));
+		} catch (IOException e) {
+			logger.error(StringUtil.getStackTrace(e));
+		}
 
-       //System.out.println(receiveMsg.toString());
-       return receiveMsg.toString();
 	}
 }
 

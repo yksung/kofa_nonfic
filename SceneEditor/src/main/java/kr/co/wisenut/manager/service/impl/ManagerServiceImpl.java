@@ -26,4 +26,16 @@ public class ManagerServiceImpl implements ManagerService {
 		
 		return result;
 	}
+	
+	@Override
+	public int editEvent(Event event) throws Exception{
+		int result = managerDao.editEvent(event);
+		return result;
+	}
+	
+	@Override
+	public int deleteEvent(Event event) throws Exception{
+		int result = managerDao.deleteEvent(event);
+		return result;
+	}
 }

@@ -48,4 +48,40 @@ public class ManagerDaoImpl implements ManagerDao {
 		
 		return resultCount;
 	}
+	
+	@Override
+	public int editEvent(Event event){
+		SqlSession session = sessionService.getSession();
+		
+		int resultCount = 0;
+		try{
+			resultCount = session.update("EntryMapper.updateEvent", event);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		session.commit(false);
+		logger.info("update count : " + resultCount);
+		
+		return resultCount;
+	}
+	
+	@Override
+	public int deleteEvent(Event event){
+		SqlSession session = sessionService.getSession();
+		
+		int resultCount = 0;
+		try{
+			resultCount = session.delete("EntryMapper.deleteEvent", event);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		session.commit(false);
+		logger.info("update count : " + resultCount);
+		
+		return resultCount;
+	}
 }

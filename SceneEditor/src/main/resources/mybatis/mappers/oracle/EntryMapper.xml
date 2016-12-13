@@ -20,7 +20,29 @@
 		<result property="clasNm" column="CLAS_NM"/>
 		<result property="upperClas" column="UPPER_CLAS"/>
 	</resultMap>
+	<resultMap id="person" type="person">
+		<result property="recid" column="CNT"/>
+		<result property="personId" column="PERSON_ID"/>
+		<result property="korNm" column="PERSON_KORNM"/>
+		<result property="engNm" column="PERSON_ENGNM"/>
+		<result property="nationalClss" column="NATIONAL_CLSS"/>
+		<result property="personField" column="PERSONFIELD"/>
+	</resultMap>
 	
+	<select id="personList" resultMap="person">
+	 select ROWNUM as CNT
+	 	  , PERSON_ID
+	 	  , KORNM
+	 	  , ENGNM
+	 	  , NATIONAL_CLSS
+	 	  , PERSONFIELD
+	   from PERSON
+	<where>
+		<if test="_parameter != null"><![CDATA[
+	 	 personfield is null and (KORNM like '%'||#{_parameter}||'%' or ENGNM like '%'||#{_parameter}||'%')
+	 	]]></if>
+	</where>
+	</select>
 	<select id="periodList" resultMap="period">
 	 select code, code_nm from codeinfo where div_id = 'S01'
 	</select>
@@ -71,4 +93,61 @@
 	 	#{eventDate}
 	)
 	</insert>
+	<update id="updateEvent" useGeneratedKeys="true" parameterType="eventCategory">
+	update CODEINFO
+	   set CODE_NM = #{eventNm},
+	 	   ADIT_INFO1 = #{eventDate}
+	 where DIV_ID = 'S02' and CODE = #{eventCd, jdbcType=VARCHAR}
+	</update>
+	<delete id="deleteEvent" parameterType="eventCategory">
+	delete from CODEINFO
+	 where DIV_ID = 'S02' and CODE = #{eventCd, jdbcType=VARCHAR}
+	</delete>
+	
+	<!-- 인물명-장면정보 매핑 -->
+	<select id="getScenePersonMapping" resultMap="person" parameterType="vo">
+	 select PERSON_KORNM
+	 	  , PERSON_ENGNM
+	 	  , PERSON_ID
+	   from SCENE_PERSON_MAPPING
+	  where SCN_ID = #{scnId}
+	</select>
+	<insert id="scenePersonMapping" useGeneratedKeys="true" parameterType="vo">
+	<choose>
+		<when test="personId != null">
+		insert into SCENE_PERSON_MAPPING (
+			SCN_ID,
+			VIDEO_ID,
+		 	PERSON_ID,
+		 	PERSON_KORNM,
+		 	PERSON_ENGNM
+		) VALUES (
+			#{scnId},
+			#{vdoId},
+			#{personId},
+			#{personKorNm},
+			#{personEngNm}
+		)
+		</when>
+		<otherwise>
+		insert into SCENE_PERSON_MAPPING (
+			SCN_ID,
+			VIDEO_ID,
+		 	PERSON_KORNM,
+		 	PERSON_ENGNM
+		) VALUES (
+			#{scnId},
+			#{vdoId},
+			#{personKorNm},
+			#{personEngNm}
+		)
+		</otherwise>
+	</choose>
+	</insert>
+	
+	<delete id="deletePersonFromMapping" parameterType="person">
+	delete from SCENE_PERSON_MAPPING
+	 where SCN_ID = #{scnId} and PERSON_KORNM= #{personKorNm}
+	</delete>
+	<!-- // 인물명-장면정보 매핑 -->
 </mapper>

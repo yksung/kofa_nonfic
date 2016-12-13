@@ -1,7 +1,5 @@
 package kr.co.wisenut;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +34,7 @@ public class HomeController {
 //		model.addAttribute("serverTime", formattedDate );
 		
 		if(request.getSession().getAttribute("loginInfo")!=null){
-			return "redirect:/editor/viewVideo?page=0&pageSize=10";
+			return "redirect:/editor/viewVideo";
 		}else{			
 			return "redirect:/login/page";
 		}

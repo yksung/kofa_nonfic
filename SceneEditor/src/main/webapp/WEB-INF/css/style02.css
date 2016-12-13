@@ -26,6 +26,7 @@
 .opt  .btn_item {float:right;width:55px; height:25px; line-height:23px;border:1px solid #5f5f5f; color:#fff; background-color:#666;  font-weight:500;cursor:pointer;text-align:center; display:inline-block;border-radius:2px;}
 
 .sub_tit{width:916px; margin:0 auto;padding:6px 10px; height:27px;line-height:27px; font-size:15px; font-weight:700; background-color:#dfe9f5; border:1px solid #cedbea}
+.sub_tit span { font-size:12px; font-weight:normal; color:#888; }
 .sub_tit strong{color:#0754b1;}
 .sub_tit ul{float:right}
 .sub_tit ul li{float:left}

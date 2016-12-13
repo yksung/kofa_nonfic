@@ -1,10 +1,24 @@
 package kr.co.wisenut.editor.model;
 
 public class Person {
+	private int recid;
+	private String personId;
 	private String korNm;
 	private String engNm;
 	private String nationalClss;
 	private String personField;
+	public int getRecid() {
+		return recid;
+	}
+	public void setRecid(int recid) {
+		this.recid = recid;
+	}
+	public String getPersonId() {
+		return personId;
+	}
+	public void setPersonId(String personId) {
+		this.personId = personId;
+	}
 	public String getKorNm() {
 		return korNm;
 	}

@@ -29,7 +29,7 @@
 			<beans:bean class="kr.co.wisenut.login.interceptor.LoginInterceptor"/>
 		</interceptor>
 		<interceptor>
-			<mapping path="/editor/*" />
+			<mapping path="/editor/view*" />
 			<beans:bean class="kr.co.wisenut.login.interceptor.LoginInterceptor"/>
 		</interceptor>
 	</interceptors>
@@ -52,5 +52,7 @@
 	</beans:bean>
 	
 	<context:component-scan base-package="kr.co.wisenut" />
-	
+	<beans:bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	    <beans:property name="location" value="classpath:search.properties" />
+	</beans:bean>
 </beans:beans>

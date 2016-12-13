@@ -54,17 +54,14 @@ public class EditorServiceImpl implements EditorService {
 		
 		StringBuffer jsonString = new StringBuffer();
 		try{
-			if(vo.getVdoId()!=0 && vo.getPageSize()!=0){
-				videoList = sceneDao.goBackToVideoList(vo);
-			}else{				
-				videoList = sceneDao.getVideoList(vo);
-			}
-			
-			//response.getWriter().print(jsonString.replaceAll("\\{\"", "\\{").replaceAll("\":", ":").replaceAll(",\"", ","));
+			vo.setPage(vo.getOffset());
+			vo.setPageSize(vo.getOffset()+vo.getLimit());
+			videoList = sceneDao.getVideoList(vo);
+
 			jsonString.append("{");
 			jsonString.append(QUOTE+"status"+QUOTE).append(":").append(QUOTE+"success"+QUOTE);
 			jsonString.append(",");
-			jsonString.append(QUOTE+"total"+QUOTE).append(":").append(videoList.size());
+			jsonString.append(QUOTE+"total"+QUOTE).append(":").append(sceneDao.getVideoTotalCount(vo));
 			jsonString.append(",");
 			jsonString.append(QUOTE+"records"+QUOTE).append(":").append(mapper.writeValueAsString(videoList));
 			jsonString.append("}");
@@ -73,5 +70,44 @@ public class EditorServiceImpl implements EditorService {
 		}
 		
 		return jsonString.toString();
+	}
+	
+	@Override
+	public String getVideoFilePath(FormVO vo) throws Exception {
+		String filePath = "";
+		
+		try{
+			filePath = sceneDao.findVideoFilePath(vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
+		return filePath;
+	}
+	
+	@Override
+	public int scenePersonMapping(FormVO vo) throws Exception {
+		int successfullyMappedCount = 0;
+		
+		try{
+			successfullyMappedCount = sceneDao.scenePersonMapping(vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
+		return successfullyMappedCount;
+	}
+	
+	@Override
+	public int deletePersonFromMapping(FormVO vo) throws Exception {
+		int successfullyDeleteCount = 0;
+		
+		try{
+			successfullyDeleteCount = sceneDao.deletePersonFromMapping(vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
+		return successfullyDeleteCount;
 	}
 }

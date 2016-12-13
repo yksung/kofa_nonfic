@@ -8,6 +8,7 @@ import kr.co.wisenut.editor.model.Country;
 import kr.co.wisenut.editor.model.Event;
 import kr.co.wisenut.editor.model.FormVO;
 import kr.co.wisenut.editor.model.Period;
+import kr.co.wisenut.editor.model.Person;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.model.Video;
 import kr.co.wisenut.editor.model.VideoCategory;
@@ -52,11 +53,11 @@ public class EditorDaoImpl implements EditorDao {
 	}
 
 	@Override
-	public List<Scene> getSceneList(int id) throws Exception{
+	public List<Scene> getSceneList(FormVO vo) throws Exception{
 		
 		SqlSession session = sessionService.getSession();
 	
-		List<Scene> sceneList = session.selectList("SceneMapper.getSceneList", id);
+		List<Scene> sceneList = session.selectList("SceneMapper.getSceneList", vo);
 		
 		return sceneList;
 	}
@@ -110,6 +111,21 @@ public class EditorDaoImpl implements EditorDao {
 		eventCategoryList = session.selectList("EntryMapper.eventCategoryList", vo);
 		
 		return eventCategoryList;
+	}
+	
+	@Override
+	public List<Person> getPersonList(String celebrityNm) throws Exception{
+		
+		SqlSession session = sessionService.getSession();
+	
+		List<Person> personList = null;
+		if(StringUtils.isNullOrEmpty(celebrityNm)){
+			personList = session.selectList("EntryMapper.personList");			
+		}else{			
+			personList = session.selectList("EntryMapper.personList", celebrityNm);
+		}
+		
+		return personList;
 	}
 	
 	@Override
@@ -194,5 +210,78 @@ public class EditorDaoImpl implements EditorDao {
 		logger.info("Delete count : " + resultCount);
 		
 		return resultCount;
+	}
+	
+	@Override
+	public String findVideoFilePath(FormVO vo) throws Exception {
+		SqlSession session = sessionService.getSession();
+		String filePath = (String)session.selectOne("VideoMapper.findVideoFile", vo);			
+		
+		return filePath;
+	}
+	
+	@Override
+	public int scenePersonMapping(FormVO vo) throws Exception {
+		SqlSession session = sessionService.getSession();
+		
+		int resultCount = 0;
+		try{
+			resultCount = session.insert("EntryMapper.scenePersonMapping", vo);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		session.commit(false);
+		logger.info("Insert count : " + resultCount);
+		
+		return resultCount;
+	}
+	
+	@Override
+	public int deletePersonFromMapping(FormVO vo) throws Exception {
+		SqlSession session = sessionService.getSession();
+		
+		int resultCount = 0;
+		try{
+			resultCount = session.delete("EntryMapper.deletePersonFromMapping", vo);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		session.commit(false);
+		logger.info("Delete count : " + resultCount);
+		
+		return resultCount;
+	}
+	
+	@Override
+	public List<Person> getScenePersonMapping(FormVO vo) throws Exception {
+		SqlSession session = sessionService.getSession();
+		
+		List<Person> personList = null;
+		try{
+			personList = session.selectList("EntryMapper.getScenePersonMapping", vo);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		return personList;
+	}
+	
+	@Override
+	public int getVideoTotalCount(FormVO vo) throws Exception {
+		SqlSession session = sessionService.getSession();
+		int totalCount = 0;
+		try{
+			totalCount = (Integer)session.selectOne("VideoMapper.getVideoTotalCount", vo);			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+			session.rollback();
+		}
+		
+		return totalCount;
 	}
 }

@@ -1,5 +1,8 @@
 package kr.co.wisenut.editor.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class FormVO {
 	private int scnId;
 	private int vdoId;
@@ -27,9 +30,18 @@ public class FormVO {
 	private String summary;
 	private String keyword;
 	private String note;
+	private String personId;
+	private String personKorNm;
+	private String personEngNm;
 	private int page;
 	private int pageSize;
+	private int offset;
+	private int limit;
 	private int direction;
+	private String viewOnlyHavingScene;
+	private ArrayList<HashMap<String,String>> sort;
+	private ArrayList<HashMap<String,String>> search;
+	private String searchLogic;
 	
 	public int getScnId() {
 		return scnId;
@@ -187,6 +199,24 @@ public class FormVO {
 	public void setNote(String note) {
 		this.note = note;
 	}
+	public String getPersonId() {
+		return personId;
+	}
+	public void setPersonId(String personId) {
+		this.personId = personId;
+	}
+	public String getPersonKorNm() {
+		return personKorNm;
+	}
+	public void setPersonKorNm(String personKorNm) {
+		this.personKorNm = personKorNm;
+	}
+	public String getPersonEngNm() {
+		return personEngNm;
+	}
+	public void setPersonEngNm(String personEngNm) {
+		this.personEngNm = personEngNm;
+	}
 	public int getPage() {
 		return page;
 	}
@@ -199,11 +229,47 @@ public class FormVO {
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
+	public int getOffset() {
+		return offset;
+	}
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	public int getLimit() {
+		return limit;
+	}
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
 	public int getDirection() {
 		return direction;
 	}
 	public void setDirection(int direction) {
 		this.direction = direction;
+	}
+	public String getViewOnlyHavingScene() {
+		return viewOnlyHavingScene;
+	}
+	public void setViewOnlyHavingScene(String viewOnlyHavingScene) {
+		this.viewOnlyHavingScene = viewOnlyHavingScene;
+	}
+	public ArrayList<HashMap<String, String>> getSort(){
+		return sort;
+	}
+	public void setSort(ArrayList<HashMap<String, String>> sort) {
+		this.sort = sort;
+	}
+	public ArrayList<HashMap<String, String>> getSearch() {
+		return search;
+	}
+	public void setSearch(ArrayList<HashMap<String, String>> search) {
+		this.search = search;
+	}
+	public String getSearchLogic() {
+		return searchLogic;
+	}
+	public void setSearchLogic(String searchLogic) {
+		this.searchLogic = searchLogic;
 	}
 	
 	
