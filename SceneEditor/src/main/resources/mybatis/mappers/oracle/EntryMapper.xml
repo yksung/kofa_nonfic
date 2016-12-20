@@ -20,8 +20,10 @@
 		<result property="clasNm" column="CLAS_NM"/>
 		<result property="upperClas" column="UPPER_CLAS"/>
 	</resultMap>
-	<resultMap id="person" type="person">
+	<resultMap id="scenePersonMapping" type="scenePersonMapping">
 		<result property="recid" column="CNT"/>
+		<result property="scnId" column="SCN_ID"/>
+		<result property="vdoId" column="VIDEO_ID"/>
 		<result property="personId" column="PERSON_ID"/>
 		<result property="korNm" column="PERSON_KORNM"/>
 		<result property="engNm" column="PERSON_ENGNM"/>
@@ -29,7 +31,7 @@
 		<result property="personField" column="PERSONFIELD"/>
 	</resultMap>
 	
-	<select id="personList" resultMap="person">
+	<select id="personList" resultMap="scenePersonMapping">
 	 select ROWNUM as CNT
 	 	  , PERSON_ID
 	 	  , KORNM
@@ -105,7 +107,7 @@
 	</delete>
 	
 	<!-- 인물명-장면정보 매핑 -->
-	<select id="getScenePersonMapping" resultMap="person" parameterType="vo">
+	<select id="getScenePersonMapping" resultMap="scenePersonMapping" parameterType="vo">
 	 select PERSON_KORNM
 	 	  , PERSON_ENGNM
 	 	  , PERSON_ID
@@ -145,9 +147,14 @@
 	</choose>
 	</insert>
 	
-	<delete id="deletePersonFromMapping" parameterType="person">
+	<delete id="deletePersonFromMapping" parameterType="vo">
 	delete from SCENE_PERSON_MAPPING
 	 where SCN_ID = #{scnId} and PERSON_KORNM= #{personKorNm}
+	</delete>
+	
+	<delete id="deleteMapping" parameterType="vo">
+	delete from SCENE_PERSON_MAPPING
+	 where SCN_ID = #{scnId}
 	</delete>
 	<!-- // 인물명-장면정보 매핑 -->
 </mapper>

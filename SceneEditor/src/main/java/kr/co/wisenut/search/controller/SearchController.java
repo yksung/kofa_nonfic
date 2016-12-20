@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
+import kr.co.wisenut.editor.service.EditorService;
 import kr.co.wisenut.search.model.SearchForm;
 import kr.co.wisenut.search.service.SearchService;
 import kr.co.wisenut.util.StringUtil;
@@ -32,45 +33,42 @@ public class SearchController {
 	@Autowired
 	SearchService searchService;
 	
+	@Autowired
+	EditorService editorService;
+	
 	@RequestMapping(value = "/search")
 	public ModelAndView search(@ModelAttribute SearchForm form, ModelAndView mav){
 		mav.setViewName("search/search");
 		
 		try {
-			//if(form.getQuery() != null && !"".equals(form.getQuery())){
-				searchService.search(form);
-				
-				HashMap<String,String> categoryGroupby = new HashMap<String,String>();
-				String strCategoryGroupby = "";
-				if(form.isCategorySearch() && null != form.getCategoryGroupby() && !"".equals(form.getCategoryGroupby()) ){
-					String[] arrCategoryGroupby = form.getCategoryGroupby().split("!");
-					for(String cg : arrCategoryGroupby){
-						categoryGroupby.put(cg.split(":")[0], cg.split(":")[1]);
-					}
-					strCategoryGroupby = form.getCategoryGroupby();
-				}else{
-					categoryGroupby = searchService.getCategoryGroupby();
-					Iterator<String> iter = categoryGroupby.keySet().iterator();
-					StringBuffer cateBf = new StringBuffer();
-					while(iter.hasNext()){
-						String cate = iter.next();
-						cateBf.append(cate+":"+categoryGroupby.get(cate)+"!");
-					}
-					strCategoryGroupby = cateBf.toString().replaceAll("!$", "");
+			searchService.search(form);
+			
+			HashMap<String,String> categoryGroupby = new HashMap<String,String>();
+			String strCategoryGroupby = "";
+			if(form.isCategorySearch() && null != form.getCategoryGroupby() && !"".equals(form.getCategoryGroupby()) ){
+				String[] arrCategoryGroupby = form.getCategoryGroupby().split("!");
+				for(String cg : arrCategoryGroupby){
+					categoryGroupby.put(cg.split(":")[0], cg.split(":")[1]);
 				}
-				
-				mav.addObject("query", form.getQuery());
-				mav.addObject("sort", form.getSort());
-				mav.addObject("resultList", searchService.getResultList());
-				mav.addObject("categorySearch", form.isCategorySearch());
-				mav.addObject("categoryField", form.getCategoryField());
-				mav.addObject("categoryQuery", form.getCategoryQuery());
-				mav.addObject("categoryResult", categoryGroupby);
-				mav.addObject("strCategoryGroupby", strCategoryGroupby);
-				mav.addObject("searchField", form.getSearchField());
-				mav.addObject("totalCount", searchService.getTotalResultCount());
-				mav.addObject("paging", searchService.getPageLinks(form.getPage(), searchService.getTotalResultCount(), 10, 10));
-			//}
+				strCategoryGroupby = form.getCategoryGroupby();
+			}else{
+				categoryGroupby = searchService.getCategoryGroupby();
+				Iterator<String> iter = categoryGroupby.keySet().iterator();
+				StringBuffer cateBf = new StringBuffer();
+				while(iter.hasNext()){
+					String cate = iter.next();
+					cateBf.append(cate+":"+categoryGroupby.get(cate)+"!");
+				}
+				strCategoryGroupby = cateBf.toString().replaceAll("!$", "");
+			}
+			
+			mav.addObject("maxRuntime", editorService.getMaxRuntime());
+			mav.addObject("form", form);
+			mav.addObject("resultList", searchService.getResultList());
+			mav.addObject("categoryResult", categoryGroupby);
+			mav.addObject("strCategoryGroupby", strCategoryGroupby);
+			mav.addObject("totalCount", searchService.getTotalResultCount());
+			mav.addObject("paging", searchService.getPageLinks(form.getPage(), searchService.getTotalResultCount(), 10, 10));
 		} catch (Exception e) {
 			logger.error(StringUtil.getStackTrace(e));
 		}

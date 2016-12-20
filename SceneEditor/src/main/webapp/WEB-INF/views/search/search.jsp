@@ -3,14 +3,17 @@
 <c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html >
 <html  lang="ko">
- <head>
-  <meta charset="utf-8" />
-  <title>통합검색</title>
-  <!--[if lt IE 9]>
-	<script type="text/javascript" src="js/html5shiv.js"></script>
-  <![endif]-->
-<link rel="stylesheet" type="text/css" href="css/search_sty.css">
-<link rel="stylesheet" type="text/css" href="css/search_default.css">
+<head>
+	<meta charset="utf-8" />
+	<title>통합검색</title>
+	<!--[if lt IE 9]>
+		<script type="text/javascript" src="js/html5shiv.js"></script>
+ 	<![endif]-->
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/search_sty.css">
+	<link rel="stylesheet" type="text/css" href="css/search_default.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script>
 function doPaging( page ){
 	var form = document.searchForm;
@@ -53,6 +56,36 @@ function goSort(sort){
 	
 	form.submit();
 }
+
+$(function(){
+	$("#id_rangeslider").slider({
+	      range: true,
+	      min: 0,
+	      max: ${maxRuntime},
+	      values: [ ${form.runtimeMin}, ${form.runtimeMax} ],
+	      slide: function( event, ui ) {
+	    	  $("#runtime").val( ui.values[0]+"min. - " + ui.values[1]+"min." );
+	      }
+	});
+	
+	$("#id_rangeslider").on("slidechange", function(event, ui){
+		var form = document.searchForm;
+		if($("#id_rangeslider").slider("values",0)!=null){
+			form.runtimeMin.value = ui.values[0];
+		}else{
+			form.runtimeMin.value = ui.min;
+		}
+		if($("#id_rangeslider").slider("values",1)!=null){
+			form.runtimeMax.value = ui.values[1];
+		}else{
+			form.runtimeMax.value = ui.max;
+		}
+		
+		form.submit();
+	});
+	
+	$("#runtime").val( $("#id_rangeslider").slider("values", 0)+"min. - " + $("#id_rangeslider").slider("values", 1) + "min." );
+});
 </script>
 </head>
 <body>
@@ -74,10 +107,12 @@ function goSort(sort){
 		<input type="hidden" name="pageSize" value="10"/>
 		<input type="hidden" name="categorySearch" value="false"/>
 		<input type="hidden" name="categoryGroupby" value="${strCategoryGroupby }"/>
-		<input type="hidden" name="categoryField" value="${categoryField }"/>
-		<input type="hidden" name="categoryQuery" value="${categoryQuery }"/>
-		<input type="hidden" name="searchField" value="${searchField }"/>
-		<input type="hidden" name="sort" value="${sort }"/>
+		<input type="hidden" name="categoryField" value="${form.categoryField }"/>
+		<input type="hidden" name="categoryQuery" value="${form.categoryQuery }"/>
+		<input type="hidden" name="searchField" value="${form.searchField }"/>
+		<input type="hidden" name="sort" value="${form.sort }"/>
+		<input type="hidden" name="runtimeMin" value="${form.runtimeMin }"/>
+		<input type="hidden" name="runtimeMax" value="${form.runtimeMax }"/>
 		
 		<div class="top" id="top">
         	<h1>
@@ -88,7 +123,7 @@ function goSort(sort){
 				</a>
             </h1>
             <dl class="search_area">
-            	<dd class="input_box"><input type="text" name="query" value="${query }" /></dd>
+            	<dd class="input_box"><input type="text" name="query" value="${form.query }" /></dd>
 			</dl>
 			<a class="searchBtn" href="javascript:goSearch();">검색</a>
 		</div>
@@ -125,24 +160,31 @@ function goSort(sort){
 					</ul>
 				</c:if>
             </article>
-             <article class="optionArea">
-                <dl class="align">
-                		 <dt>정렬</dt>
-                                <dd class="divi <c:if test='${fn:startsWith(sort, "RANK") or sort == ""}'>on</c:if>"><a href="javascript:goSort('RANK/DESC')">정확도순</a></dd>
-                                <dd class="divi <c:if test='${fn:startsWith(sort, "UPD_DTIME")}'>on</c:if>"><a href="javascript:goSort('UPD_DTIME/DESC')">최근수정순</a></dd>
-               </dl>
-               <dl class="area">
-                        <dt>검색영역</dt>
-                                <dd class="divi <c:if test='${searchField == "" or searchField == "ALL"}'>on</c:if>"><a href="javascript:setSearchField('ALL')">전체</a></dd>
-                                <dd class="divi <c:if test='${searchField == "EVENT_NM"}'>on</c:if>"><a href="javascript:setSearchField('EVENT_NM')">사건명</a></dd>
-                                <dd class="divi <c:if test='${searchField == "EVENT_PLACE,REAL_PLACE"}'>on</c:if>"><a href="javascript:setSearchField('EVENT_PLACE,REAL_PLACE')">사건장소</a></dd>
-                                <dd class="divi <c:if test='${searchField == "CELEBRITY"}'>on</c:if>"><a href="javascript:setSearchField('CELEBRITY')">인물명</a></dd>
-                                <dd class="divi <c:if test='${searchField == "DESCRIPTION"}'>on</c:if>"><a href="javascript:setSearchField('DESCRIPTION')">장면묘사</a></dd>
-                                <dd class="divi2 <c:if test='${searchField == "NARRATION,SUBTITLES"}'>on</c:if>"><a href="javascript:setSearchField('NARRATION,SUBTITLES')">내레이션/<br />자막</a></dd>
-                                <dd class="divi <c:if test='${searchField == "SUMMARY"}'>on</c:if>"><a href="javascript:setSearchField('SUMMARY')">장면요약</a></dd>
-                                <dd class="divi <c:if test='${searchField == "KEYWORD"}'>on</c:if>"><a href="javascript:setSearchField('KEYWORD')">키워드</a></dd>
-               </dl>
-             </article>
+			<article class="optionArea">
+				<dl class="align">
+					<dt>정렬</dt>
+					<dd class="divi <c:if test='${fn:startsWith(form.sort, "RANK") or sort == ""}'>on</c:if>"><a href="javascript:goSort('RANK/DESC')">정확도순</a></dd>
+					<dd class="divi <c:if test='${fn:startsWith(form.sort, "UPD_DTIME")}'>on</c:if>"><a href="javascript:goSort('UPD_DTIME/DESC')">최근수정순</a></dd>
+				</dl>
+				<dl class="area">
+					<dt>검색영역</dt>
+					<dd class="divi <c:if test='${form.searchField == "" or form.searchField == "ALL"}'>on</c:if>"><a href="javascript:setSearchField('ALL')">전체</a></dd>
+					<dd class="divi <c:if test='${form.searchField == "EVENT_NM"}'>on</c:if>"><a href="javascript:setSearchField('EVENT_NM')">사건명</a></dd>
+					<dd class="divi <c:if test='${form.searchField == "EVENT_PLACE,REAL_PLACE"}'>on</c:if>"><a href="javascript:setSearchField('EVENT_PLACE,REAL_PLACE')">사건장소</a></dd>
+					<dd class="divi <c:if test='${form.searchField == "CELEBRITY"}'>on</c:if>"><a href="javascript:setSearchField('CELEBRITY')">인물명</a></dd>
+					<dd class="divi <c:if test='${form.searchField == "DESCRIPTION"}'>on</c:if>"><a href="javascript:setSearchField('DESCRIPTION')">장면묘사</a></dd>
+					<dd class="divi2 <c:if test='${form.searchField == "NARRATION,SUBTITLES"}'>on</c:if>"><a href="javascript:setSearchField('NARRATION,SUBTITLES')">내레이션/<br />자막</a></dd>
+					<dd class="divi <c:if test='${form.searchField == "SUMMARY"}'>on</c:if>"><a href="javascript:setSearchField('SUMMARY')">장면요약</a></dd>
+					<dd class="divi <c:if test='${form.searchField == "KEYWORD"}'>on</c:if>"><a href="javascript:setSearchField('KEYWORD')">키워드</a></dd>
+				</dl>
+				<dl>
+					<dt>영상시간 범위</dt>
+					<p style="padding-bottom:10px">
+					  <input type="text" id="runtime" readonly style="border:0; color:#f6931f;">
+					</p>
+					<div id="id_rangeslider"></div>
+				</dl>
+			</article>
 		</section>
          <!-- //leftArea -->
          
@@ -150,19 +192,19 @@ function goSort(sort){
          <c:if test="${totalCount >0 }">
          <section class="contents" id="contents">
          	<c:choose>
-         		<c:when test="${categoryField == 'VDO_KIND' }"><c:set var='vdoKindNm' value='영상분류'/></c:when>
-         		<c:when test="${categoryField == 'VDO_PRODYEAR' }"><c:set var='vdoKindNm' value='영상제작년도'/></c:when>
-         		<c:when test="${categoryField == 'EVENT_PRD' }"><c:set var='vdoKindNm' value='장면연대'/></c:when>
-         		<c:when test="${categoryField == 'CNTRY_CD' }"><c:set var='vdoKindNm' value='장면지역'/></c:when>
+         		<c:when test="${form.categoryField == 'VDO_KIND' }"><c:set var='vdoKindNm' value='영상분류'/></c:when>
+         		<c:when test="${form.categoryField == 'VDO_PRODYEAR' }"><c:set var='vdoKindNm' value='영상제작년도'/></c:when>
+         		<c:when test="${form.categoryField == 'EVENT_PRD' }"><c:set var='vdoKindNm' value='장면연대'/></c:when>
+         		<c:when test="${form.categoryField == 'CNTRY_CD' }"><c:set var='vdoKindNm' value='장면지역'/></c:when>
          		<c:otherwise></c:otherwise>
          	</c:choose>
          	<div class="result_top">
-         	[&nbsp;<c:choose><c:when test="${ categorySearch == true}">${vdoKindNm }>${fn:trim(categoryQuery) }</c:when>
+         	[&nbsp;<c:choose><c:when test="${ form.categorySearch == true}">${vdoKindNm }>${fn:trim(form.categoryQuery) }</c:when>
          	<c:otherwise>전체영상</c:otherwise></c:choose>&nbsp;] 중 <strong>${query }</strong> (으)로 찾은 장면정보 검색 결과(<fmt:formatNumber value="${totalCount }" pattern="#,###" />건)입니다.</div>
          	<c:forEach var="result" items="${ resultList }" varStatus="status">
             <div class="sectit01">
-                <h2><a href="/editor/editScene?vdoId=${result.VDO_ID }&scnId=${result.DOCID}">${ result.VDO_NM }<span>/&nbsp; ${result.SCN_START_CD }~${result.SCN_END_CD }</span></h2>
-                <div class="txt">${ result.SUMMARY }</div>
+                <h2><a href="/editor/editScene?vdoId=${result.VDO_ID }&scnId=${result.DOCID}">${ result.VDO_NM }<span> (<c:if test="${result.VDO_KIND != '-' and result.VDO_KIND!='' }">${result.VDO_KIND }, </c:if><c:if test="${result.VDO_PRODYEAR != 0 }">${result.VDO_PRODYEAR}년作, </c:if><c:if test="${result.VDO_LANG!='-' and result.VDO_LANG!='' }">${result.VDO_LANG }, </c:if><c:if test="${result.VDO_RUNTIME!=0}">${result.VDO_RUNTIME }분)</c:if> </span></h2>
+                <div class="txt">${result.SCN_START_CD }~${result.SCN_END_CD }&nbsp;/&nbsp;${ result.SUMMARY }</div>
                 <ul>
               		<li>&bull; <c:if test="${result.EVENT_PRD != 0}">${result.EVENT_PRD}년대, </c:if>${result.DOM_ABR }&gt;${result.CNTRY_CD }</li>
                 	<c:if test="${result.DESCRIPTION != ''}"><li>&bull; <span>화면묘사</span> ${result.DESCRIPTION }</li></c:if>

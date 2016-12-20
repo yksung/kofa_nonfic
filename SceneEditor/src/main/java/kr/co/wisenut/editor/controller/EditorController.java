@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 import kr.co.wisenut.editor.model.Country;
 import kr.co.wisenut.editor.model.FormVO;
 import kr.co.wisenut.editor.model.Period;
-import kr.co.wisenut.editor.model.Person;
+import kr.co.wisenut.editor.model.ScenePersonMapping;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.model.Video;
 import kr.co.wisenut.editor.service.EditorService;
@@ -89,7 +89,7 @@ public class EditorController {
 		Scene scene = new Scene();
 		List<Country> countryList = null;
 		List<Period> periodList = null;
-		List<Person> personList = null;
+		List<ScenePersonMapping> personList = null;
 		boolean isValidUser = false;
 		//List<Event> eventList = null;
 		int prevExists = 0;
@@ -100,6 +100,8 @@ public class EditorController {
 			
 		try{
 			if(vo.getScnId() != 0){
+				// 현재 장면의 정보를 가져올 때는 direction 값을 0으로 초기화해서 넘긴다.
+				vo.setDirection(0);
 				scene = editorDao.findScene(vo);
 				
 				voForPrevScene.setDirection(-1);
@@ -111,17 +113,18 @@ public class EditorController {
 				voForNextScene.setScnId(vo.getScnId());
 				
 				if(editorDao.findScene(voForPrevScene) != null){
-					prevExists = 1;
+					prevExists = editorDao.findScene(voForPrevScene).getScnId();
 				}
 				
 				if(editorDao.findScene(voForNextScene) != null){
-					nextExists = 1;
+					nextExists = editorDao.findScene(voForNextScene).getScnId();
 				}
 				// 해당 장몀의 사건연대 값을 받아와 해당 연대의 사건만 가져온다. 개발할 때만 적용할 수도 있음. 
 				vo.setEventPrd(scene.getEventPrd());
 				
 				vdoFilePath = sceneService.getVideoFilePath(vo);
 			}else{
+				scene.setScnId(sceneService.getNewScnId());
 				scene.setVdoId(vo.getVdoId());// 새 장면인 경우 기존에 장면정보 ID는 없지만 VIDEO_ID는 존재하므로 그 정보를 새 장면 입력화면에 넘겨준다.
 				scene.setVdoNm(vo.getVdoNm());
 			}
@@ -138,8 +141,8 @@ public class EditorController {
 			logger.error(StringUtil.getStackTrace(e));
 		}
 		
-		mav.addObject("prevExists", prevExists);
-		mav.addObject("nextExists", nextExists);
+		mav.addObject("prevScene", prevExists);
+		mav.addObject("nextScene", nextExists);
 		mav.addObject("sceneInfo", scene );
 		mav.addObject("periodList", periodList);
 		mav.addObject("countryList", countryList);
@@ -255,7 +258,7 @@ public class EditorController {
 	@RequestMapping(value = "/getCelebrityListAsJson")
 	public void getCelebrityAsJson(@RequestParam String celebrityNm, HttpServletResponse response) {
 		
-		List<Person> personList = null;
+		List<ScenePersonMapping> personList = null;
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonString = "";

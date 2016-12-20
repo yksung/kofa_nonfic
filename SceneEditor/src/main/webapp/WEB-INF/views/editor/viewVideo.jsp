@@ -43,7 +43,9 @@ var config = {
         searches: [                
             { field: 'vdoTitle', caption: '제목', type: 'text' },
             { field: 'vdoType', caption: '유형', type: 'text' },
-            { field: 'language', caption: '언어', type: 'text' },
+            { field: 'language', caption: '국가', type: 'text' },
+            { field: 'runtime', caption: '상영시간', type: 'text' },
+            { field: 'productionDate', caption: '제작년도', type: 'text' },
         ],
     	columns:[                
 	        { field: 'recid', caption: '순서', size: '2%', attr: 'align=center'},
@@ -51,8 +53,8 @@ var config = {
 	        { field: 'vdoTitle', caption: '제목', size: '30%', sortable:true, attr: 'align=center' },
 	        { field: 'vdoType', caption: '유형', size: '3%', sortable:true, attr: 'align=center' },
 	        { field: 'runtime', caption: '상영시간', size: '20%', sortable:true, attr: 'align=right'},
-	        { field: 'language', caption: '언어', size: '20%', sortable:true, attr: 'align=center'},
-	        { field: 'productionDate', caption: '제작일시', size: '10%', sortable:true, render:'date_format', attr: 'align=center'},
+	        { field: 'language', caption: '국가', size: '20%', sortable:true, attr: 'align=center'},
+	        { field: 'productionDate', caption: '제작년도', size: '10%', sortable:true, render:'date_format', attr: 'align=center'},
 	        { field: 'scnCnt', caption: '장면정보개수', size: '10%', sortable:true, render:'decimalSymbol', attr: 'align=center',
 	        	render: function (record) {
 	        		if( record.scnCnt > 0){	        			

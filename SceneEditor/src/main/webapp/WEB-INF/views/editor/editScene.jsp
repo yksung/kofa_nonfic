@@ -39,9 +39,12 @@ $(document).ready(function(){
 			}
 		}
 	});
-
 });
 
+function resize(obj) {
+	obj.style.height = "1px";
+	obj.style.height = (10+obj.scrollHeight)+"px";
+}
 </script>
 <section class="content">
 	<article class="vdo_area" id="vdo_area">
@@ -60,16 +63,16 @@ $(document).ready(function(){
          	<a href="${contextRoot }/editor/viewScene?vdoId=${sceneInfo.vdoId}">목록보기</a>
             <ul>
              	<c:choose>
-             	<c:when test='${ prevExists == 1 }'>
-             	<li><a class="btn_prev on" href="${contextRoot }/editor/editScene?vdoId=${ sceneInfo.vdoId }&scnId=${sceneInfo.scnId}&direction=-1">이전정보</a></li>
+             	<c:when test='${ prevScene != 0 }'>
+             	<li><a class="btn_prev on" href="${contextRoot }/editor/editScene?vdoId=${ sceneInfo.vdoId }&scnId=${prevScene}&direction=-1">이전정보</a></li>
              	</c:when>
              	<c:otherwise>
              	<li><a class="btn_prev" href="#">이전정보</a></li>
              	</c:otherwise>
              	</c:choose>
              	<c:choose>
-             	<c:when test='${ nextExists == 1 }'>
-                 <li><a class="btn_next on" href="${contextRoot }/editor/editScene?vdoId=${ sceneInfo.vdoId }&scnId=${sceneInfo.scnId}&direction=1">다음정보</a></li>
+             	<c:when test='${ nextScene != 0 }'>
+                 <li><a class="btn_next on" href="${contextRoot }/editor/editScene?vdoId=${ sceneInfo.vdoId }&scnId=${nextScene}&direction=1">다음정보</a></li>
                  </c:when>
                  <c:otherwise>
              	<li><a class="btn_next" href="#">다음정보</a></li>
@@ -202,7 +205,7 @@ $(document).ready(function(){
 								<c:forEach var="celebrity" items="${empty scenePersonMapping ? ' ':scenePersonMapping }" varStatus="status">
 								<li name="celebrity" id="id_celebrity_${status.index }">
 									<input name="celebrityNm" id="id_celebrityNm_${status.index }" type="text"
-											placeholder="유명인만 기재" value="${empty celebrity.korNm? '': fn:trim(celebrity.korNm) }(${empty celebrity.personId? '': fn:trim(celebrity.personId) })"/>
+											placeholder="유명인만 기재" value="${empty celebrity.korNm? '': fn:trim(celebrity.korNm) }(${celebrity.personId != null or fn:trim(celebrity.personId)!='' ? celebrity.personId:'-'})"/>
 									<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a>
 									<!-- 인물명팝업 -->
 									<div class="layer" id="layer_addcelebrity_${status.index }">
@@ -239,27 +242,27 @@ $(document).ready(function(){
 					</tr>
 					<tr class="textarea_h">
 						<th>화면묘사</th>
-						<td><textarea id="id_description" name="description">${sceneInfo.description }</textarea></td>
+						<td><textarea id="id_description" name="description" onkeyup="resize(this)">${sceneInfo.description }</textarea></td>
 					</tr>
 					<tr class="textarea_h">
 						<th>내레이션</th>
-						<td><textarea id="id_narration" name="narration">${sceneInfo.narration }</textarea></td>
+						<td><textarea id="id_narration" name="narration" onkeyup="resize(this)">${sceneInfo.narration }</textarea></td>
 					</tr>
 					<tr class="textarea_h">
                      	<th>자막</th>
-						<td><textarea id="id_subtitles" name="subtitles">${sceneInfo.subtitles }</textarea></td>
+						<td><textarea id="id_subtitles" name="subtitles" onkeyup="resize(this)">${sceneInfo.subtitles }</textarea></td>
 					</tr>
 					<tr class="textarea_h">
 						<th>장면요약</th>
-						<td><textarea id="id_summary" name="summary">${sceneInfo.summary }</textarea></td>
+						<td><textarea id="id_summary" name="summary" onkeyup="resize(this)">${sceneInfo.summary }</textarea></td>
 					</tr>
                     <tr class="textarea_h">
                      	<th>키워드</th>
-                        <td><textarea id="id_keyword" name="keyword">${sceneInfo.keyword }</textarea></td>
+                        <td><textarea id="id_keyword" name="keyword" onkeyup="resize(this)">${sceneInfo.keyword }</textarea></td>
 					</tr>
 					<tr class="textarea_h">
                      	<th>비고</th>
-                        <td><textarea id="id_note" name="note">${sceneInfo.note }</textarea></td>
+                        <td><textarea id="id_note" name="note" onkeyup="resize(this)">${sceneInfo.note }</textarea></td>
 					</tr>
 				</tbody>
 			</table>

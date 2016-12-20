@@ -27,6 +27,11 @@ public class EditorServiceImpl implements EditorService {
 	private EditorDao sceneDao;
 	
 	@Override
+	public int getMaxRuntime() throws Exception {
+		return sceneDao.getMaxRuntime();
+	}
+	
+	@Override
 	public int saveSceneInfo(FormVO vo) throws Exception {
 		int resultCnt = 0;
 		
@@ -41,9 +46,15 @@ public class EditorServiceImpl implements EditorService {
 	}
 	
 	@Override
+	public int getNewScnId() throws Exception {
+		return sceneDao.getNewScnId();		
+	}
+	
+	@Override
 	public int deleteSceneInfo(FormVO vo) throws Exception {
 		int resultCnt = sceneDao.deleteScene(vo);
-		
+		// 장면이 삭제되면 인물-장면 매핑 테이블에서도 삭제되는 장면에 해당하는 항목을 모두 삭제.
+		sceneDao.deletePersonFromMapping(vo);
 		return resultCnt;
 	}
 	
@@ -90,7 +101,9 @@ public class EditorServiceImpl implements EditorService {
 		int successfullyMappedCount = 0;
 		
 		try{
-			successfullyMappedCount = sceneDao.scenePersonMapping(vo);
+			if(vo.getScnId() != 0){				
+				successfullyMappedCount = sceneDao.scenePersonMapping(vo);
+			}
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}

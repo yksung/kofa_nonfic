@@ -13,6 +13,8 @@ public class SearchForm {
 	String categoryField;
 	String categoryQuery;
 	String categoryGroupby;
+	int runtimeMin;
+	int runtimeMax;
 	
 	public boolean isCategorySearch() {
 		return categorySearch;
@@ -85,6 +87,18 @@ public class SearchForm {
 	}
 	public void setCategoryGroupby(String categoryGroupby) {
 		this.categoryGroupby = categoryGroupby;
+	}
+	public int getRuntimeMin() {
+		return runtimeMin;
+	}
+	public void setRuntimeMin(int runtimeMin) {
+		this.runtimeMin = runtimeMin;
+	}
+	public int getRuntimeMax() {
+		return runtimeMax;
+	}
+	public void setRuntimeMax(int rumtimeMax) {
+		this.runtimeMax = rumtimeMax;
 	}
 	
 }

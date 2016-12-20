@@ -19,7 +19,7 @@
         <typeAlias alias="vo" type="kr.co.wisenut.editor.model.FormVO"/>
         <typeAlias alias="period" type="kr.co.wisenut.editor.model.Period"/>
         <typeAlias alias="country" type="kr.co.wisenut.editor.model.Country"/>
-        <typeAlias alias="person" type="kr.co.wisenut.editor.model.Person"/>
+        <typeAlias alias="scenePersonMapping" type="kr.co.wisenut.editor.model.ScenePersonMapping"/>
         <typeAlias alias="eventCategory" type="kr.co.wisenut.editor.model.Event"/>
         <typeAlias alias="videoCategory" type="kr.co.wisenut.editor.model.VideoCategory"/>
         <typeAlias alias="user" type="kr.co.wisenut.login.model.User"/>
@@ -29,19 +29,37 @@
 		<environment id="development">
 			<transactionManager type="JDBC" />
 			<dataSource type="POOLED">
-				<property name="driver" value="${jdbc.driver}" />
-				<property name="url" value="${jdbc.url}" />
-				<property name="username" value="${jdbc.username}" />
-				<property name="password" value="${jdbc.password}" />
+				<property name="driver" value="${dev.jdbc.driver}" />
+				<property name="url" value="${dev.jdbc.url}" />
+				<property name="username" value="${dev.jdbc.username}" />
+				<property name="password" value="${dev.jdbc.password}" />
+			</dataSource>
+		</environment>
+		<environment id="production0">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${prd.0.jdbc.driver}" />
+				<property name="url" value="${prd.0.jdbc.url}" />
+				<property name="username" value="${prd.0.jdbc.username}" />
+				<property name="password" value="${prd.0.jdbc.password}" />
+			</dataSource>
+		</environment>
+		<environment id="production1">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${prd.1.jdbc.driver}" />
+				<property name="url" value="${prd.1.jdbc.url}" />
+				<property name="username" value="${prd.1.jdbc.username}" />
+				<property name="password" value="${prd.1.jdbc.password}" />
 			</dataSource>
 		</environment>
 	</environments>
 	
 	<mappers>  
-        <mapper resource="mybatis/mappers/${jdbc.vendor}/SceneMapper.xml" />  
-        <mapper resource="mybatis/mappers/${jdbc.vendor}/VideoMapper.xml" />  
-        <mapper resource="mybatis/mappers/${jdbc.vendor}/EntryMapper.xml" />  
-        <mapper resource="mybatis/mappers/${jdbc.vendor}/LoginMapper.xml" />  
+        <mapper resource="mybatis/mappers/${prd.0.jdbc.vendor}/SceneMapper.xml" />  
+        <mapper resource="mybatis/mappers/${prd.0.jdbc.vendor}/VideoMapper.xml" />  
+        <mapper resource="mybatis/mappers/${prd.0.jdbc.vendor}/EntryMapper.xml" />  
+        <mapper resource="mybatis/mappers/${prd.0.jdbc.vendor}/LoginMapper.xml" />  
     </mappers>
 	
 </configuration>

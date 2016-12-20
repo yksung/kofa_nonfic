@@ -56,11 +56,11 @@
 .info_area header ul li a.btn_next.on{background:url(../images/icon_next_on.png) no-repeat right center; padding-right:8px; margin-left:8px;color:#fff;}
 
 .info_area form{ position:relative}
-.info_area table{width:496px; margin:5px auto 0}
+.info_area table{width:496px; margin:5px auto 0;}
 .info_area table th, .info_area table td{height:42px;}
 .info_area table tr.textarea_h th, .info_area table tr.textarea_h td{height:52px}
 .info_area table th{font-size:13px; color:#666;font-weight:700}
-.info_area table td{font-size:12px; color:#666;font-weight:400}
+.info_area table td{font-size:12px; color:#666;font-weight:400;}
 .info_area table th img{vertical-align:middle; margin-left:3px;}
 .info_area table td img{margin:5px 0 0 3px;}
 .info_area table td input, .info_area table td label{vertical-align:top;}
@@ -76,7 +76,7 @@
 	background: linear-gradient(to bottom, #aeaeae 0%,#aeaeae 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aeaeae', endColorstr='#8b8b8b',GradientType=0 ); /* IE6-9 */}
 .info_area table td input.bg{ background-color:#f0f0f0}
-.info_area table textarea{width:421px; padding-left:5px;height:37px; border:1px solid #9a9a9a;  }
+.info_area table textarea{width:421px; padding-left:5px;height:auto; border:1px solid #9a9a9a;  }
 .btn_area{float:right;margin:5px 10px 0 0; }
 .btn_area li{float:left}
 .btn_area li a.btn_save{color:#fff; font-weight:700; border:1px solid #3d6899;border-radius:2px;height:28px; line-height:26px; margin-right:3px; text-align:center;font-size:14px;width:68px; display:inline-block;

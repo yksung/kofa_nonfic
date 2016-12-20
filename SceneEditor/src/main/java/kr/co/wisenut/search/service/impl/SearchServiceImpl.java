@@ -217,6 +217,9 @@ public class SearchServiceImpl implements SearchService {
 		}
 		
 		LOGGER.debug(" - filterQuery : " + form.getFilterQuery());
+		if(form.getRuntimeMin()!=0 || form.getRuntimeMax()!=0){
+			form.setFilterQuery("<VDO_RUNTIME:gte:"+form.getRuntimeMin()+"> <VDO_RUNTIME:lte:"+form.getRuntimeMax()+">");
+		}
 		if(form.getFilterQuery()!=null && form.getFilterQuery().length()>0){
 			ret = search.w3SetFilterQuery(collection, form.getFilterQuery());
 		}

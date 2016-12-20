@@ -2,6 +2,7 @@ package kr.co.wisenut.manager.dao.impl;
 
 import java.util.List;
 
+import kr.co.wisenut.db.DB_ENV;
 import kr.co.wisenut.db.SessionService;
 import kr.co.wisenut.editor.dao.impl.EditorDaoImpl;
 import kr.co.wisenut.editor.model.Event;
@@ -18,15 +19,21 @@ public class ManagerDaoImpl implements ManagerDao {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EditorDaoImpl.class);
 	
-	private final SessionService sessionService = new SessionService();
+	private final SessionService sessionService = new SessionService(DB_ENV.PROD0);
 	
 	@Override
 	public List<Event> getEventList(){
-		
-		SqlSession session = sessionService.getSession();
-	
+		SqlSession session = null;
 		List<Event> eventCategoryList = null;
-		eventCategoryList = session.selectList("EntryMapper.eventCategoryList");
+		
+		try{
+			session = sessionService.getSession();
+			eventCategoryList = session.selectList("EntryMapper.eventCategoryList");
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{
+			session.close();
+		}
 		
 		return eventCategoryList;
 	}
@@ -34,16 +41,20 @@ public class ManagerDaoImpl implements ManagerDao {
 	@Override
 	public int addEvent(Event event){
 		SqlSession session = sessionService.getSession();
-		
 		int resultCount = 0;
+		
 		try{
-			resultCount = session.insert("EntryMapper.insertEvent", event);			
+			session = sessionService.getSession();
+			resultCount = session.insert("EntryMapper.insertEvent", event);
+			
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
 		
-		session.commit(false);
 		logger.info("Insert count : " + resultCount);
 		
 		return resultCount;
@@ -52,16 +63,20 @@ public class ManagerDaoImpl implements ManagerDao {
 	@Override
 	public int editEvent(Event event){
 		SqlSession session = sessionService.getSession();
-		
 		int resultCount = 0;
+		
 		try{
-			resultCount = session.update("EntryMapper.updateEvent", event);			
+			session = sessionService.getSession();
+			resultCount = session.update("EntryMapper.updateEvent", event);
+			
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
-		
-		session.commit(false);
+
 		logger.info("update count : " + resultCount);
 		
 		return resultCount;
@@ -70,16 +85,20 @@ public class ManagerDaoImpl implements ManagerDao {
 	@Override
 	public int deleteEvent(Event event){
 		SqlSession session = sessionService.getSession();
-		
 		int resultCount = 0;
+		
 		try{
-			resultCount = session.delete("EntryMapper.deleteEvent", event);			
+			session = sessionService.getSession();
+			resultCount = session.delete("EntryMapper.deleteEvent", event);
+			
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
 		
-		session.commit(false);
 		logger.info("update count : " + resultCount);
 		
 		return resultCount;

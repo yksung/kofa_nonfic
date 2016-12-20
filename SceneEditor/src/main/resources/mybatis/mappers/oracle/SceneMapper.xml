@@ -32,51 +32,81 @@
 		<result property="note" column="note"/>
 	</resultMap>
 	
+	<select id="getNewScnId" resultType="Integer">
+	select max(SCN_ID)+1 from SCENE_MANAGE
+	</select>
+	
 	<select id="getSceneList" resultMap="sceneList" parameterType="vo">
-	select * from (
-		SELECT row_number() over (order by
-			<choose>
-			<when test='sort !=null'>			
-				<foreach collection="sort" item="sortMap" separator=",">
-				${sortMap.field} ${sortMap.direction}
-				</foreach>
-			</when><otherwise>
-				to_number(substr(scnStartCd, 0, instr(scnStartCd, ':')-1)) asc, to_number(substr(scnStartCd, instr(scnStartCd, ':')+1)) asc
-			</otherwise></choose>
-		) as recid, X.* from (
-			select trim(SCN_ID) as scnId
-				 , trim(VIDEO_ID) as vdoId
-				 , (select MUL_TITLE from MULTI_NEW where MUL_ID=A.VIDEO_ID) as vdoNm
-				 , SCN_START_CD as scnStartCd
-				 , SCN_END_CD as scnEndCd
-				 , UPD_DTIME as updDtime
-				 , EDITOR as editor
-				 , EVENT_LCLS as eventLClasCd
-				 , EVENT_SCLS as eventSClasCd
-				 , EVENT_NM as eventNm
-				 , trim(EVENT_PRD) as eventPrd
-				 , trim(DOM_ABR) as domAbr
-				 , trim(CNTRY_CD) as cntryCd
-				 , EVENT_PLACE as eventPlace
-				 , REAL_PLACE as realPlace
-				 , LATITUDE as latitude
-				 , LONGITUDE as longitude
-				 , CELEBRITY1 as celebrity1
-				 , CELEBRITY2 as celebrity2
-				 , CELEBRITY3 as celebrity3
-				 , DESCRIPTION as description
-				 , NARRATION as narration
-				 , SUBTITLES as subtitles
-				 , SUMMARY as summary
-				 , KEYWORD as keyword
-				 , NOTE as note
+	<choose>
+		<when test='sort !=null'>
+		select rownum as recid
+			 , trim(SCN_ID) as scnId
+			 , trim(VIDEO_ID) as vdoId
+			 , (select MUL_TITLE from MULTI_NEW where MUL_ID=A.VIDEO_ID) as vdoNm
+			 , SCN_START_CD as scnStartCd
+			 , SCN_END_CD as scnEndCd
+			 , UPD_DTIME as updDtime
+			 , EDITOR as editor
+			 , EVENT_LCLS as eventLClasCd
+			 , EVENT_SCLS as eventSClasCd
+			 , EVENT_NM as eventNm
+			 , trim(EVENT_PRD) as eventPrd
+			 , trim(DOM_ABR) as domAbr
+			 , trim(CNTRY_CD) as cntryCd
+			 , EVENT_PLACE as eventPlace
+			 , REAL_PLACE as realPlace
+			 , LATITUDE as latitude
+			 , LONGITUDE as longitude
+			 , CELEBRITY1 as celebrity1
+			 , CELEBRITY2 as celebrity2
+			 , CELEBRITY3 as celebrity3
+			 , DESCRIPTION as description
+			 , NARRATION as narration
+			 , SUBTITLES as subtitles
+			 , SUMMARY as summary
+			 , KEYWORD as keyword
+			 , NOTE as note
+		   FROM SCENE_MANAGE A
+		  WHERE VIDEO_ID = #{vdoId}
+		  order by	
+			<foreach collection="sort" item="sortMap" separator=",">
+		    ${sortMap.field} ${sortMap.direction}
+			</foreach>
+		</when><otherwise>
+		select row_number() over (ORDER BY TO_NUMBER(SUBSTR("SCN_START_CD",0,INSTR("SCN_START_CD",':')-1)) ASC, TO_NUMBER(SUBSTR("SCN_START_CD",INSTR("SCN_START_CD",':')+1)) ASC) as recid
+			 , trim(SCN_ID) as scnId
+			 , trim(VIDEO_ID) as vdoId
+			 , (select MUL_TITLE from MULTI_NEW where MUL_ID=A.VIDEO_ID) as vdoNm
+			 , SCN_START_CD as scnStartCd
+			 , SCN_END_CD as scnEndCd
+			 , UPD_DTIME as updDtime
+			 , EDITOR as editor
+			 , EVENT_LCLS as eventLClasCd
+			 , EVENT_SCLS as eventSClasCd
+			 , EVENT_NM as eventNm
+			 , trim(EVENT_PRD) as eventPrd
+			 , trim(DOM_ABR) as domAbr
+			 , trim(CNTRY_CD) as cntryCd
+			 , EVENT_PLACE as eventPlace
+			 , REAL_PLACE as realPlace
+			 , LATITUDE as latitude
+			 , LONGITUDE as longitude
+			 , CELEBRITY1 as celebrity1
+			 , CELEBRITY2 as celebrity2
+			 , CELEBRITY3 as celebrity3
+			 , DESCRIPTION as description
+			 , NARRATION as narration
+			 , SUBTITLES as subtitles
+			 , SUMMARY as summary
+			 , KEYWORD as keyword
+			 , NOTE as note
 		   FROM SCENE_MANAGE A
 		   WHERE VIDEO_ID = #{vdoId}
-		) X
-	)
+		</otherwise></choose>
 	 </select>
 	 <select id="findScene" parameterType="vo" resultMap="sceneList">
-	 SELECT ROWNUM as recid
+	 SELECT /*+ INDEX(scene_manage, SCENE_MANAGE_PK) */
+	 	ROWNUM as recid
 	 	,trim(SCN_ID) as scnId
 		,trim(VIDEO_ID) as vdoId
 		,(select MUL_TITLE from MULTI_NEW where MUL_ID=A.VIDEO_ID) as vdoNm
@@ -107,10 +137,10 @@
 	   <where>
 	   <choose>
 	   	<when test="direction == 1"><![CDATA[
-	   	SCN_ID = ( select min(SCN_ID) from SCENE_MANAGE where SCN_ID > #{scnId} ) AND VIDEO_ID = #{vdoId}
+	   	VIDEO_ID = #{vdoId} and SCN_ID = ( select /*+ INDEX_ASC(scene_manage, IDX_SCN_ID) */ min(SCN_ID) from SCENE_MANAGE where SCN_ID > #{scnId} ) 
 	   	]]></when>
 	   	<when test="direction == -1"><![CDATA[
-	   	SCN_ID = ( select max(SCN_ID) from SCENE_MANAGE where SCN_ID < #{scnId} ) AND VIDEO_ID = #{vdoId}
+	   	VIDEO_ID = #{vdoId} and SCN_ID = ( select /*+ INDEX_DESC(scene_manage, IDX_SCN_ID) */ max(SCN_ID) from SCENE_MANAGE where SCN_ID < #{scnId} ) 
 	   	]]></when>
 	   	<otherwise>
 	   	SCN_ID = #{scnId} AND VIDEO_ID = #{vdoId}

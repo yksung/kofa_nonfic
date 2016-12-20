@@ -204,7 +204,7 @@ function onEventChange(){
 }
 
 function onDomAbrChange(cntryCd){
-	$("#id_domAbr").on("change", function(){
+	$("body").on("change", "#id_domAbr", function(){
 		var val = $(this).val();
 		$.ajax({
 			url : "/editor/getCountryAsJson?domAbr="+val,
@@ -219,7 +219,6 @@ function onDomAbrChange(cntryCd){
 						html+= " selected ";
 					}
 					html += "'>" + pair.cntryNm + "</option>";
-					console.log(i +":"+ pair.cntryCd + ", " + pair.cntryNm);
 				});
 				$("#id_cntryCd").html(html);
 			},
@@ -386,8 +385,10 @@ function close(el){
 
 function setPerson(idx, personKorNm, personEngNm, personId, scnId, vdoId){
 	var displayName = personKorNm;
-	if(personId){
+	if(personId != ''){
 		displayName += "("+personId+")";
+	}else{
+		displayName += "(-)";
 	}
 	$("#id_celebrityNm_"+idx).val(displayName);
 	var param = "personKorNm="+personKorNm+"&personEngNm="+personEngNm+"&personId="+personId+"&scnId="+scnId+"&vdoId="+vdoId;
@@ -431,7 +432,7 @@ function searchPerson(idx){
 				});
 			}else{
 				str += "<p>인명정보가 없습니다. 그래도 장면정보와 인물 간 매핑정보를 저장하겠습니까?</p>"
-				str += "<p><a href='javascript:setPerson("+idx+",\""+$("#id_personKorNm_"+idx).val()+"\",\""+$("#id_personEngNm_"+idx).val()+"\",null,\""+$("input[name='scnId']").val()+"\",\""+$("input[name='vdoId']").val()+"\");'>저장</a></p>";
+				str += "<p><a href='javascript:setPerson("+idx+",\""+$("#id_personKorNm_"+idx).val()+"\",\"\",\"\",\""+$("input[name='scnId']").val()+"\",\""+$("input[name='vdoId']").val()+"\");'>저장</a></p>";
 			}
 			str += "</div>";
 			

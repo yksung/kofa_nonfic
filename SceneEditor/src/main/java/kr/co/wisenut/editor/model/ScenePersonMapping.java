@@ -1,12 +1,27 @@
 package kr.co.wisenut.editor.model;
 
-public class Person {
+public class ScenePersonMapping {
 	private int recid;
+	private String scnId;
+	private String vdoId;
 	private String personId;
 	private String korNm;
 	private String engNm;
 	private String nationalClss;
 	private String personField;
+	
+	public String getScnId() {
+		return scnId;
+	}
+	public void setScnId(String scnId) {
+		this.scnId = scnId;
+	}
+	public String getVdoId() {
+		return vdoId;
+	}
+	public void setVdoId(String vdoId) {
+		this.vdoId = vdoId;
+	}
 	public int getRecid() {
 		return recid;
 	}

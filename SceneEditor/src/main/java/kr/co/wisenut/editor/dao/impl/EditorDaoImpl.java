@@ -8,7 +8,7 @@ import kr.co.wisenut.editor.model.Country;
 import kr.co.wisenut.editor.model.Event;
 import kr.co.wisenut.editor.model.FormVO;
 import kr.co.wisenut.editor.model.Period;
-import kr.co.wisenut.editor.model.Person;
+import kr.co.wisenut.editor.model.ScenePersonMapping;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.model.Video;
 import kr.co.wisenut.editor.model.VideoCategory;
@@ -17,11 +17,7 @@ import kr.co.wisenut.util.StringUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.mysql.cj.core.util.StringUtils;
 
@@ -31,125 +27,187 @@ public class EditorDaoImpl implements EditorDao {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EditorDaoImpl.class);
 	
-	private final SessionService sessionService = new SessionService();
+	private final SessionService sessionService = new SessionService(DB_ENV.PROD0);
 	
 	@Override
-	public List<Video> getVideoList(FormVO vo) throws Exception{
+	public List<Video> getVideoList(FormVO vo){
+		SqlSession session = null;
+		List<Video> videoList = null;
 		
-		SqlSession session = sessionService.getSession();
-	
-		List<Video> videoList = session.selectList("VideoMapper.getVideoList", vo);
+		try{
+			session = sessionService.getSession();
+			videoList = session.selectList("VideoMapper.getVideoList", vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
+		}
 		
 		return videoList;
 	}
 	
 	@Override
-	public List<Video> goBackToVideoList(FormVO vo) throws Exception {
-		SqlSession session = sessionService.getSession();
+	public List<Scene> getSceneList(FormVO vo){
+		SqlSession session = null;
+		List<Scene> sceneList = null;
 		
-		List<Video> videoList = session.selectList("VideoMapper.goBackToVideoList", vo);
-		
-		return videoList;
-	}
-
-	@Override
-	public List<Scene> getSceneList(FormVO vo) throws Exception{
-		
-		SqlSession session = sessionService.getSession();
-	
-		List<Scene> sceneList = session.selectList("SceneMapper.getSceneList", vo);
+		try{
+			session = sessionService.getSession();
+			sceneList = session.selectList("SceneMapper.getSceneList", vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
+		}
 		
 		return sceneList;
 	}
 	
 	@Override
-	public List<Period> getPeriodList() throws Exception{
+	public List<Period> getPeriodList(){
+		SqlSession session = null;
+		List<Period> periodList = null;
 		
-		SqlSession session = sessionService.getSession();
-	
-		List<Period> periodList = session.selectList("EntryMapper.periodList");
+		try{
+			session = sessionService.getSession();
+			periodList = session.selectList("EntryMapper.periodList");
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
+		}
 		
 		return periodList;
 	}
 	
 	@Override
-	public List<Country> getCountryList(String domAbr) throws Exception{
-		
-		SqlSession session = sessionService.getSession();
-	
+	public List<Country> getCountryList(String domAbr){
+		SqlSession session = null;
 		List<Country> countryList = null;
-		if(StringUtils.isNullOrEmpty(domAbr)){
-			countryList = session.selectList("EntryMapper.countryList");			
-		}else{			
-			countryList = session.selectList("EntryMapper.countryList", domAbr);
+		
+		try{
+			session = sessionService.getSession();
+			
+			logger.debug("[getCountryList] domAbr : " + domAbr);
+			
+			if(null != domAbr && !"".equals(domAbr)){
+				countryList = session.selectList("EntryMapper.countryList", domAbr);
+			}else{			
+				countryList = session.selectList("EntryMapper.countryList");			
+			}
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
 		}
 		
 		return countryList;
 	}
 	
 	@Override
-	public List<Country> getCountryList(FormVO vo) throws Exception{
-		
-		SqlSession session = sessionService.getSession();
-	
+	public List<Country> getCountryList(FormVO vo){
+		SqlSession session = null;
 		List<Country> countryList = null;
-		if(vo.getDomAbr()==null || StringUtils.isNullOrEmpty(vo.getDomAbr())){
-			countryList = session.selectList("EntryMapper.countryList");			
-		}else{			
-			countryList = session.selectList("EntryMapper.countryList", vo.getDomAbr());
+		
+		try{
+			session = sessionService.getSession();
+			if(vo.getDomAbr()==null || StringUtils.isNullOrEmpty(vo.getDomAbr())){
+				countryList = session.selectList("EntryMapper.countryList");			
+			}else{			
+				countryList = session.selectList("EntryMapper.countryList", vo.getDomAbr());
+			}
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
 		}
 		
 		return countryList;
 	}
 	
 	@Override
-	public List<Event> getEventList(FormVO vo) throws Exception{
-		
-		SqlSession session = sessionService.getSession();
-	
+	public List<Event> getEventList(FormVO vo){
+		SqlSession session = null;
 		List<Event> eventCategoryList = null;
-		eventCategoryList = session.selectList("EntryMapper.eventCategoryList", vo);
+		
+		try{
+			session = sessionService.getSession();
+			eventCategoryList = session.selectList("EntryMapper.eventCategoryList", vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
+		}
 		
 		return eventCategoryList;
 	}
 	
 	@Override
-	public List<Person> getPersonList(String celebrityNm) throws Exception{
-		
-		SqlSession session = sessionService.getSession();
-	
-		List<Person> personList = null;
-		if(StringUtils.isNullOrEmpty(celebrityNm)){
-			personList = session.selectList("EntryMapper.personList");			
-		}else{			
-			personList = session.selectList("EntryMapper.personList", celebrityNm);
+	public List<ScenePersonMapping> getPersonList(String celebrityNm){
+		SqlSession session = null;
+		List<ScenePersonMapping> personList = null;
+		try{
+			session = sessionService.getSession();
+			if(StringUtils.isNullOrEmpty(celebrityNm)){
+				personList = session.selectList("EntryMapper.personList");			
+			}else{			
+				personList = session.selectList("EntryMapper.personList", celebrityNm);
+			}
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
 		}
 		
 		return personList;
 	}
 	
 	@Override
-	public List<VideoCategory> getVideoCategoryList() throws Exception{
-		
-		SqlSession session = sessionService.getSession();
-	
-		List<VideoCategory> videoCategoryList = session.selectList("EntryMapper.videoCategoryList");
+	public List<VideoCategory> getVideoCategoryList(){
+		SqlSession session = null;
+		List<VideoCategory> videoCategoryList = null;
+		try{
+			session = sessionService.getSession();
+			videoCategoryList = session.selectList("EntryMapper.videoCategoryList");
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
+		}
 		
 		return videoCategoryList;
 	}
 	
 	@Override
-	public Scene findScene(FormVO vo) throws Exception {
-		SqlSession session = sessionService.getSession();
-		Scene theScene = (Scene)session.selectOne("SceneMapper.findScene", vo);
+	public Scene findScene(FormVO vo) {
+		SqlSession session = null;
+		Scene theScene = null;
 			
+		try{
+			session = sessionService.getSession();
+			theScene = (Scene)session.selectOne("SceneMapper.findScene", vo);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
+		}
+		
 		return theScene;
 	}
 	
 	@Override
-	public Video findVideo(String id) throws Exception {
-		SqlSession session = sessionService.getSession();
-		Video theVideo = (Video)session.selectOne("VideoMapper.findVideo", id);
+	public Video findVideo(String id) {
+		SqlSession session = null;
+		Video theVideo = null;;
+		
+		try{
+			session = sessionService.getSession();
+			theVideo = (Video)session.selectOne("VideoMapper.findVideo", id);
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{			
+			session.close();
+		}
 	
 		return theVideo;
 	}
@@ -160,17 +218,21 @@ public class EditorDaoImpl implements EditorDao {
 	
 	@Override
 	public int updateScene(FormVO vo){
-		SqlSession session = sessionService.getSession();
-
+		SqlSession session = null;
 		int resultCount = 0;
+		
 		try{
-			resultCount = session.update("SceneMapper.updateScene", vo);			
+			session = sessionService.getSession();
+			resultCount = session.update("SceneMapper.updateScene", vo);
+			
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
 		
-		session.commit(false);
 		logger.info("Update count : " + resultCount);
 		
 		return resultCount;
@@ -178,17 +240,20 @@ public class EditorDaoImpl implements EditorDao {
 	
 	@Override
 	public int insertScene(FormVO vo){
-		SqlSession session = sessionService.getSession();
-
+		SqlSession session = null;
 		int resultCount = 0;
 		try{
-			resultCount = session.insert("SceneMapper.insertScene", vo);			
+			session = sessionService.getSession();
+			resultCount = session.insert("SceneMapper.insertScene", vo);
+			
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
-		
-		session.commit(false);
+
 		logger.info("Insert count : " + resultCount);
 		
 		return resultCount;
@@ -196,92 +261,155 @@ public class EditorDaoImpl implements EditorDao {
 	
 	@Override
 	public int deleteScene(FormVO vo){
-		SqlSession session = sessionService.getSession();
-
+		SqlSession session = null;
 		int resultCount = 0;
 		try{
-			resultCount = session.delete("SceneMapper.deleteScene", vo);			
+			session = sessionService.getSession();
+			resultCount = session.delete("SceneMapper.deleteScene", vo);		
+
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
 		
-		session.commit(false);
 		logger.info("Delete count : " + resultCount);
 		
 		return resultCount;
 	}
 	
 	@Override
-	public String findVideoFilePath(FormVO vo) throws Exception {
+	public String findVideoFilePath(FormVO vo) {
 		SqlSession session = sessionService.getSession();
-		String filePath = (String)session.selectOne("VideoMapper.findVideoFile", vo);			
+		String filePath = null;
+		
+		try{
+			session = sessionService.getSession();
+			filePath = (String)session.selectOne("VideoMapper.findVideoFile", vo);		
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{
+			session.close();
+		}
 		
 		return filePath;
 	}
 	
 	@Override
-	public int scenePersonMapping(FormVO vo) throws Exception {
-		SqlSession session = sessionService.getSession();
-		
+	public int scenePersonMapping(FormVO vo) {
+		SqlSession session = null;
 		int resultCount = 0;
+		
 		try{
+			session = sessionService.getSession();
 			resultCount = session.insert("EntryMapper.scenePersonMapping", vo);			
+			
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
 		
-		session.commit(false);
 		logger.info("Insert count : " + resultCount);
 		
 		return resultCount;
 	}
 	
 	@Override
-	public int deletePersonFromMapping(FormVO vo) throws Exception {
-		SqlSession session = sessionService.getSession();
-		
+	public int deletePersonFromMapping(FormVO vo) {
+		SqlSession session = null;
 		int resultCount = 0;
+		
 		try{
-			resultCount = session.delete("EntryMapper.deletePersonFromMapping", vo);			
+			session = sessionService.getSession();
+			if(vo.getPersonKorNm() != null){				
+				resultCount = session.delete("EntryMapper.deletePersonFromMapping", vo);			
+			}else{ // 장면이 삭제되면 scene_person_mapping 의 특정 장면 관련 정보를 모두 삭제.
+				resultCount = session.delete("EntryMapper.deleteMapping", vo);
+			}
+			
+			session.commit();
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 			session.rollback();
+		}finally{
+			session.close();
 		}
-		
-		session.commit(false);
+
 		logger.info("Delete count : " + resultCount);
 		
 		return resultCount;
 	}
 	
 	@Override
-	public List<Person> getScenePersonMapping(FormVO vo) throws Exception {
-		SqlSession session = sessionService.getSession();
+	public List<ScenePersonMapping> getScenePersonMapping(FormVO vo) {
+		SqlSession session = null;		
+		List<ScenePersonMapping> personList = null;
 		
-		List<Person> personList = null;
 		try{
+			session = sessionService.getSession();
 			personList = session.selectList("EntryMapper.getScenePersonMapping", vo);			
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
-			session.rollback();
+		}finally{
+			session.close();
 		}
 		
 		return personList;
 	}
 	
 	@Override
-	public int getVideoTotalCount(FormVO vo) throws Exception {
-		SqlSession session = sessionService.getSession();
+	public int getVideoTotalCount(FormVO vo) {
+		SqlSession session = null;
 		int totalCount = 0;
+		
 		try{
+			session = sessionService.getSession();
 			totalCount = (Integer)session.selectOne("VideoMapper.getVideoTotalCount", vo);			
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
-			session.rollback();
+		}finally{
+			session.close();
 		}
 		
 		return totalCount;
+	}
+	
+	@Override
+	public int getNewScnId() {
+		SqlSession session = null;
+		int scnId = 0;
+		
+		try{
+			session = sessionService.getSession();
+			scnId = (Integer)session.selectOne("SceneMapper.getNewScnId");			
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{
+			session.close();
+		}
+		
+		return scnId;
+	}
+	
+	@Override
+	public int getMaxRuntime() {
+		SqlSession session = null;
+		int maxRuntime = 0;
+		
+		try{
+			session = sessionService.getSession();
+			maxRuntime = (Integer)session.selectOne("VideoMapper.getMaxRuntime");
+		}catch(Exception e){
+			logger.error(StringUtil.getStackTrace(e));
+		}finally{
+			session.close();
+		}
+		
+		return maxRuntime;
 	}
 }

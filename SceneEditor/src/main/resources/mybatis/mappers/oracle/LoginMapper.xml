@@ -8,6 +8,9 @@
 	</resultMap>
 	
 	<select id="getUserInfo" resultMap="loginInfo" parameterType="user">
-	 select USER_ID, PASSWORD from USERINFO where USER_ID=#{userName} and PASSWORD=#{password}
+	 select USER_ID, PASSWORD
+	   from USERINFO
+	  where USER_ID=#{userName}
+	    and PASSWORD=damo.HASH_STR_DATA('${password}')
 	 </select>
 </mapper>

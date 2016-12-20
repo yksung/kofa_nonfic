@@ -31,17 +31,20 @@
 	<select id="getVideoTotalCount" resultType="Integer" parameterType="vo">
 	 SELECT count(*) FROM (
 	 	select X.* from (
-			select MUL_ID as vdoId
-				, MUL_TITLE as vdoTitle
-				, TITLE_ETC as vdoType
-				, LANGUAGE as language
-				, MUL_YEAR as productionDate
-				, RUNTIME as runtime
-				, (select count(*) from scene_manage where video_id=Z.MUL_ID) AS scnCnt
-			 FROM MULTI_NEW Z
+			select A.MUL_ID as vdoId
+				, A.MUL_TITLE as vdoTitle
+				, (select code_nm from CODEINFO where div_id = 'A01' and code = B.PATTEN_CLSS) as vdoType
+				, B.NATION_CLSS as language
+				, A.MUL_YEAR as productionDate
+				, A.RUNTIME as runtime
+				, (select count(*) from scene_manage where video_id=A.MUL_ID) AS scnCnt
+			 FROM MULTI_NEW A, MOVIE_SE B, MULTI_MOVIE_REL C
 			 <where>
+			 	A.MUL_ID = C.MUL_ID
+			 	and B.MOVIE_ID = C.MOVIE_ID
+			 	and B.MOVIE_SEQ = C.MOVIE_SEQ
 			 	<if test='viewOnlyHavingScene != null and viewOnlyHavingScene == "y"'>
-				(select count(*) from scene_manage where video_id=Z.MUL_ID)  > 0
+				and (select count(*) from scene_manage where video_id=A.MUL_ID)  > 0
 				</if>
 			 </where>
 		) X
@@ -80,17 +83,20 @@
 				vdoId ASC
 			</otherwise></choose>
 		) as recid, X.* from (
-		select MUL_ID as vdoId
-			, MUL_TITLE as vdoTitle
-			, TITLE_ETC as vdoType
-			, LANGUAGE as language
-			, MUL_YEAR as productionDate
-			, RUNTIME as runtime
-			, (select count(*) from scene_manage where video_id=Z.MUL_ID) AS scnCnt
-		 FROM MULTI_NEW Z
+		select A.MUL_ID as vdoId
+			, A.MUL_TITLE as vdoTitle
+			, (select code_nm from CODEINFO where div_id = 'A01' and code = B.PATTEN_CLSS) as vdoType
+			, B.NATION_CLSS as language
+			, A.MUL_YEAR as productionDate
+			, A.RUNTIME as runtime
+			, (select count(*) from scene_manage where video_id=A.MUL_ID) AS scnCnt
+		 FROM MULTI_NEW A, MOVIE_SE B, MULTI_MOVIE_REL C
 		 <where>
+		 	A.MUL_ID = C.MUL_ID
+		 	and B.MOVIE_ID = C.MOVIE_ID
+		 	and B.MOVIE_SEQ = C.MOVIE_SEQ
 		 	<if test='viewOnlyHavingScene != null and viewOnlyHavingScene == "y"'>
-			(select count(*) from scene_manage where video_id=Z.MUL_ID)  > 0
+			and (select count(*) from scene_manage where video_id=A.MUL_ID)  > 0
 			</if>
 		 </where>
 		) X
@@ -124,17 +130,20 @@
 		</where>
 	</select>
 	<select id="findVideo" resultMap="videoList" parameterType="String">
-	 SELECT MUL_ID as vdoId
-		 , MUL_TITLE as vdoTitle
-		 , TITLE_ETC as vdoType
-		 , LANGUAGE as language
-		 , MUL_YEAR as productionDate
-		 , RUNTIME as runtime
-		 , (select count(*) from scene_manage where video_id=Z.MUL_ID) AS scnCnt
-		FROM MULTI_NEW Z
+	select A.MUL_ID as vdoId
+		, A.MUL_TITLE as vdoTitle
+		, (select code_nm from CODEINFO where div_id = 'A01' and code = B.PATTEN_CLSS) as vdoType
+		, B.NATION_CLSS as language
+		, A.MUL_YEAR as productionDate
+		, A.RUNTIME as runtime
+		, (select count(*) from scene_manage where video_id=A.MUL_ID) AS scnCnt
+	 FROM MULTI_NEW A, MOVIE_SE B, MULTI_MOVIE_REL C
 		<where>
+		A.MUL_ID = C.MUL_ID
+	 	and B.MOVIE_ID = C.MOVIE_ID
+	 	and B.MOVIE_SEQ = C.MOVIE_SEQ
 		<if test='_parameter != null'>
-		MUL_ID = #{id}
+		and C.MUL_ID = #{id}
 		</if>
 		</where>
 	</select>
@@ -149,5 +158,7 @@
 	  ) A
 	  where rownum=1
 	</select>
-	
+	<select id="getMaxRuntime" resultType="Integer">
+	 SELECT max(B.RUNTIME) FROM MULTI_NEW B
+	</select>	
 </mapper>
