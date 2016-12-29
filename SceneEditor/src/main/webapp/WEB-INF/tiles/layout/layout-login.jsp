@@ -9,7 +9,7 @@ response.setCharacterEncoding("UTF-8");
 <!DOCTYPE html >
 <html lang="ko">
  <head>
-  <title>로그인</title>
+  <title>장면정보 입력 관리 시스템&nbsp;|&nbsp;한국영상자료원</title>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <link rel="stylesheet" href="${contextRoot }/css/default.css" type="text/css"/>

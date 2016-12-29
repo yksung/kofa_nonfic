@@ -5,7 +5,7 @@
 <html  lang="ko">
 <head>
 	<meta charset="utf-8" />
-	<title>통합검색</title>
+	<title>비극영상물 장면정보 통합검색&nbsp;|&nbsp;한국영상자료원</title>
 	<!--[if lt IE 9]>
 		<script type="text/javascript" src="js/html5shiv.js"></script>
  	<![endif]-->
@@ -86,6 +86,14 @@ $(function(){
 	
 	$("#runtime").val( $("#id_rangeslider").slider("values", 0)+"min. - " + $("#id_rangeslider").slider("values", 1) + "min." );
 });
+
+function fnReturn() {
+	if(event.keyCode==13){
+		goSearch();
+	}else{
+		return false;
+	}
+}
 </script>
 </head>
 <body>
@@ -113,6 +121,7 @@ $(function(){
 		<input type="hidden" name="sort" value="${form.sort }"/>
 		<input type="hidden" name="runtimeMin" value="${form.runtimeMin }"/>
 		<input type="hidden" name="runtimeMax" value="${form.runtimeMax }"/>
+		<input type="text" name="preventSubmitFromHittingEnter" style="display:none;"/>
 		
 		<div class="top" id="top">
         	<h1>
@@ -123,7 +132,7 @@ $(function(){
 				</a>
             </h1>
             <dl class="search_area">
-            	<dd class="input_box"><input type="text" name="query" value="${form.query }" /></dd>
+            	<dd class="input_box"><input type="text" id="id_query" name="query" value="${form.query }" onkeyup="javascript:fnReturn();"/></dd>
 			</dl>
 			<a class="searchBtn" href="javascript:goSearch();">검색</a>
 		</div>

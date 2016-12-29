@@ -137,10 +137,10 @@
 	   <where>
 	   <choose>
 	   	<when test="direction == 1"><![CDATA[
-	   	VIDEO_ID = #{vdoId} and SCN_ID = ( select /*+ INDEX_ASC(scene_manage, IDX_SCN_ID) */ min(SCN_ID) from SCENE_MANAGE where SCN_ID > #{scnId} ) 
+	   	SCN_ID = ( select /*+ INDEX_ASC(scene_manage, IDX_SCN_ID) */ min(SCN_ID) from SCENE_MANAGE where VIDEO_ID = #{vdoId} and SCN_ID > #{scnId} ) 
 	   	]]></when>
 	   	<when test="direction == -1"><![CDATA[
-	   	VIDEO_ID = #{vdoId} and SCN_ID = ( select /*+ INDEX_DESC(scene_manage, IDX_SCN_ID) */ max(SCN_ID) from SCENE_MANAGE where SCN_ID < #{scnId} ) 
+	   	SCN_ID = ( select /*+ INDEX_DESC(scene_manage, IDX_SCN_ID) */ max(SCN_ID) from SCENE_MANAGE where VIDEO_ID = #{vdoId} and SCN_ID < #{scnId} )  
 	   	]]></when>
 	   	<otherwise>
 	   	SCN_ID = #{scnId} AND VIDEO_ID = #{vdoId}

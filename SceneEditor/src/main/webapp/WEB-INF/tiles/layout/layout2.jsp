@@ -11,7 +11,7 @@ response.setCharacterEncoding("utf-8");
 <html  lang="ko">
  <head>
   <meta charset="utf-8" />
-  <title> 영상조회</title>
+  <title>장면정보 입력 관리 시스템&nbsp;|&nbsp;한국영상자료원</title>
   <!--[if lt IE 9]>
 	<script type="text/javascript" src="${contextRoot}/js/html5shiv.js"></script>
   <![endif]-->

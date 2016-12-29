@@ -3,14 +3,7 @@
 <c:set var="contextRoot" value="${pageContext.request.contextPath }"/>
 <fmt:parseNumber var="strVdoIdx" value="${fn:indexOf(vdoFilePath, 'vod') }"/>
 <fmt:parseNumber var="vdoFilePathLen" value="${fn:length(vdoFilePath) }"/>
-<script>
-console.log('vdoFilePath : ${vdoFilePath}');
-console.log('strVdoIdx : ${strVdoIdx}');
-console.log('vdoFilePathLen : ${vdoFilePathLen}');
-</script>
 <c:set var="vdoFilePathReal" value="${fn:substring(vdoFilePath, strVdoIdx-1, vdoFilePathLen )}"/>
-<fmt:parseNumber var="scnStartMin" value="${fn:trim(strScnStartMin) }"/>
-<fmt:parseNumber var="scnStartSec" value="${fn:trim(strScnStartSec) }"/>
 <link rel="stylesheet" type="text/css" href="${contextRoot}/css/style01.css">
 <script type="text/javascript" src="${contextRoot}/js/beta.fix.js"></script>
 <script type="text/javascript" src="${contextRoot}/js/ark_function.js"></script>
@@ -32,7 +25,6 @@ $(document).ready(function(){
 		if(target.parent().attr("id")=='id_playerButton' || target.attr("id")=='id_playerButton'){
 			var videoFilePath = '${vdoFilePathReal}';
 			if(videoFilePath.lastIndexOf('mp4')==videoFilePath.length-3){
-				console.log("scnStartMin : ${scnStartMin} / scnStartSec : ${scnStartSec}" );
 				$f("id_vdoPlayer", playerImg, playerConfig).load();
 			}else{
 				$("#id_vdoPlayer").html('<span>mp4 형식의 영상이 아닙니다.</span>');
@@ -60,33 +52,31 @@ function resize(obj) {
       	<header>
       		<h2>메타입력 정보</h2>
       		<c:if test="${ isValidUser }">
-         	<a href="${contextRoot }/editor/viewScene?vdoId=${sceneInfo.vdoId}">목록보기</a>
             <ul>
-             	<c:choose>
+            <c:choose>
              	<c:when test='${ prevScene != 0 }'>
              	<li><a class="btn_prev on" href="${contextRoot }/editor/editScene?vdoId=${ sceneInfo.vdoId }&scnId=${prevScene}&direction=-1">이전정보</a></li>
              	</c:when>
              	<c:otherwise>
              	<li><a class="btn_prev" href="#">이전정보</a></li>
              	</c:otherwise>
-             	</c:choose>
-             	<c:choose>
+             </c:choose>
+             <c:choose>
              	<c:when test='${ nextScene != 0 }'>
-                 <li><a class="btn_next on" href="${contextRoot }/editor/editScene?vdoId=${ sceneInfo.vdoId }&scnId=${nextScene}&direction=1">다음정보</a></li>
-                 </c:when>
-                 <c:otherwise>
+                <li><a class="btn_next on" href="${contextRoot }/editor/editScene?vdoId=${ sceneInfo.vdoId }&scnId=${nextScene}&direction=1">다음정보</a></li>
+                </c:when>
+                <c:otherwise>
              	<li><a class="btn_next" href="#">다음정보</a></li>
              	</c:otherwise>
-             	</c:choose>
+             </c:choose>
 			</ul>
+         	<a href="${contextRoot }/editor/viewScene?vdoId=${sceneInfo.vdoId}">목록보기</a>
 			</c:if>
 		</header>
 		<form name="thisSceneForm" action="${contextRoot }/editor/saveScene" method="POST">
          	<input type="hidden" name="scnId" value="${fn:trim(sceneInfo.scnId) }"/>
 			<input type="hidden" name="vdoId" value="${fn:trim(sceneInfo.vdoId) }"/>
 			<input type="hidden" name="editor" value="<%=userName %>"/>
-			<c:set var="strScnStartMin" value="${fn:substring(sceneInfo.scnStartCd, 0, 3) }"/>
-			<c:set var="strScnStartSec" value="${fn:substring(sceneInfo.scnStartCd, 4, 6) }"/>
          	<table summary="메타정보를 입력할 수 있는 양식">
                  <caption>메타입력정보</caption>
                  <colgroup>
@@ -101,7 +91,7 @@ function resize(obj) {
 						</td>
 					</tr>
 					<tr>
-                       	<th>관련사건<a href="javascript:plusEvent('li', 'event')" id="id_evnt_add"><img src="${contextRoot}/images/btn_plus.png" alt="사건 추가" /></a></th>
+                       	<th>관련사건<c:if test="${ isValidUser }"><a href="javascript:plusEvent('li', 'event')" id="id_evnt_add"><img src="${contextRoot}/images/btn_plus.png" alt="사건 추가" /></a></c:if></th>
                         <!-- yksung@20160924 : 대분류는 직접입력의 자동완성과 기능적으로 겹치기 때문에 빼는 쪽으로 갔으면 함.
                         <td>
 							<label for="">대분류*</label>
@@ -126,7 +116,7 @@ function resize(obj) {
 									<!-- <label for="id_eventNm${status.index }">직접입력</label> -->
 									<input class="size" id="id_eventNm${status.index }" name="eventNm" type="text" value="${fn:trim(eventNm) }" onClick="javascript:doArk('thisSceneForm', 'id_eventNm${status.index}', 'id_eventArk${status.index }', 'event');" onKeyUp="javascript:arkKeyUp(event, 'id_eventArk${status.index }')"/> 
 		                     		<span id="id_eventArk${status.index }"></span>
-		                     		<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="사건 삭제" /></a>
+		                     		<c:if test="${ isValidUser }"><a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="사건 삭제" /></a></c:if>
 	                     		</li>
 	                     		</c:forTokens>
 							</ul>
@@ -198,7 +188,7 @@ function resize(obj) {
 						</td>
 					</tr>
                     <tr>
-						<th>인물명<a href="javascript:cloneElement('li', 'celebrity')" id="id_celb_add"><img src="${contextRoot}/images/btn_plus.png" alt="인물 추가" /></th>
+						<th>인물명<c:if test="${ isValidUser }"><a href="javascript:cloneElement('li', 'celebrity')" id="id_celb_add"><img src="${contextRoot}/images/btn_plus.png" alt="인물 추가" /></a></c:if></th>
 						<td id="id_celebrity">
 							<ul class="horizontal">
 								<c:if test="${not empty scenePersonMapping }">
@@ -224,7 +214,7 @@ function resize(obj) {
 								<c:if test="${empty scenePersonMapping }">
 								<li name="celebrity" id="id_celebrity_0">
 									<input name="celebrityNm" id="id_celebrityNm_0" type="text" placeholder="유명인만 기재" value=""/>
-									<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a>
+									<c:if test="${ isValidUser }"><a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a></c:if>
 									<!-- 인물명팝업 -->
 									<div class="layer" id="layer_addcelebrity_0">
 										<div class="bg"></div>
@@ -269,6 +259,7 @@ function resize(obj) {
 			<c:if test="${ isValidUser }">
             <ul class="btn_area">
 				<li><a class="btn_save" href="javascript:saveScene();">저장</a></li>
+				<li><a class="btn_new" href="javascript:createNewSceneInfo('${fn:trim(sceneInfo.vdoNm)}', '${fn:trim(sceneInfo.vdoId)}');">새 장면 입력하기</a></li>
 				<!-- <li><a class="btn_check" href="#">검증</a></li> -->
 				<li><a class="btn_del" href="javascript:deleteScene('${fn:trim(sceneInfo.vdoId)}', '${fn:trim(sceneInfo.scnId) }');">삭제</a></li>
             </ul>
@@ -343,7 +334,7 @@ var playerConfig = {
         // configure clip to use hddn as our provider, referring to our rtmp plugin
         provider: 'hddn',
         onStart : function(){
-        	$f("id_vdoPlayer").seek(${scnStartMin*60 + scnStartSec});
+        	$f("id_vdoPlayer").seek(${sceneStartsAt});
         }
     },
 

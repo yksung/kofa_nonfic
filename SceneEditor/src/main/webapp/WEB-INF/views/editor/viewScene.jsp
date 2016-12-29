@@ -55,10 +55,6 @@ var config = {
 	}
 };
 
-function createNewSceneInfo(vdoNm, vdoId){
-	location.href = "${contextRoot}/editor/editScene?vdoNm="+vdoNm+"&vdoId="+vdoId;
-}
-
 $(function(){
 	$('#id_sceneGrid').w2grid(config.grid);
 });

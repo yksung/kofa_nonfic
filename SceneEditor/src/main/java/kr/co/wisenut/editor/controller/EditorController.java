@@ -75,7 +75,7 @@ public class EditorController {
 			logger.error(StringUtil.getStackTrace(e));
 		}
 		
-		mav.addObject("videoInfo", video );
+		mav.addObject("videoInfo", video);
 		
 		return mav;
 	}
@@ -86,7 +86,7 @@ public class EditorController {
 		
 		logger.info("============ start to edit scene !!");
 				
-		Scene scene = new Scene();
+		Scene scene = null;
 		List<Country> countryList = null;
 		List<Period> periodList = null;
 		List<ScenePersonMapping> personList = null;
@@ -97,17 +97,22 @@ public class EditorController {
 		FormVO voForPrevScene = new FormVO();
 		FormVO voForNextScene = new FormVO();
 		String vdoFilePath = "";
+		int scnStartsAt = 0;
 			
 		try{
-			if(vo.getScnId() != 0){
-				// 현재 장면의 정보를 가져올 때는 direction 값을 0으로 초기화해서 넘긴다.
-				vo.setDirection(0);
-				scene = editorDao.findScene(vo);
+			// 현재 장면의 정보를 가져올 때는 direction 값을 0으로 초기화해서 넘긴다.
+			vo.setDirection(0);
+			scene = editorDao.findScene(vo);
+			
+			// "장면정보 입력하기" 버튼 or 기존 장면 정보 수정 시
+			if(vo.getScnId() != 0 && scene !=null ){
 				
+				// direction 값이 -1이면 vdoId와 scnId를 이용해 현재 scnId보다 작은 scnId 중 가장 큰 값을 리턴
 				voForPrevScene.setDirection(-1);
 				voForPrevScene.setVdoId(vo.getVdoId());
 				voForPrevScene.setScnId(vo.getScnId());
 				
+				// direction 값이 1이면 vdoId와 scnId를 이용해 현재 scnId보다 큰 scnId 중 가장 작은 값을 리턴
 				voForNextScene.setDirection(1);
 				voForNextScene.setVdoId(vo.getVdoId());
 				voForNextScene.setScnId(vo.getScnId());
@@ -122,13 +127,23 @@ public class EditorController {
 				// 해당 장몀의 사건연대 값을 받아와 해당 연대의 사건만 가져온다. 개발할 때만 적용할 수도 있음. 
 				vo.setEventPrd(scene.getEventPrd());
 				
-				vdoFilePath = sceneService.getVideoFilePath(vo);
-			}else{
+				// 장면 시작하는 초(sec) 구하기
+				if( scene.getScnStartCd()!=null ){
+					int colonIdx = scene.getScnStartCd().indexOf(":");
+					int min = Integer.parseInt(scene.getScnStartCd().substring(0, colonIdx));
+					int sec = Integer.parseInt(scene.getScnStartCd().substring(colonIdx+1).trim());
+					
+					scnStartsAt = min*60 + sec;
+				}
+			}else{ // "새 장면 입력"
+				scene = new Scene();
+				
 				scene.setScnId(sceneService.getNewScnId());
 				scene.setVdoId(vo.getVdoId());// 새 장면인 경우 기존에 장면정보 ID는 없지만 VIDEO_ID는 존재하므로 그 정보를 새 장면 입력화면에 넘겨준다.
 				scene.setVdoNm(vo.getVdoNm());
 			}
 			
+			vdoFilePath = sceneService.getVideoFilePath(vo);
 			countryList = editorDao.getCountryList(vo);
 			periodList = editorDao.getPeriodList();
 			personList = editorDao.getScenePersonMapping(vo);
@@ -141,6 +156,7 @@ public class EditorController {
 			logger.error(StringUtil.getStackTrace(e));
 		}
 		
+		mav.addObject("sceneStartsAt", scnStartsAt);
 		mav.addObject("prevScene", prevExists);
 		mav.addObject("nextScene", nextExists);
 		mav.addObject("sceneInfo", scene );
@@ -157,6 +173,25 @@ public class EditorController {
 	@RequestMapping(value = "/saveScene")
 	public ModelAndView saveSceneInfo(@ModelAttribute FormVO vo, ModelAndView mav) {
 		mav.setViewName("editor/updateScene");
+		
+		int successfullySaveCount = 0;
+		try {
+			successfullySaveCount = sceneService.saveSceneInfo(vo);
+		} catch (IOException e) {
+			logger.error(StringUtil.getStackTrace(e));
+		} catch (Exception e) {
+			logger.error(StringUtil.getStackTrace(e));
+		}
+		
+		mav.addObject("saveCount", successfullySaveCount);
+		mav.addObject("sceneInfo", vo);
+		
+		return mav;
+	}
+	
+	@RequestMapping(value = "/saveAndCreateScene")
+	public ModelAndView saveAndCreateSceneInfo(@ModelAttribute FormVO vo, ModelAndView mav) {
+		mav.setViewName("editor/saveAndCreateScene");
 		
 		int successfullySaveCount = 0;
 		try {

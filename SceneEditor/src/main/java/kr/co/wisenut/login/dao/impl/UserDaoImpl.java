@@ -27,8 +27,6 @@ private static final Logger logger = LoggerFactory.getLogger(EditorDaoImpl.class
 		try{
 			session = sessionService.getSession();
 			if(session.selectOne("LoginMapper.getUserInfo", loginInfo) != null){
-				logger.info(loginInfo.getUserName() + " exists.");
-				
 				ret = true;
 			}
 		}catch(Exception e){

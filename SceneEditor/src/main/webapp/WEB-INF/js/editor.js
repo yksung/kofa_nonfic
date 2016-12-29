@@ -1,4 +1,4 @@
-$(function(){
+$(function(){	
 	$("img.popup_close").on("click", function(){
 		$("div.map_pop").hide();
 	});
@@ -442,4 +442,21 @@ function searchPerson(idx){
 			alert("code : " + request.status + "\n" + "message : "+ request.responseText + "\n" + "error : " + error);
 		}
 	});
+}
+
+function createNewSceneInfo(vdoNm, vdoId){
+	location.href = "/editor/editScene?vdoNm="+vdoNm+"&vdoId="+vdoId;
+}
+
+function saveAndCreateNewScene(){
+	
+	var $eventNm = $("input[name='eventNm']");
+	var loop = 0;
+	
+	serializeInputArray("input[name='eventNm']", "@^@");
+	serializeInputArray("input[name='celebrity1']", "@^@");
+	
+	$("form[name='thisSceneForm']").attr("action", "/editor/saveAndCreateScene");
+	
+	$("form[name='thisSceneForm']").submit();
 }

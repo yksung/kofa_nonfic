@@ -57,11 +57,7 @@ var config = {
 	        { field: 'productionDate', caption: '제작년도', size: '10%', sortable:true, render:'date_format', attr: 'align=center'},
 	        { field: 'scnCnt', caption: '장면정보개수', size: '10%', sortable:true, render:'decimalSymbol', attr: 'align=center',
 	        	render: function (record) {
-	        		if( record.scnCnt > 0){	        			
-	                	return '<a href=\"${contextRoot}/editor/viewScene?vdoId=' + record.vdoId + '\">' + record.scnCnt +'</a>';
-	        		}else{
-						return record.scnCnt;	        			
-	        		}
+	               return '<a href=\"${contextRoot}/editor/viewScene?vdoId=' + record.vdoId + '\">' + record.scnCnt +'</a>';
 	            }
 	        }
 	    ]
