@@ -19,9 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.cj.core.util.StringUtils;
-
-
 @Repository("SceneMapper")
 public class EditorDaoImpl implements EditorDao {
 	
@@ -111,7 +108,7 @@ public class EditorDaoImpl implements EditorDao {
 		
 		try{
 			session = sessionService.getSession();
-			if(vo.getDomAbr()==null || StringUtils.isNullOrEmpty(vo.getDomAbr())){
+			if(null == vo.getDomAbr() || "".equals(vo.getDomAbr())){
 				countryList = session.selectList("EntryMapper.countryList");			
 			}else{			
 				countryList = session.selectList("EntryMapper.countryList", vo.getDomAbr());
@@ -148,7 +145,7 @@ public class EditorDaoImpl implements EditorDao {
 		List<ScenePersonMapping> personList = null;
 		try{
 			session = sessionService.getSession();
-			if(StringUtils.isNullOrEmpty(celebrityNm)){
+			if(null == celebrityNm || "".equals(celebrityNm)){
 				personList = session.selectList("EntryMapper.personList");			
 			}else{			
 				personList = session.selectList("EntryMapper.personList", celebrityNm);

@@ -2,6 +2,7 @@ package kr.co.wisenut.search.service.impl;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,8 +20,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wisenut.bic.analyzer.Request;
+import com.wisenut.bic.analyzer.common.APIRequest;
+import com.wisenut.bic.analyzer.model.Request.RequestRes;
+import com.wisenut.bic.analyzer.model.Request.RequestVO;
+import com.wisenut.bic.analyzer.types.APIRequestType;
+
 import QueryAPI530.Search;
+import kr.co.wisenut.search.model.JsonResult;
+import kr.co.wisenut.search.model.Result;
 import kr.co.wisenut.search.model.SearchForm;
+import kr.co.wisenut.search.model.Variable;
 import kr.co.wisenut.search.model.WNAnchor;
 import kr.co.wisenut.search.service.*;
 import kr.co.wisenut.util.StringUtil;
@@ -82,6 +95,13 @@ public class SearchServiceImpl implements SearchService {
 	private String datatype;
 	private String charset;
 	
+	/*
+	 * Wise BicAnalyzer 설정
+	 */
+	private String analyzerIp;
+	private int analyzerPort;
+	private String[] analyzerCategories;
+	
 	public boolean debug = true;
 	
 	@PostConstruct
@@ -129,11 +149,23 @@ public class SearchServiceImpl implements SearchService {
 		convert = env.getProperty("wiseark.convert");
 		
 		LOGGER.debug("------------------------------------------------------------------");
-		LOGGER.debug("searchIP : "+ MANAGER_IP);
-		LOGGER.debug("searchPort : "+ MANAGER_PORT);
+		LOGGER.debug("managerIP : "+ MANAGER_IP);
+		LOGGER.debug("managerPort : "+ MANAGER_PORT);
 		LOGGER.debug("datatype : "+ datatype);
 		LOGGER.debug("charset : "+ charset);
 		LOGGER.debug("convert : "+ convert);
+		LOGGER.debug("------------------------------------------------------------------");
+		
+		analyzerIp = env.getProperty("wiseba.ip");
+		analyzerPort = (env.getProperty("wiseba.port")!=null)? Integer.parseInt(env.getProperty("wiseba.port")):0;
+		if(env.getProperty("wiseba.categories")!=null){
+			analyzerCategories =  env.getProperty("wiseba.categories").split("\\^");
+		}
+		
+		LOGGER.debug("----------------------------------------------------------- -------");
+		LOGGER.debug("analyzerIp : "+ analyzerIp);
+		LOGGER.debug("analyzerPort : "+ analyzerPort);
+		LOGGER.debug("analyzerCategories : "+ env.getProperty("wiseba.categories"));
 		LOGGER.debug("------------------------------------------------------------------");
 	}
 	
@@ -146,7 +178,11 @@ public class SearchServiceImpl implements SearchService {
 		if(form.getQuery() == null || "".equals(form.getQuery())){		
 			ret = search.w3SetCommonQuery("", 0);
 		}else{
-			ret = search.w3SetCommonQuery(form.getQuery(), 0);
+			String query = form.getQuery();
+			String orQuery = getTMResultAsQuery(form.getQuery());
+			
+			query += "|" + orQuery;
+			ret = search.w3SetCommonQuery(query, 0);
 		}
 		
 		LOGGER.debug(" - collection : " + collection);			
@@ -179,7 +215,8 @@ public class SearchServiceImpl implements SearchService {
 		
 		LOGGER.debug(" - prefixQuery : " + form.getPrefixQuery());
 		if(form.getPrefixQuery()!=null && form.getPrefixQuery().length()>0){
-			ret = search.w3SetPrefixQuery(collection, form.getPrefixQuery(), 1);
+			// PrefixQuery와 Common Query를 OR 검색
+			ret = search.w3SetPrefixQuery(collection, form.getPrefixQuery(), 0);
 		}
 		
 		if( null == form.getSearchField() || "".equals(form.getSearchField()) || "ALL".equals(form.getSearchField()) ){
@@ -334,6 +371,75 @@ public class SearchServiceImpl implements SearchService {
 		return totalResultCount;
 	}
 	
+	public ArrayList<JsonResult> getJsonResultFromBicAnalyzer(String query){
+		ArrayList<JsonResult> resultList = null;
+
+		Request request = new Request(analyzerIp, analyzerPort);
+		
+		APIRequest apiReq = new APIRequest(APIRequestType.request);
+		apiReq.setData(query);
+		
+		RequestRes result = request.getRequest(apiReq);
+		
+		if(result.getErrCode() == null ){
+			resultList = new ArrayList<JsonResult>();
+			for (RequestVO vo : result.getRequestVOList()) {
+				ObjectMapper mapper = new ObjectMapper();
+				
+				JsonResult jsonResult;
+				try {
+					jsonResult = mapper.readValue(vo.getResult(), JsonResult.class);
+					resultList.add(jsonResult);
+				} catch(JsonMappingException e){
+					LOGGER.error(e.getMessage());
+				} catch (IOException e) {
+					LOGGER.error(StringUtil.getStackTrace(e));
+				}
+			}
+		}
+		
+		return resultList;
+	}
+	
+	@Override
+	public String getTMResultAsQuery(String query) throws JsonParseException, JsonMappingException, IOException {
+		ArrayList<JsonResult> tmResults = getJsonResultFromBicAnalyzer(query);
+		StringBuffer queryBuffer = new StringBuffer();
+		
+		/*
+		 * {
+		 * 	"stauts":{
+		 * 		...
+		 * 	},
+		 * 	"result" : [
+		 * 	{	...
+		 * 			"variables" : [
+		 * 				{
+		 * 				"name" : "person",
+		 * 				"value" : "박정희"
+		 * 				}
+		 * 			],
+		 * 		...
+		 * 	}
+		 * 	]
+		 * }
+		 */
+		for(JsonResult result : tmResults){
+			if(result.getResult()!=null){
+				for(Result rs : result.getResult()){					
+					ArrayList<Variable> variables = rs.getVariables();
+					
+					for(Variable variable : variables){
+						queryBuffer.append(variable.getValue());
+						queryBuffer.append("|");
+					}
+				}
+			}
+		}
+		
+		return queryBuffer.toString().replaceAll("\\|$", "");
+	}
+		
 	public int getResultCount() {
 		return resultCount;
 	}

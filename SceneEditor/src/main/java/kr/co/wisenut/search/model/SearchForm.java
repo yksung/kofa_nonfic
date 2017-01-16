@@ -1,6 +1,7 @@
 package kr.co.wisenut.search.model;
 
 public class SearchForm {
+//	boolean analyzedSearch;
 	boolean categorySearch;
 	String query;
 	String sort;
@@ -16,6 +17,13 @@ public class SearchForm {
 	int runtimeMin;
 	int runtimeMax;
 	
+
+//	public boolean isAnalyzedSearch() {
+//		return analyzedSearch;
+//	}
+//	public void setAnalyzedSearch(boolean analyzedSearch) {
+//		this.analyzedSearch = analyzedSearch;
+//	}
 	public boolean isCategorySearch() {
 		return categorySearch;
 	}

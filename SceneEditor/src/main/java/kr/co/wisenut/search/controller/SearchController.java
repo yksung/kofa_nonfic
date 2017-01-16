@@ -2,12 +2,15 @@ package kr.co.wisenut.search.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
 import kr.co.wisenut.editor.service.EditorService;
+import kr.co.wisenut.search.model.JsonResult;
+import kr.co.wisenut.search.model.Result;
 import kr.co.wisenut.search.model.SearchForm;
 import kr.co.wisenut.search.service.SearchService;
 import kr.co.wisenut.util.StringUtil;

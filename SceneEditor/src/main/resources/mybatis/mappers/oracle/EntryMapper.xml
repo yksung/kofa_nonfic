@@ -41,7 +41,7 @@
 	   from PERSON
 	<where>
 		<if test="_parameter != null"><![CDATA[
-	 	 personfield is null and (KORNM like '%'||#{_parameter}||'%' or ENGNM like '%'||#{_parameter}||'%')
+	 	(KORNM like '%'||#{_parameter}||'%' or ENGNM like '%'||#{_parameter}||'%')
 	 	]]></if>
 	</where>
 	</select>
@@ -117,19 +117,11 @@
 	<insert id="scenePersonMapping" useGeneratedKeys="true" parameterType="vo">
 	<choose>
 		<when test="personId != null">
-		insert into SCENE_PERSON_MAPPING (
-			SCN_ID,
-			VIDEO_ID,
-		 	PERSON_ID,
-		 	PERSON_KORNM,
-		 	PERSON_ENGNM
-		) VALUES (
-			#{scnId},
-			#{vdoId},
-			#{personId},
-			#{personKorNm},
-			#{personEngNm}
-		)
+		update SCENE_PERSON_MAPPING 
+		   set VIDEO_ID = #{vdoId},
+		 	   PERSON_ID = #{personId, jdbcType=VARCHAR}, 
+		 	   PERSON_ENGNM = #{personEngNm, jdbcType=VARCHAR}
+		 where SCN_ID = #{scnId} and PERSON_KORNM = #{personKorNm}
 		</when>
 		<otherwise>
 		insert into SCENE_PERSON_MAPPING (
