@@ -15,11 +15,6 @@
 		<result property="eventNm" column="CODE_NM"/>
 		<result property="eventDate" column="ADIT_INFO1"/>
 	</resultMap>
-	<resultMap id="videoCategory" type="videoCategory">
-		<result property="clasCd" column="CLAS_CD"/>
-		<result property="clasNm" column="CLAS_NM"/>
-		<result property="upperClas" column="UPPER_CLAS"/>
-	</resultMap>
 	<resultMap id="scenePersonMapping" type="scenePersonMapping">
 		<result property="recid" column="CNT"/>
 		<result property="scnId" column="SCN_ID"/>
@@ -78,9 +73,6 @@
 	 </choose>
 	 </where>
 	 order by to_number(code) asc
-	</select>
-	<select id="videoCategoryList" resultMap="videoCategory">
-	 select * from video_kind
 	</select>
 	<insert id="insertEvent" useGeneratedKeys="true" parameterType="eventCategory">
 	INSERT INTO CODEINFO (

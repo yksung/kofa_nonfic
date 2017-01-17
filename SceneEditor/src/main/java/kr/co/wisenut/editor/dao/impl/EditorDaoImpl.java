@@ -5,13 +5,11 @@ import java.util.List;
 import kr.co.wisenut.editor.dao.EditorDao;
 import kr.co.wisenut.db.*;
 import kr.co.wisenut.editor.model.Country;
-import kr.co.wisenut.editor.model.Event;
 import kr.co.wisenut.editor.model.FormVO;
 import kr.co.wisenut.editor.model.Period;
 import kr.co.wisenut.editor.model.ScenePersonMapping;
 import kr.co.wisenut.editor.model.Scene;
 import kr.co.wisenut.editor.model.Video;
-import kr.co.wisenut.editor.model.VideoCategory;
 import kr.co.wisenut.util.StringUtil;
 
 import org.apache.ibatis.session.SqlSession;
@@ -123,23 +121,6 @@ public class EditorDaoImpl implements EditorDao {
 	}
 	
 	@Override
-	public List<Event> getEventList(FormVO vo){
-		SqlSession session = null;
-		List<Event> eventCategoryList = null;
-		
-		try{
-			session = sessionService.getSession();
-			eventCategoryList = session.selectList("EntryMapper.eventCategoryList", vo);
-		}catch(Exception e){
-			logger.error(StringUtil.getStackTrace(e));
-		}finally{			
-			session.close();
-		}
-		
-		return eventCategoryList;
-	}
-	
-	@Override
 	public List<ScenePersonMapping> getPersonList(String celebrityNm){
 		SqlSession session = null;
 		List<ScenePersonMapping> personList = null;
@@ -157,22 +138,6 @@ public class EditorDaoImpl implements EditorDao {
 		}
 		
 		return personList;
-	}
-	
-	@Override
-	public List<VideoCategory> getVideoCategoryList(){
-		SqlSession session = null;
-		List<VideoCategory> videoCategoryList = null;
-		try{
-			session = sessionService.getSession();
-			videoCategoryList = session.selectList("EntryMapper.videoCategoryList");
-		}catch(Exception e){
-			logger.error(StringUtil.getStackTrace(e));
-		}finally{			
-			session.close();
-		}
-		
-		return videoCategoryList;
 	}
 	
 	@Override

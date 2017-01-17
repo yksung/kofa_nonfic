@@ -17,7 +17,7 @@ public class UserDaoImpl implements UserDao {
 
 private static final Logger logger = LoggerFactory.getLogger(EditorDaoImpl.class);
 	
-	private final SessionService sessionService = new SessionService(DB_ENV.PROD1);
+	private final SessionService sessionService = new SessionService(DB_ENV.PROD0);
 	
 	@Override
 	public boolean isValidUser(User loginInfo){

@@ -21,7 +21,6 @@
         <typeAlias alias="country" type="kr.co.wisenut.editor.model.Country"/>
         <typeAlias alias="scenePersonMapping" type="kr.co.wisenut.editor.model.ScenePersonMapping"/>
         <typeAlias alias="eventCategory" type="kr.co.wisenut.editor.model.Event"/>
-        <typeAlias alias="videoCategory" type="kr.co.wisenut.editor.model.VideoCategory"/>
         <typeAlias alias="user" type="kr.co.wisenut.login.model.User"/>
     </typeAliases>
     

@@ -100,7 +100,6 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	private String analyzerIp;
 	private int analyzerPort;
-	private String[] analyzerCategories;
 	
 	public boolean debug = true;
 	
@@ -158,14 +157,10 @@ public class SearchServiceImpl implements SearchService {
 		
 		analyzerIp = env.getProperty("wiseba.ip");
 		analyzerPort = (env.getProperty("wiseba.port")!=null)? Integer.parseInt(env.getProperty("wiseba.port")):0;
-		if(env.getProperty("wiseba.categories")!=null){
-			analyzerCategories =  env.getProperty("wiseba.categories").split("\\^");
-		}
 		
 		LOGGER.debug("----------------------------------------------------------- -------");
 		LOGGER.debug("analyzerIp : "+ analyzerIp);
 		LOGGER.debug("analyzerPort : "+ analyzerPort);
-		LOGGER.debug("analyzerCategories : "+ env.getProperty("wiseba.categories"));
 		LOGGER.debug("------------------------------------------------------------------");
 	}
 	
