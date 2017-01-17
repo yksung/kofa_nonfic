@@ -313,7 +313,7 @@ function poiSearch(){
 		success : function(response){
 			var html = "<ul>";
 			$.each(response.searchPoiInfo.pois.poi, function(idx, el){
-				html += "<li><a href='javascript:putLatLon(\""+el.noorLat+"\",\""+el.noorLon+"\");'>"+el.name+"</a></li>";
+				html += "<li><a href='javascript:putLatLon(\""+el.noorLat+"\",\""+el.noorLon+"\");'>"+el.name+"</a> &gt;"+el.upperAddrName+" "+el.middleAddrName+" "+el.lowerAddrName+" "+el.detailAddrName+"</li>";
 			});
 			
 			html+="</ul>";
