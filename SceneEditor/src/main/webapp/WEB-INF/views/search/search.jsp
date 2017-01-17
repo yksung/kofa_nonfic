@@ -213,7 +213,7 @@ function fnReturn() {
          	<c:otherwise>전체영상</c:otherwise></c:choose>&nbsp;] 중 <strong>${query }</strong> (으)로 찾은 장면정보 검색 결과(<fmt:formatNumber value="${totalCount }" pattern="#,###" />건)입니다.</div>
          	<c:forEach var="result" items="${ resultList }" varStatus="status">
             <div class="sectit01">
-                <h2><a href="/editor/editScene?vdoId=${result.VDO_ID }&scnId=${result.DOCID}">${ result.VDO_NM }<span> (<c:if test="${result.VDO_KIND != '-' and result.VDO_KIND!='' }">${result.VDO_KIND }, </c:if><c:if test="${result.VDO_PRODYEAR != 0 }">${result.VDO_PRODYEAR}년作, </c:if><c:if test="${result.VDO_LANG!='-' and result.VDO_LANG!='' }">${result.VDO_LANG }, </c:if><c:if test="${result.VDO_RUNTIME!=0}">${result.VDO_RUNTIME }분</c:if>) </span></h2>
+                <h2><a href="/editor/editScene?vdoId=${result.VDO_ID }&scnId=${result.DOCID}">${ result.VDO_NM }<span> (<c:if test="${result.VDO_KIND != '-' and result.VDO_KIND!='' }">${result.VDO_KIND }, </c:if><c:if test="${result.VDO_PRODYEAR != 0 }">${result.VDO_PRODYEAR}년作, </c:if><c:if test="${result.VDO_LANG!='-' and result.VDO_LANG!='' }">${result.VDO_LANG }, </c:if>${result.VDO_RUNTIME==null ? '0':result.VDO_RUNTIME }분) </span></h2>
                 <div class="txt">${result.SCN_START_CD }~${result.SCN_END_CD }&nbsp;/&nbsp;${ result.SUMMARY }</div>
                 <ul>
               		<li>&bull; <c:if test="${result.EVENT_PRD != 0}">${result.EVENT_PRD}년대, </c:if>${result.DOM_ABR }&gt;${result.CNTRY_CD }</li>
