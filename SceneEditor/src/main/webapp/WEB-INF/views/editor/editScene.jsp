@@ -201,7 +201,7 @@ function resize(obj) {
 									<div class="layer" id="layer_addcelebrity_${status.index }">
 										<div class="bg"></div>
 							            <div class="pop-layer" id="id_addcelebrity_${status.index }">
-							            	<p>사건 추가<a href="javascript:layer_close('id_addcelebrity_${status.index }')"><img src="${contextRoot }/images/icon_close01.png" alt="닫기" /></a></p>
+							            	<p>인물 추가<a href="javascript:layer_close('id_addcelebrity_${status.index }')"><img src="${contextRoot }/images/icon_close01.png" alt="닫기" /></a></p>
 							                <input id="id_personKorNm_${status.index }" name="personKorNm" type="text" placeholder="인물명(한글)" value=""/>
 											<input type="button" name="searchPerson" id="id_searchPerson_${status.index }" value="검색">
 											<div id="id_personList_${status.index }"></div>
@@ -219,7 +219,7 @@ function resize(obj) {
 									<div class="layer" id="layer_addcelebrity_0">
 										<div class="bg"></div>
 							            <div class="pop-layer" id="id_addcelebrity_0">
-							            	<p>사건 추가<a href="javascript:layer_close('id_addcelebrity_0')"><img src="${contextRoot }/images/icon_close01.png" alt="닫기" /></a></p>
+							            	<p>인물 추가<a href="javascript:layer_close('id_addcelebrity_0')"><img src="${contextRoot }/images/icon_close01.png" alt="닫기" /></a></p>
 							                <input id="id_personKorNm_0" name="personKorNm" type="text" placeholder="인물명(한글)" value=""/>
 											<input type="button" name="searchPerson" id="id_searchPerson_0" value="검색">
 											<div class="button-list" id="id_personList_0"></div>
