@@ -41,7 +41,12 @@
 	</where>
 	</select>
 	<select id="periodList" resultMap="period">
-	 select code, code_nm from codeinfo where div_id = 'S01'
+	 select * from  (
+		 select code, code_nm from codeinfo where div_id = 'S01'
+		 union all 
+		 select null as code, '-' as code_nm from dual
+	)
+	order by code_nm asc
 	</select>
 	<select id="countryList" resultMap="country">
 	 select code, code_nm from codeinfo
@@ -58,6 +63,7 @@
 		</otherwise>
 	 </choose>
 	 </where>
+	 order by sort_seq asc
 	</select>
 	<!-- 2016.08.25 event는 자동완성으로 처리 -->
 	<select id="eventCategoryList" resultMap="eventCategory" parameterType="vo">
@@ -107,28 +113,19 @@
 	  where SCN_ID = #{scnId}
 	</select>
 	<insert id="scenePersonMapping" useGeneratedKeys="true" parameterType="vo">
-	<choose>
-		<when test="personId != null">
-		update SCENE_PERSON_MAPPING 
-		   set VIDEO_ID = #{vdoId},
-		 	   PERSON_ID = #{personId, jdbcType=VARCHAR}, 
-		 	   PERSON_ENGNM = #{personEngNm, jdbcType=VARCHAR}
-		 where SCN_ID = #{scnId} and PERSON_KORNM = #{personKorNm}
-		</when>
-		<otherwise>
-		insert into SCENE_PERSON_MAPPING (
-			SCN_ID,
-			VIDEO_ID,
-		 	PERSON_KORNM,
-		 	PERSON_ENGNM
-		) VALUES (
-			#{scnId},
-			#{vdoId},
-			#{personKorNm},
-			#{personEngNm}
-		)
-		</otherwise>
-	</choose>
+	insert into SCENE_PERSON_MAPPING (
+		SCN_ID,
+		VIDEO_ID,
+		PERSON_ID,
+	 	PERSON_KORNM,
+	 	PERSON_ENGNM
+	) VALUES (
+		#{scnId},
+		#{vdoId},
+		#{personId},
+		#{personKorNm},
+		#{personEngNm}
+	)
 	</insert>
 	
 	<delete id="deletePersonFromMapping" parameterType="vo">

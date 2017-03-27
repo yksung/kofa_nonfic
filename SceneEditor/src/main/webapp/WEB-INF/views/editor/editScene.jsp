@@ -147,12 +147,19 @@ function resize(obj) {
                             <select class="marL" id="id_domAbr" name="domAbr" onChange="javascript:onDomAbrChange('${sceneInfo.cntryCd }');">
                             <c:choose>
 								<c:when test="${ fn:trim(sceneInfo.domAbr) == 'domestic' }">
+								<option value="-">-</option>
 								<option value="domestic" selected>국내</option>
 								<option value="abroad">국외</option>
 								</c:when>
-								<c:otherwise>
+								<c:when test="${ fn:trim(sceneInfo.domAbr) == 'abroad' }">
+								<option value="-">-</option>
 								<option value="domestic">국내</option>
 								<option value="abroad" selected>국외</option>
+								</c:when>
+								<c:otherwise>
+								<option value="-" selected>-</option>
+								<option value="domestic">국내</option>
+								<option value="abroad">국외</option>
 								</c:otherwise>
 							</c:choose>
                             </select>
@@ -194,8 +201,8 @@ function resize(obj) {
 								<c:if test="${not empty scenePersonMapping }">
 								<c:forEach var="celebrity" items="${empty scenePersonMapping ? ' ':scenePersonMapping }" varStatus="status">
 								<li name="celebrity" id="id_celebrity_${status.index }">
-									<input name="celebrityNm" id="id_celebrityNm_${status.index }" type="text"
-											placeholder="유명인만 기재" value="${empty celebrity.korNm? '': fn:trim(celebrity.korNm) }(${celebrity.personId != null or fn:trim(celebrity.personId)!='' ? celebrity.personId:'-'})"/>
+									<input name="celebrityNm" id="id_celebrityNm_${status.index }" type="text" <c:if test="${ isValidUser eq false }">disabled</c:if>
+											placeholder="유명인만 기재" value="${empty celebrity.korNm? '': fn:trim(celebrity.korNm) }(${celebrity.personId != null and fn:trim(celebrity.personId)!='' ? celebrity.personId:'-'})"/>
 									<a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a>
 									<!-- 인물명팝업 -->
 									<div class="layer" id="layer_addcelebrity_${status.index }">
@@ -213,7 +220,7 @@ function resize(obj) {
 								</c:if>
 								<c:if test="${empty scenePersonMapping }">
 								<li name="celebrity" id="id_celebrity_0">
-									<input name="celebrityNm" id="id_celebrityNm_0" type="text" placeholder="유명인만 기재" value=""/>
+									<input name="celebrityNm" id="id_celebrityNm_0" type="text" placeholder="유명인만 기재" value="" <c:if test="${ isValidUser eq false }">disabled</c:if>/>
 									<c:if test="${ isValidUser }"><a class="minus" href="#"><img src="${contextRoot}/images/btn_minus.png" alt="인물 삭제" /></a></c:if>
 									<!-- 인물명팝업 -->
 									<div class="layer" id="layer_addcelebrity_0">

@@ -155,7 +155,7 @@ public class EditorController {
 		}catch(Exception e){
 			logger.error(StringUtil.getStackTrace(e));
 		}
-		
+				
 		mav.addObject("sceneStartsAt", scnStartsAt);
 		mav.addObject("prevScene", prevExists);
 		mav.addObject("nextScene", nextExists);
@@ -297,8 +297,7 @@ public class EditorController {
 		ObjectMapper mapper = new ObjectMapper();
 
 		String jsonString = "";
-		
-		System.out.println("### celebrityNm : " + celebrityNm);
+		System.out.println("[EditorController>getCelebrityAsJson] celebrityNm : " + celebrityNm);
 	
 		try{
 			personList = editorDao.getPersonList(celebrityNm);
@@ -317,7 +316,7 @@ public class EditorController {
 	
 	@RequestMapping(value = "/mapSceneAndPerson")
 	public void mapSceneAndPerson(@ModelAttribute FormVO vo, HttpServletResponse response) {
-		
+		System.out.println("[EditorController>mapSceneAndPerson] celebrityNm : " + vo.getPersonKorNm());
 		int successfullyMappedCount = 0;
 		try{
 			successfullyMappedCount = sceneService.scenePersonMapping(vo);

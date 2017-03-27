@@ -11,7 +11,7 @@
 	 select USER_ID, PASSWORD
 	   from USERINFO
 	  where USER_ID=#{userName}
-	    and PASSWORD=#{password}
-	    /*and PASSWORD=damo.HASH_STR_DATA('${password}')*/
+	    and PASSWORD=damo.HASH_STR_DATA('${password}')
+	    and SCENE_YN = 'Y'
 	 </select>
 </mapper>

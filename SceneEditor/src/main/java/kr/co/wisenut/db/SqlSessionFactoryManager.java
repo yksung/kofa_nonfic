@@ -19,9 +19,9 @@ public class SqlSessionFactoryManager {
 			Reader resourceProd1 = Resources.getResourceAsReader(resourceName);
 			
 			SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
-			sqlSessionFactoryDev = builder.build(resourceDev, "development");
-			sqlSessionFactoryProd0 = builder.build(resourceProd0, "production0");
-			sqlSessionFactoryProd1 = builder.build(resourceProd1, "production1");
+			sqlSessionFactoryDev = builder.build(resourceDev, "development");		// 개발용 DB
+			sqlSessionFactoryProd0 = builder.build(resourceProd0, "production0");	// 운영-일반 데이터 DB
+			sqlSessionFactoryProd1 = builder.build(resourceProd1, "production1");	// 운영-로그인 정보 DB
 
 		} catch (Exception e) {
 			e.printStackTrace();

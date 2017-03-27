@@ -34,12 +34,14 @@ $(function(){
 	});
 	
 	$("body").on("click", "input[name='searchPerson']", function(e){
-		var id = e.toElement.getAttribute("id").substring(e.toElement.getAttribute("id").lastIndexOf("_")+1);
+		e.preventDefault();
+		var id = e.target.getAttribute("id").substring(e.target.getAttribute("id").lastIndexOf("_")+1);
 		searchPerson(id);
 	});
 	
 	$("body").on("click", "input[name='celebrityNm']", function(e){
-		var id = e.toElement.getAttribute("id").substring(e.toElement.getAttribute("id").lastIndexOf("_")+1);
+		e.preventDefault();
+		var id = e.target.getAttribute("id").substring(e.target.getAttribute("id").lastIndexOf("_")+1);
 		layer_open('id_addcelebrity_'+id, 'layer_addcelebrity_'+id);
 	});
 	
@@ -56,7 +58,7 @@ $(function(){
 	    			personKorNm = $(this).val().substring(0, $(this).val().indexOf("("));        			
 	    		}
 	    	});
-	    	var param = "personKorNm="+personKorNm+"&scnId="+$("input[name='scnId']").val();
+	    	var param = "personKorNm="+encodeURIComponent(personKorNm)+"&scnId="+$("input[name='scnId']").val();
 	    	
 	    	$.ajax({
 	    		url : "/editor/deletePersonFromMapping?"+param,
@@ -391,7 +393,7 @@ function setPerson(idx, personKorNm, personEngNm, personId, scnId, vdoId){
 		displayName += "(-)";
 	}
 	$("#id_celebrityNm_"+idx).val(displayName);
-	var param = "personKorNm="+personKorNm+"&personEngNm="+personEngNm+"&personId="+personId+"&scnId="+scnId+"&vdoId="+vdoId;
+	var param = "personKorNm="+encodeURIComponent(personKorNm)+"&personEngNm="+personEngNm+"&personId="+personId+"&scnId="+scnId+"&vdoId="+vdoId;
 	
 	$.ajax({
 		url : "/editor/mapSceneAndPerson?"+param,
@@ -415,7 +417,7 @@ function setPerson(idx, personKorNm, personEngNm, personId, scnId, vdoId){
 
 function searchPerson(idx){
 	$.ajax({
-		url : "/editor/getCelebrityListAsJson?celebrityNm="+$("#id_personKorNm_"+idx).val(),
+		url : "/editor/getCelebrityListAsJson?celebrityNm="+encodeURIComponent($("#id_personKorNm_"+idx).val()),
 		type : "POST",
 		dataType : "json",
 		beforeSend:function(xhr, opts){
